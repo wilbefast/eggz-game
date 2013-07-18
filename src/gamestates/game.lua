@@ -16,10 +16,21 @@ Lesser General Public License for more details.
 GAME GAMESTATE
 --]]------------------------------------------------------------
 
-local state = GameState.new()
+local state = GameState.new() 
 
 function state:init()
   self.n = Overlord(32, 32)
+
+
+  -- create grid
+  self.grid = CollisionGrid(64, 64, 11, 11)
+
+  -- point camera at centre of collision-grid
+  self.camera = Camera(0, 0)
+  self.camera:lookAt(self.grid:centrePixel())
+  self.camera:zoom(scaling.SCALE_MAX)
+
+  
 end
 
 function state:enter()
@@ -46,8 +57,16 @@ end
 
 
 function state:draw()
-  love.graphics.print("Hello Game", 32, 32)
-  GameObject.drawAll()
+
+	self.camera:attach()
+
+		self.grid:draw()
+
+  	GameObject.drawAll()
+
+	self.camera:detach()
+
+
 end
 
 return state

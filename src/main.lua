@@ -16,6 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 IMPORTS
 --]]------------------------------------------------------------
 
+Camera = require("hump/camera")
 GameState = require("hump/gamestate")
 Class = require("hump/class")
 
@@ -25,6 +26,8 @@ scaling = require("unrequited/scaling")
 input = require("unrequited/input")
 GameObject = require("unrequited/GameObject")
 
+Tile = require("unrequited/Tile")
+CollisionGrid = require("unrequited/CollisionGrid")
 Overlord = require("gameobjects/Overlord")
 
 title = require("gamestates/title")
