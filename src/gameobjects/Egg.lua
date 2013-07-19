@@ -16,7 +16,6 @@ Lesser General Public License for more details.
 EGG GAMEOBJECT
 --]]------------------------------------------------------------
 
-
 --[[------------------------------------------------------------
 Initialisation
 --]]--
@@ -28,7 +27,7 @@ local Egg = Class
   ENERGY_DRAW_SPEED = 0.3, 				-- per second
   ENERGY_CONSUME_SPEED = 0,--0.01, 		-- per second
   ENERGY_DRAW_EFFICIENCY = 0.7, 	-- percent
-  ENERGY_START = 0.3,
+  ENERGY_START = 0, --0.3
   MAX_W = 24,
   MAX_H = 24,
 
@@ -40,25 +39,54 @@ Egg:include(Plant)
 
 
 --[[------------------------------------------------------------
+Resources
+--]]--
+
+Egg.IMAGES = 
+{
+	{
+		love.graphics.newImage("assets/RED-egg-A.png"),
+		love.graphics.newImage("assets/RED-egg-B.png"),
+		love.graphics.newImage("assets/RED-egg-C.png")
+	},
+	{
+		love.graphics.newImage("assets/BLUE-egg-A.png"),
+		love.graphics.newImage("assets/BLUE-egg-B.png"),
+		love.graphics.newImage("assets/BLUE-egg-C.png")
+	}
+}
+
+--[[------------------------------------------------------------
 Game loop
 --]]--
 
 function Egg:draw()
-	player.bindTeamColour[self.player]()
+	--player.bindTeamColour[self.player]()
 
-		love.graphics.rectangle("fill", 
-			self.x - self.w/2, 
-			self.y - self.h/2, 
-			self.w, self.h)
+		local subimage = 1
+		if self.energy > 0.5 then
+			if self.energy == 1 then
+				subimage = 3
+			else
+				subimage = 2
+			end
+		end
 
-		if not self.transport then
+
+
+		love.graphics.draw(Egg.IMAGES[self.player][subimage],
+			self.x, 
+			self.y,
+			0,
+			1, 1, 32, 40)
+
+		--[[if not self.transport then
 			love.graphics.rectangle("line", 
 				self.x - self.MAX_W/2, 
 				self.y - self.MAX_H/2,  
-				self.MAX_W, self.MAX_H)	
-		end
-
-	love.graphics.setColor(255, 255, 255)
+				self.MAX_W, self.MAX_H,
+				32, 32)	
+		end--]]
 end
 
 

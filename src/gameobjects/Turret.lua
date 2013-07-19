@@ -27,7 +27,7 @@ local Turret = Class
   ENERGY_DRAW_SPEED = 0.1, 						-- per second
   ENERGY_CONSUME_SPEED = 0,--0.01, 		-- per second
   ENERGY_DRAW_EFFICIENCY = 0.7, 			-- percent
-  ENERGY_START = 0.3,
+  ENERGY_START = 0, --0.3
   MAX_W = 24,
   MAX_H = 24,
 
@@ -37,21 +37,31 @@ local Turret = Class
 }
 Turret:include(Plant)
 
+--[[------------------------------------------------------------
+Resources
+--]]--
+
+Turret.IMAGES = 
+{
+  {
+    love.graphics.newImage("assets/RED-knight-01.png"),
+    love.graphics.newImage("assets/RED-knight-02.png")
+  },
+  {
+    love.graphics.newImage("assets/BLUE-knight-01.png"),
+    love.graphics.newImage("assets/BLUE-knight-02.png")
+  }
+}
 
 --[[------------------------------------------------------------
 Game loop
 --]]--
 
 function Turret:draw()
-	player.bindTeamColour[self.player]()
 
-		love.graphics.circle("fill", self.x, self.y, self.w)
+  love.graphics.draw(Turret.IMAGES[self.player][1], self.x, self.y,
+    0, 1, 1, 32, 40)
 
-		if not self.transport then
-			love.graphics.circle("line", self.x, self.y, self.MAX_W)
-		end
-
-	love.graphics.setColor(255, 255, 255)
 end
 
 --[[------------------------------------------------------------

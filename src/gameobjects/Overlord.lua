@@ -184,7 +184,7 @@ function Overlord:draw()
 
     -- draw egg being laid
     if self.egg_ready > 0 then
-      local egg_size = Egg.ENERGY_START*Egg.MAX_W*self.egg_ready
+      local egg_size = 0.3*Egg.MAX_W*self.egg_ready
       love.graphics.rectangle(useful.tri(self.egg_ready == 1, "fill", "line"), 
         self.x - egg_size/2, 
         self.y - self.h*2 - egg_size/2, 
