@@ -37,6 +37,7 @@ GameObject = require("unrequited/GameObject")
 
 Tile = require("unrequited/Tile")
 CollisionGrid = require("unrequited/CollisionGrid")
+Plant = require("gameobjects/Plant")
 Egg = require("gameobjects/Egg")
 Overlord = require("gameobjects/Overlord")
 
