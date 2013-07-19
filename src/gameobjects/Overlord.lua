@@ -29,7 +29,7 @@ local Overlord = Class
     GameObject.init(self, x, y, 32, 32)
 
     self.player = player
-    self.laying = 0
+    self.egg_ready = 0
   end,
 }
 Overlord:include(GameObject)
@@ -80,6 +80,7 @@ function Overlord:update(dt)
       self.passenger.transport = self
       self.tile.occupant = nil
       self.passenger.tile = nil
+      self.egg_ready = 0
 
     -- put down passenger
     elseif self.passenger then
@@ -89,21 +90,17 @@ function Overlord:update(dt)
       self.passenger.x = self.tile.x
       self.passenger.y = self.tile.y
       self.passenger = nil
-    end
 
-  -- Egg laying ----------------------------------------------------------
-  elseif inp.lay_trigger == -1 then
-    if (not self.tile.occupant) then
-      if (self.laying == 1) then
-        Egg(self.tile, self.player)
-      end
-      self.laying = 0
-    end    
+    -- lay egg
+    elseif self.egg_ready == 1 then
+      Egg(self.tile, self.player)
+      self.egg_ready = 0
+    end
   end
 
   -- Egg production ------------------------------------------------------
-  if inp.lay and (not self.passenger) then
-    self.laying = math.min(1, self.laying + dt*0.2)
+  if not self.passenger then
+    self.egg_ready = math.min(1, self.egg_ready + dt*0.2)
   end
 end
 
@@ -122,9 +119,9 @@ function Overlord:draw()
 		love.graphics.setLineWidth(1)
 
     -- draw egg being laid
-    if self.laying > 0 then
-      local egg_size = 0.3*32*self.laying
-      love.graphics.rectangle("line", 
+    if self.egg_ready > 0 then
+      local egg_size = 0.3*32*self.egg_ready
+      love.graphics.rectangle(useful.tri(self.egg_ready == 1, "fill", "line"), 
         self.x - egg_size/2, 
         self.y - egg_size/2, 
         egg_size, egg_size)
@@ -136,6 +133,8 @@ function Overlord:draw()
                                     self.w, self.h/2)
 
 	love.graphics.setColor(255, 255, 255)
+
+
 end
 
 --[[----------------------------------------------------------------------------
