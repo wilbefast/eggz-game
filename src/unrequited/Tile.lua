@@ -28,12 +28,14 @@ Initialisation
 
 local Tile = Class
 {
+		REGROWTH_SPEED = 0.01,
+
+		init = function(self, x, y, w, h)
+			self.x, self.y, self.w, self.h = x, y, w, h
+			self.energy = math.random()
+		end
 }
 
-Tile.init = function(self, x, y, w, h)
-	self.x, self.y, self.w, self.h = x, y, w, h
-	self.energy = math.random()
-end
 
 --[[------------------------------------------------------------
 Game loop
@@ -46,7 +48,7 @@ function Tile:draw()
 end
 
 function Tile:update(dt)
-	self.energy = useful.clamp(self.energy + dt/100/self.energy, 0, 1)
+	self.energy = math.min(1, self.energy + dt*Tile.REGROWTH_SPEED/self.energy)
 end
 
 --[[------------------------------------------------------------

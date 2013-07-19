@@ -16,6 +16,10 @@ Lesser General Public License for more details.
 OVERLORD GAMEOBJECT
 --]]------------------------------------------------------------
 
+--[[------------------------------------------------------------
+Initialisation
+--]]--
+
 local Overlord = Class
 {
   type = GameObject.TYPE.new("Overlord"),
@@ -34,6 +38,9 @@ local Overlord = Class
 }
 Overlord:include(GameObject)
 
+--[[------------------------------------------------------------
+Game loop
+--]]--
 
 function Overlord:update(dt)
   
@@ -76,20 +83,12 @@ function Overlord:update(dt)
 
     -- pick up tile occupant
 		if self.tile.occupant then
-      self.passenger = self.tile.occupant
-      self.passenger.transport = self
-      self.tile.occupant = nil
-      self.passenger.tile = nil
+      self.tile.occupant:uproot(self)
       self.egg_ready = 0
 
     -- put down passenger
     elseif self.passenger then
-      self.passenger.tile = self.tile
-      self.passenger.transport = nil
-      self.tile.occupant = self.passenger
-      self.passenger.x = self.tile.x
-      self.passenger.y = self.tile.y
-      self.passenger = nil
+      self.passenger:plant(self.tile)
 
     -- lay egg
     elseif self.egg_ready == 1 then
@@ -139,6 +138,6 @@ end
 
 --[[----------------------------------------------------------------------------
 Export
---]]
+--]]--
 
 return Overlord

@@ -16,6 +16,10 @@ Lesser General Public License for more details.
 EGG GAMEOBJECT
 --]]------------------------------------------------------------
 
+--[[------------------------------------------------------------
+Initialisation
+--]]--
+
 local Egg = Class
 {
   type = GameObject.TYPE.new("Egg"),
@@ -27,8 +31,7 @@ local Egg = Class
   init = function(self, tile, player)
     GameObject.init(self, tile.x, tile.y, 16, 16)
 
-    self.tile = tile
-    tile.occupant = self
+    self:plant(tile)
 
     self.energy = 0.3
 
@@ -37,6 +40,39 @@ local Egg = Class
 }
 Egg:include(GameObject)
 
+--[[------------------------------------------------------------
+Pick up and put down
+--]]--
+
+function Egg:plant(tile)
+	if self.transport then
+		self.transport.passenger = nil
+		self.transport = nil
+	end
+	if self.tile then
+		self.tile.occupant = nil
+	end
+	self.tile = tile
+  self.x, self.y = tile.x, tile.y
+	tile.occupant = self
+end
+
+function Egg:uproot(transport)
+	if self.transport then
+		self.transport.passenger = nil
+	end
+	if self.tile then
+		self.tile.occupant = nil
+		self.tile = nil
+	end
+	self.transport = transport
+	transport.passenger = self
+end
+
+
+--[[------------------------------------------------------------
+Game loop
+--]]--
 
 function Egg:update(dt)
   GameObject.update(self, dt)
@@ -88,6 +124,6 @@ end
 
 --[[------------------------------------------------------------
 Export
---]]
+--]]--
 
 return Egg

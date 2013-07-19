@@ -63,7 +63,7 @@ end
 
 --[[------------------------------------------------------------
 Game loop
---]]
+--]]--
 
 function CollisionGrid:update(dt) 
   for x = 1, self.w do
