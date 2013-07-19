@@ -42,8 +42,8 @@ function Overlord:update(dt)
   local inp = input[self.player]
 
   -- Snapped position ---------------------------------------------
-  local snapx = useful.floor(self.x, GameObject.COLLISIONGRID.tilew)
-  local snapy = useful.floor(self.y, GameObject.COLLISIONGRID.tileh)
+  self.snapx = useful.floor(self.x, GameObject.COLLISIONGRID.tilew)
+  self.snapy = useful.floor(self.y, GameObject.COLLISIONGRID.tileh)
 
   -- Directional movement ---------------------------------------------
   if inp.x == 0 or self.dx*inp.x < 0 then
@@ -61,13 +61,13 @@ function Overlord:update(dt)
   self.dy = self.dy + inp.y*dt*self.acceleration
 
   if inp.x == 0 and inp.y == 0 then
-  	self.x = useful.lerp(self.x, snapx + 32, dt)
-  	self.y = useful.lerp(self.y, snapy + 32, dt)
+  	self.x = useful.lerp(self.x, self.snapx + 32, dt*2)
+  	self.y = useful.lerp(self.y, self.snapy + 32, dt*2)
   end
 
 	-- Egg laying ------------------------------------------------------
 	if inp.lay == 1 then
-		Egg(snapx, snapy, self.player)
+		Egg(self.snapx, self.snapy, self.player)
 	end
 
 end
@@ -78,6 +78,9 @@ function Overlord:draw()
 	player.bindTeamColour[self.player]()
 		love.graphics.rectangle("fill", self.x-self.w/2, self.y-self.w/2, 
 																		self.w, self.h)
+		love.graphics.setLineWidth(3)
+			love.graphics.rectangle("line", self.snapx, self.snapy, 64, 64)
+		love.graphics.setLineWidth(1)
 	love.graphics.setColor(255, 255, 255)
 end
 

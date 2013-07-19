@@ -44,6 +44,10 @@ function Tile:draw(x, y, w, h)
 	love.graphics.setColor(255, 255, 255)
 end
 
+function Tile:update(dt)
+	self.energy = useful.clamp(self.energy + dt/100/self.energy, 0, 1)
+end
+
 --[[------------------------------------------------------------
 EXPORT
 --]]------------------------------------------------------------

@@ -65,6 +65,14 @@ end
 Game loop
 --]]
 
+function CollisionGrid:update(dt) 
+  for x = 1, self.w do
+    for y = 1, self.h do
+      self.tiles[x][y]:update(dt)
+    end
+  end
+end
+
 function CollisionGrid:draw(view) 
 
   local start_x, end_x, start_y, end_y
@@ -83,7 +91,7 @@ function CollisionGrid:draw(view)
 
   for x = start_x, end_x do
     for y = start_y, end_y do
-      self.tiles[x][y]:draw((x-1)*self.tilew, (y-1)*self.tileh, self.tilew, 64)--self.tileh)
+      self.tiles[x][y]:draw((x-1)*self.tilew, (y-1)*self.tileh, self.tilew, self.tileh)
     end
   end
 

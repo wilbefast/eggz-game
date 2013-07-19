@@ -55,6 +55,8 @@ end
 
 function state:update(dt)
   GameObject.updateAll(dt)
+
+  self.grid:update(dt)
 end
 
 
