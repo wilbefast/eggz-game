@@ -20,7 +20,7 @@ input[1].keyleft = "left"
 input[1].keyright = "right"
 input[1].keyup = "up"
 input[1].keydown = "down"
-input[1].keylay = " "--"rctrl"
+input[1].keylay = "rctrl"
 
 
 input[2].keyleft = "q"

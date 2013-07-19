@@ -46,26 +46,21 @@ function Overlord:update(dt)
   self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
 
   -- Directional movement ---------------------------------------------
-
-  if (inp.x == 0) or (self.dx*inp.x < 0) or (self.laying ~= 0)  then
+  if (inp.x == 0) or (self.dx*inp.x < 0) then
   	self.FRICTION_X = 600
   else
   	self.FRICTION_X = 0
   end
-  if self.laying == 0 then
-	 self.dx = self.dx + inp.x*dt*self.acceleration
-  end
+  self.dx = self.dx + inp.x*dt*self.acceleration
 
-  if (inp.y == 0) or (self.dy*inp.y < 0) or (self.laying ~= 0)  then
+  if (inp.y == 0) or (self.dy*inp.y < 0) then
   	self.FRICTION_Y = 600
   else
   	self.FRICTION_Y = 0
   end 
-  if self.laying == 0 then
-    self.dy = self.dy + inp.y*dt*self.acceleration
-  end
+  self.dy = self.dy + inp.y*dt*self.acceleration
 
-  if (inp.x == 0 and inp.y == 0) or (self.laying ~= 0) then
+  if (inp.x == 0 and inp.y == 0) then
   	self.x = useful.lerp(self.x, self.tile.x + 32, dt*3)
   	self.y = useful.lerp(self.y, self.tile.y + 32, dt*3)
   end
@@ -76,7 +71,7 @@ function Overlord:update(dt)
     self.passenger.y = self.y + 16
   end
 
-	-- Egg transporation/laying -------------------------------------------
+	-- Egg transporation -------------------------------------------
 	if inp.lay_trigger == 1 then
 
     -- pick up tile occupant
@@ -95,18 +90,20 @@ function Overlord:update(dt)
       self.passenger.y = self.tile.y
       self.passenger = nil
     end
+
+  -- Egg laying ----------------------------------------------------------
+  elseif inp.lay_trigger == -1 then
+    if (not self.tile.occupant) then
+      if (self.laying == 1) then
+        Egg(self.tile, self.player)
+      end
+      self.laying = 0
+    end    
   end
 
-  -- Egg laying ------------------------------------------------------
-  if inp.lay and (inp.x == 0) and (inp.x == 0) 
-  and (not self.passenger) and (not self.tile.occupant) then
-    self.laying = self.laying + dt
-    if self.laying > 1 then
-      Egg(self.tile, self.player)
-      self.laying = 0
-    end
-  else
-    self.laying = 0
+  -- Egg production ------------------------------------------------------
+  if inp.lay and (not self.passenger) then
+    self.laying = math.min(1, self.laying + dt*0.2)
   end
 end
 
