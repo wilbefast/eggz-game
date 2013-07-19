@@ -20,14 +20,21 @@ local Overlord = Class
 {
   type = GameObject.TYPE.new("Overlord"),
       
-  speed = 256,
+  acceleration = 600,
 
-  init = function(self, x, y)
+  MAX_DX = 300,
+  MAX_DY = 300,
+
+  FRICTION_X = 25,
+  FRICTION_Y = 25,
+
+  init = function(self, x, y, player)
     GameObject.init(self, x, y, 32, 32)
+
+    self.player = player
   end,
 }
 Overlord:include(GameObject)
-
 
 
 function Overlord:update(dt)
@@ -35,9 +42,13 @@ function Overlord:update(dt)
   GameObject.update(self, dt)
   
   --local dx, dy = love.joystick.getAxes(1)
-  self.x, self.y = self.x + input.x*dt*self.speed, self.y + input.y*dt*self.speed
+  self.dx = self.dx + input[self.player].x*dt*self.acceleration
+  self.dy = self.dy + input[self.player].y*dt*self.acceleration
 end
 
+function Overlord:draw()
+
+end
 
 --[[------------------------------------------------------------
 Export

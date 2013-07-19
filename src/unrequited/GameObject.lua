@@ -228,7 +228,7 @@ function GameObject:update(dt)
   if fisix.GRAVITY and self.airborne then
     self.dy = self.dy + fisix.GRAVITY*dt
   end
-  
+
   -- friction
   if (self.dx ~= 0) and fisix.FRICTION_X and (fisix.FRICTION_X ~= 0) then
     self.dx = self.dx / (math.pow(fisix.FRICTION_X, dt))

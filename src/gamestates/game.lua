@@ -19,8 +19,9 @@ GAME GAMESTATE
 local state = GameState.new() 
 
 function state:init()
-  self.n = Overlord(32, 32)
 
+  Overlord(32, 32, 1)
+  Overlord(64*11 - 32, 64*11 - 32, 2)
 
   -- create grid
   self.grid = CollisionGrid(64, 64, 11, 11)

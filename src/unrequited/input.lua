@@ -12,26 +12,41 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 --]]
 
-local input = 
-{
-  x = 0,
-  y = 0
-}
+local input = {}
+for i = 1, MAX_PLAYERS do
+  input[i] = { x = 0, y = 0}
+end
+input[1].keyleft = "left"
+input[1].keyright = "right"
+input[1].keyup = "up"
+input[1].keydown = "down"
+input[2].keyleft = "q"
+input[2].keyright = "d"
+input[2].keyup = "z"
+input[2].keydown = "s"
 
 function input:update(dt)
-  self.x, self.y = 0, 0
-  if love.keyboard.isDown("left", "q", "a") then
-    self.x = self.x - 1 
+
+  for i = 1, MAX_PLAYERS do
+    local p = self[i]
+    p.x, p.y = 0, 0
+
+
+
+    if p.keyleft and love.keyboard.isDown(p.keyleft) then
+      p.x = p.x - 1 
+    end
+    if p.keyright and love.keyboard.isDown(p.keyright) then
+      p.x = p.x + 1 
+    end
+    if p.keyup and love.keyboard.isDown(p.keyup) then
+      p.y = p.y - 1 
+    end
+    if p.keydown and love.keyboard.isDown(p.keydown) then 
+      p.y = p.y + 1 
+    end
   end
-  if love.keyboard.isDown("right", "d") then
-    self.x = self.x + 1 
-  end
-  if love.keyboard.isDown("up", "z", "w") then
-    self.y = self.y - 1 
-  end
-  if love.keyboard.isDown("down", "s") then 
-    self.y = self.y + 1 
-  end
+
 end
 
 
