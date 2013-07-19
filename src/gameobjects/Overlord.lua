@@ -36,6 +36,8 @@ local Overlord = Class
     self.egg_ready = 1--0
     self.z = 1
     self.radial_menu = 0
+    self.radial_menu_x = 0
+    self.radial_menu_y = 0
   end,
 }
 Overlord:include(GameObject)
@@ -75,26 +77,41 @@ function Overlord:update(dt)
     self.dy = self.dy + inp.y*dt*self.acceleration
   -- Radial menu ---------------------------------------------------------
   else
+    self.dx, self.dx = 0, 0
+    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, 5*dt)
+    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, 5*dt)
+
+    if (math.abs(self.radial_menu_x) < 0.1) and (math.abs(self.radial_menu_y) < 0.1) then
+      self.radial_menu_choice = nil
+    else
+      local bomb = self.radial_menu_x
+      local turret = -self.radial_menu_y
+      local converter = -self.radial_menu_x
+
+      -- evolve bomb
+      if (bomb > 2*turret) and (bomb > 2*converter) then
+        --self.radial_menu_choice = Bomb
+        self.radial_menu_choice = nil
+
+      -- evolve turret
+      elseif (turret > 2*bomb) and (turret > 2*converter) then
+        self.radial_menu_choice = Turret
+
+      -- evolve converter
+      elseif (converter > 2*turret) and (converter > 2*bomb) then
+        --self.radial_menu_choice = Converter
+        self.radial_menu_choice = nil
+
+      else
+        self.radial_menu_choice = nil
+      end
+    end
   end
 
   -- Transportation ------------------------------------------------------
   if self.passenger then
     self.passenger.x = self.x
     self.passenger.y = self.y
-  end
-
-  -- Land on the ground --------------------------------------------------
-  if inp.lay then
-    self.z = math.max(0, self.z - dt*10)
-    if (self.z == 0) and self.tile.occupant 
-      and self.tile.occupant:isType("Egg")
-      and (self.tile.occupant.energy == 1) then
-    -- Open radial menu
-      self.radial_menu = math.min(1, self.radial_menu + dt*2)
-    end
-  else
-    self.z = math.min(1, self.z + dt*10)
-    self.radial_menu = 0
   end
 
 	-- Put down a plant  -------------------------------------------
@@ -113,7 +130,8 @@ function Overlord:update(dt)
   elseif inp.lay_trigger == -1 then
     -- pick up tile occupant
     if self.tile.occupant and (not self.passenger) 
-      and (not self.previous_passenger) and self.z > 0 then
+      and (not self.previous_passenger)
+      and (self.radial_menu < 1) then
       self.tile.occupant:uproot(self)
     end
     self.previous_passenger = nil
@@ -121,6 +139,28 @@ function Overlord:update(dt)
 
   -- Egg production ------------------------------------------------------
   self.egg_ready = math.min(1, self.egg_ready + dt*0.2)
+
+  -- Land on the ground --------------------------------------------------
+  if inp.lay then
+    self.z = math.max(0, self.z - dt*10)
+    if (self.z == 0) and self.tile.occupant 
+      and self.tile.occupant:isType("Egg")
+      and (self.tile.occupant.energy == 1) then
+    -- Open radial menu
+      self.radial_menu = math.min(1, self.radial_menu + dt*6)
+    end
+  else
+
+    -- Select option from radial menu
+    if (self.radial_menu == 1) and self.radial_menu_choice then
+        self.tile.occupant.purge = true
+        self.radial_menu_choice(self.tile, self.player)
+    end
+
+    -- Close radial menu
+    self.z = math.min(1, self.z + dt*10)
+    self.radial_menu = math.max(0, self.radial_menu - dt*8)
+  end
 end
 
 
@@ -154,8 +194,15 @@ function Overlord:draw()
                                     self.w, self.h/2)
 
     -- draw radial menu
-    love.graphics.setColor(0, 255, 0)
-    love.graphics.circle("line", self.x, self.y, self.radial_menu*64)
+    if self.radial_menu > 0 then
+
+      love.graphics.setColor(0, 255, 0)
+      love.graphics.circle("line", self.x, self.y, self.radial_menu*64)
+
+      love.graphics.circle("fill", 
+        self.x + self.radial_menu_x*self.radial_menu*64, 
+        self.y + self.radial_menu_y*self.radial_menu*64, 10)
+    end
 
 	love.graphics.setColor(255, 255, 255)
 

@@ -26,6 +26,7 @@ IMPORTS
 Camera = require("hump/camera")
 GameState = require("hump/gamestate")
 Class = require("hump/class")
+Vector = require("hump/vector-light")
 
 player = require("player")
 

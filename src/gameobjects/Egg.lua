@@ -24,9 +24,9 @@ local Egg = Class
 {
   type = GameObject.TYPE.new("Egg"),
 
-  ENERGY_DRAW_SPEED = 0.3, 				-- per second
+  ENERGY_DRAW_SPEED = 10,--0.3, 				-- per second
   ENERGY_CONSUME_SPEED = 0,--0.01, 		-- per second
-  ENERGY_DRAW_EFFICIENCY = 0.7, 	-- percent
+  ENERGY_DRAW_EFFICIENCY = 10,--0.7, 	-- percent
   ENERGY_START = 0.3,
   MAX_W = 24,
   MAX_H = 24,
