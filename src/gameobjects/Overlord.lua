@@ -33,7 +33,7 @@ local Overlord = Class
     GameObject.init(self, x, y, 32, 32)
 
     self.player = player
-    self.egg_ready = 0
+    self.egg_ready = 1--0
   end,
 }
 Overlord:include(GameObject)
@@ -75,7 +75,7 @@ function Overlord:update(dt)
   -- Transportation ------------------------------------------------------
   if self.passenger then
     self.passenger.x = self.x
-    self.passenger.y = self.y + 16
+    self.passenger.y = self.y
   end
 
 	-- Egg transporation -------------------------------------------
@@ -88,7 +88,6 @@ function Overlord:update(dt)
     -- pick up tile occupant
 		elseif self.tile.occupant and (not self.passenger) then
       self.tile.occupant:uproot(self)
-      --self.egg_ready = 0
 
     -- lay egg
     elseif self.egg_ready == 1 then
@@ -98,9 +97,7 @@ function Overlord:update(dt)
   end
 
   -- Egg production ------------------------------------------------------
-  --if not self.passenger then
-    self.egg_ready = math.min(1, self.egg_ready + dt*0.2)
-  --end
+  self.egg_ready = math.min(1, self.egg_ready + dt*0.2)
 end
 
 
@@ -119,7 +116,7 @@ function Overlord:draw()
 
     -- draw egg being laid
     if self.egg_ready > 0 then
-      local egg_size = 0.3*32*self.egg_ready
+      local egg_size = Egg.ENERGY_START*Egg.MAX_W*self.egg_ready
       love.graphics.rectangle(useful.tri(self.egg_ready == 1, "fill", "line"), 
         self.x - egg_size/2, 
         self.y - self.h*2 - egg_size/2, 

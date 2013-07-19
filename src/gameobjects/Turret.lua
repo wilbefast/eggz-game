@@ -20,13 +20,13 @@ EGG GAMEOBJECT
 Initialisation
 --]]--
 
-local Egg = Class
+local Turret = Class
 {
-  type = GameObject.TYPE.new("Egg"),
+  type = GameObject.TYPE.new("Turret"),
 
-  ENERGY_DRAW_SPEED = 0.3, 				-- per second
+  ENERGY_DRAW_SPEED = 0.1, 						-- per second
   ENERGY_CONSUME_SPEED = 0,--0.01, 		-- per second
-  ENERGY_DRAW_EFFICIENCY = 0.7, 	-- percent
+  ENERGY_DRAW_EFFICIENCY = 0.7, 			-- percent
   ENERGY_START = 0.3,
   MAX_W = 24,
   MAX_H = 24,
@@ -35,34 +35,27 @@ local Egg = Class
     Plant.init(self, tile, player)
   end,
 }
-Egg:include(Plant)
+Turret:include(Plant)
 
 
 --[[------------------------------------------------------------
 Game loop
 --]]--
 
-function Egg:draw()
+function Turret:draw()
 	player.bindTeamColour[self.player]()
 
-		love.graphics.rectangle("fill", 
-			self.x - self.w/2, 
-			self.y - self.h/2, 
-			self.w, self.h)
+		love.graphics.circle("fill", self.x, self.y, self.w)
 
 		if not self.transport then
-			love.graphics.rectangle("line", 
-				self.x - self.MAX_W/2, 
-				self.y - self.MAX_H/2,  
-				self.MAX_W, self.MAX_H)	
+			love.graphics.circle("line", self.x, self.y, self.MAX_W)
 		end
 
 	love.graphics.setColor(255, 255, 255)
 end
 
-
 --[[------------------------------------------------------------
 Export
 --]]--
 
-return Egg
+return Turret
