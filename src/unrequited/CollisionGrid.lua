@@ -40,7 +40,7 @@ local CollisionGrid = Class
     for x = 1, self.w do
       self.tiles[x] = {}
       for y = 1, self.h do
-        self.tiles[x][y] = Tile()
+        self.tiles[x][y] = Tile((x-1)*self.tilew, (y-1)*self.tileh, self.tilew, self.tileh)
       end
     end
   end
@@ -91,7 +91,7 @@ function CollisionGrid:draw(view)
 
   for x = start_x, end_x do
     for y = start_y, end_y do
-      self.tiles[x][y]:draw((x-1)*self.tilew, (y-1)*self.tileh, self.tilew, self.tileh)
+      self.tiles[x][y]:draw()
     end
   end
 
@@ -114,7 +114,6 @@ function CollisionGrid:pixelToTile(x, y)
   return self:gridToTile(math.floor(x / self.tilew) + 1,
                          math.floor(y / self.tileh) + 1)
 end
-
 
 function CollisionGrid:centrePixel()
   return self.w*self.tilew/2, self.h*self.tileh/2

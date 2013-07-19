@@ -42,8 +42,7 @@ function Overlord:update(dt)
   local inp = input[self.player]
 
   -- Snapped position ---------------------------------------------
-  self.snapx = useful.floor(self.x, GameObject.COLLISIONGRID.tilew)
-  self.snapy = useful.floor(self.y, GameObject.COLLISIONGRID.tileh)
+  self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
 
   -- Directional movement ---------------------------------------------
   if inp.x == 0 or self.dx*inp.x < 0 then
@@ -61,13 +60,16 @@ function Overlord:update(dt)
   self.dy = self.dy + inp.y*dt*self.acceleration
 
   if inp.x == 0 and inp.y == 0 then
-  	self.x = useful.lerp(self.x, self.snapx + 32, dt*2)
-  	self.y = useful.lerp(self.y, self.snapy + 32, dt*2)
+  	self.x = useful.lerp(self.x, self.tile.x + 32, dt*2)
+  	self.y = useful.lerp(self.y, self.tile.y + 32, dt*2)
   end
 
 	-- Egg laying ------------------------------------------------------
 	if inp.lay == 1 then
-		Egg(self.snapx, self.snapy, self.player)
+		if self.tile.occupant then 
+    else
+      Egg(self.tile.x, self.tile.y, self.player)
+    end
 	end
 
 end
@@ -79,7 +81,7 @@ function Overlord:draw()
 		love.graphics.rectangle("fill", self.x-self.w/2, self.y-self.w/2, 
 																		self.w, self.h)
 		love.graphics.setLineWidth(3)
-			love.graphics.rectangle("line", self.snapx, self.snapy, 64, 64)
+			love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
 		love.graphics.setLineWidth(1)
 	love.graphics.setColor(255, 255, 255)
 end

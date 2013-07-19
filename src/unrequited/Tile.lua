@@ -30,7 +30,8 @@ local Tile = Class
 {
 }
 
-Tile.init = function(self)
+Tile.init = function(self, x, y, w, h)
+	self.x, self.y, self.w, self.h = x, y, w, h
 	self.energy = math.random()
 end
 
@@ -38,9 +39,9 @@ end
 Game loop
 --]]
 
-function Tile:draw(x, y, w, h)
+function Tile:draw()
 	love.graphics.setColor(255*self.energy, 255*self.energy, 255*self.energy)
-		love.graphics.rectangle("fill", x, y, w, h)
+		love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 	love.graphics.setColor(255, 255, 255)
 end
 
