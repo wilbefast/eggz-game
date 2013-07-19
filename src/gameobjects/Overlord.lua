@@ -29,6 +29,8 @@ local Overlord = Class
   MAX_DX = 400,
   MAX_DY = 400,
 
+  SPAWN = { Bomb, Turret, Convertor}, -- FIXME
+
   init = function(self, x, y, player)
     GameObject.init(self, x, y, 32, 32)
 
@@ -41,6 +43,26 @@ local Overlord = Class
   end,
 }
 Overlord:include(GameObject)
+
+--[[------------------------------------------------------------
+Resources
+--]]--
+
+Overlord.IMAGES_RADIAL =
+{
+  { 
+    love.graphics.newImage("assets/radial_bomb_B.png"), 
+    love.graphics.newImage("assets/radial_bomb_hl_B.png")
+  },
+  {
+    love.graphics.newImage("assets/radial_turret_Y.png"),
+    love.graphics.newImage("assets/radial_turret_hl_Y.png")
+  },
+  {
+    love.graphics.newImage("assets/radial_fountain_X.png"),
+    love.graphics.newImage("assets/radial_fountain_hl_X.png")
+  }
+}
 
 --[[------------------------------------------------------------
 Game loop
@@ -78,11 +100,11 @@ function Overlord:update(dt)
   -- Radial menu ---------------------------------------------------------
   else
     self.dx, self.dx = 0, 0
-    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, 5*dt)
-    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, 5*dt)
+    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, 10*dt)
+    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, 10*dt)
 
     if (math.abs(self.radial_menu_x) < 0.1) and (math.abs(self.radial_menu_y) < 0.1) then
-      self.radial_menu_choice = nil
+      self.radial_menu_choice = 0
     else
       local bomb = self.radial_menu_x
       local turret = -self.radial_menu_y
@@ -91,19 +113,19 @@ function Overlord:update(dt)
       -- evolve bomb
       if (bomb > 2*turret) and (bomb > 2*converter) then
         --self.radial_menu_choice = Bomb
-        self.radial_menu_choice = nil
+        self.radial_menu_choice = 1
 
       -- evolve turret
       elseif (turret > 2*bomb) and (turret > 2*converter) then
-        self.radial_menu_choice = Turret
+        self.radial_menu_choice = 2
 
       -- evolve converter
       elseif (converter > 2*turret) and (converter > 2*bomb) then
         --self.radial_menu_choice = Converter
-        self.radial_menu_choice = nil
+        self.radial_menu_choice = 3
 
       else
-        self.radial_menu_choice = nil
+        self.radial_menu_choice = 0
       end
     end
   end
@@ -155,9 +177,9 @@ function Overlord:update(dt)
   else
 
     -- Select option from radial menu
-    if (self.radial_menu == 1) and self.radial_menu_choice then
+    if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) then
         self.tile.occupant.purge = true
-        self.radial_menu_choice(self.tile, self.player)
+        self.SPAWN[self.radial_menu_choice](self.tile, self.player)
     end
 
     -- Close radial menu
@@ -196,15 +218,29 @@ function Overlord:draw()
     love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.h*0.25, 
                                     self.w, self.h/2)
 
+
     -- draw radial menu
     if self.radial_menu > 0 then
+      love.graphics.setColor(255, 255, 255, self.radial_menu*255)
 
-      love.graphics.setColor(0, 255, 0)
-      love.graphics.circle("line", self.x, self.y, self.radial_menu*64)
+      function drawRadial(x, y, i)
+        local scale, image
+        if i == self.radial_menu_choice then
+          scale, image = 1.3, Overlord.IMAGES_RADIAL[i][2]
+        else
+          scale, image = 1, Overlord.IMAGES_RADIAL[i][1]
+        end
+        love.graphics.draw(image, self.x + x, self.y + y, 
+                            0, scale, scale, 18, 18)
+      end
 
-      love.graphics.circle("fill", 
-        self.x + self.radial_menu_x*self.radial_menu*64, 
-        self.y + self.radial_menu_y*self.radial_menu*64, 10)
+      drawRadial(self.radial_menu*64, 0, 1)
+      drawRadial(0, -self.radial_menu*64, 2)
+      drawRadial(-self.radial_menu*64, 0, 3)
+
+      --love.graphics.circle("fill", 
+        --self.x + self.radial_menu_x*self.radial_menu*64, 
+        --self.y + self.radial_menu_y*self.radial_menu*64, 10)
     end
 
 	love.graphics.setColor(255, 255, 255)

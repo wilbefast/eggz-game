@@ -40,6 +40,8 @@ Tile = require("unrequited/Tile")
 CollisionGrid = require("unrequited/CollisionGrid")
 Plant = require("gameobjects/Plant")
 Turret = require("gameobjects/Turret")
+Convertor = require("gameobjects/Convertor")
+Bomb = require("gameobjects/Bomb")
 Egg = require("gameobjects/Egg")
 Overlord = require("gameobjects/Overlord")
 

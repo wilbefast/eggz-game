@@ -13,16 +13,16 @@ Lesser General Public License for more details.
 --]]
 
 --[[------------------------------------------------------------
-TURRET GAMEOBJECT
+BOMB GAMEOBJECT
 --]]------------------------------------------------------------
 
 --[[------------------------------------------------------------
 Initialisation
 --]]--
 
-local Turret = Class
+local Bomb = Class
 {
-  type = GameObject.TYPE.new("Turret"),
+  type = GameObject.TYPE.new("Bomb"),
 
   ENERGY_DRAW_SPEED = 0.1, 						-- per second
   ENERGY_CONSUME_SPEED = 0,--0.01, 		-- per second
@@ -35,13 +35,13 @@ local Turret = Class
     Plant.init(self, tile, player)
   end,
 }
-Turret:include(Plant)
+Bomb:include(Plant)
 
 --[[------------------------------------------------------------
 Resources
 --]]--
 
-Turret.IMAGES = 
+Bomb.IMAGES = 
 {
   {
     love.graphics.newImage("assets/RED-knight-01.png"),
@@ -57,9 +57,9 @@ Turret.IMAGES =
 Game loop
 --]]--
 
-function Turret:draw()
+function Bomb:draw()
 
-  love.graphics.draw(Turret.IMAGES[self.player][1], self.x, self.y,
+  love.graphics.draw(Bomb.IMAGES[self.player][1], self.x, self.y,
     0, 1, 1, 32, 40)
 
 end
@@ -68,4 +68,4 @@ end
 Export
 --]]--
 
-return Turret
+return Bomb

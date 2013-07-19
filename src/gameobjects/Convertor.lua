@@ -13,16 +13,16 @@ Lesser General Public License for more details.
 --]]
 
 --[[------------------------------------------------------------
-TURRET GAMEOBJECT
+CONVERTOR GAMEOBJECT
 --]]------------------------------------------------------------
 
 --[[------------------------------------------------------------
 Initialisation
 --]]--
 
-local Turret = Class
+local Convertor = Class
 {
-  type = GameObject.TYPE.new("Turret"),
+  type = GameObject.TYPE.new("Convertor"),
 
   ENERGY_DRAW_SPEED = 0.1, 						-- per second
   ENERGY_CONSUME_SPEED = 0,--0.01, 		-- per second
@@ -35,13 +35,13 @@ local Turret = Class
     Plant.init(self, tile, player)
   end,
 }
-Turret:include(Plant)
+Convertor:include(Plant)
 
 --[[------------------------------------------------------------
 Resources
 --]]--
 
-Turret.IMAGES = 
+Convertor.IMAGES = 
 {
   {
     love.graphics.newImage("assets/RED-knight-01.png"),
@@ -57,9 +57,9 @@ Turret.IMAGES =
 Game loop
 --]]--
 
-function Turret:draw()
+function Convertor:draw()
 
-  love.graphics.draw(Turret.IMAGES[self.player][1], self.x, self.y,
+  love.graphics.draw(Convertor.IMAGES[self.player][1], self.x, self.y,
     0, 1, 1, 32, 40)
 
 end
@@ -68,4 +68,4 @@ end
 Export
 --]]--
 
-return Turret
+return Convertor
