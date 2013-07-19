@@ -43,14 +43,7 @@ Resources
 
 Bomb.IMAGES = 
 {
-  {
-    love.graphics.newImage("assets/RED-knight-01.png"),
-    love.graphics.newImage("assets/RED-knight-02.png")
-  },
-  {
-    love.graphics.newImage("assets/BLUE-knight-01.png"),
-    love.graphics.newImage("assets/BLUE-knight-02.png")
-  }
+  love.graphics.newImage("assets/BOMB.png"),
 }
 
 --[[------------------------------------------------------------
@@ -59,7 +52,7 @@ Game loop
 
 function Bomb:draw()
 
-  love.graphics.draw(Bomb.IMAGES[self.player][1], self.x, self.y,
+  love.graphics.draw(Bomb.IMAGES[1], self.x, self.y,
     0, 1, 1, 32, 40)
 
 end
