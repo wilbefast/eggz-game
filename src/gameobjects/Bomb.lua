@@ -52,7 +52,8 @@ Game loop
 
 function Bomb:draw()
 
-  love.graphics.draw(Bomb.IMAGES[1], self.x, self.y,
+  local img = (useful.tri(self.energy < 1, player.COCOON[self.player], Bomb.IMAGES[1]))
+  love.graphics.draw(img, self.x, self.y,
     0, 1, 1, 32, 40)
 
 end

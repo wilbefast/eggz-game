@@ -100,8 +100,8 @@ function Overlord:update(dt)
   -- Radial menu ---------------------------------------------------------
   else
     self.dx, self.dx = 0, 0
-    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, 10*dt)
-    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, 10*dt)
+    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, 7*dt)
+    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, 7*dt)
 
     if (math.abs(self.radial_menu_x) < 0.1) and (math.abs(self.radial_menu_y) < 0.1) then
       self.radial_menu_choice = 0
@@ -226,9 +226,9 @@ function Overlord:draw()
       function drawRadial(x, y, i)
         local scale, image
         if i == self.radial_menu_choice then
-          scale, image = 1.3, Overlord.IMAGES_RADIAL[i][2]
+          scale, image = 1.3*self.radial_menu, Overlord.IMAGES_RADIAL[i][2]
         else
-          scale, image = 1, Overlord.IMAGES_RADIAL[i][1]
+          scale, image = 1*self.radial_menu, Overlord.IMAGES_RADIAL[i][1]
         end
         love.graphics.draw(image, self.x + x, self.y + y, 
                             0, scale, scale, 18, 18)

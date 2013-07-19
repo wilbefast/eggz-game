@@ -44,15 +44,35 @@ Resources
 
 Egg.IMAGES = 
 {
+	-- RED
 	{
-		love.graphics.newImage("assets/RED-egg-A.png"),
-		love.graphics.newImage("assets/RED-egg-B.png"),
-		love.graphics.newImage("assets/RED-egg-C.png")
+		{ 
+			love.graphics.newImage("assets/RED-egg-A.png"), 
+			love.graphics.newImage("assets/RED-egg-carry-A.png")
+		},
+		{ 
+			love.graphics.newImage("assets/RED-egg-B.png"),
+			love.graphics.newImage("assets/RED-egg-carry-B.png")
+		},
+		{ 
+			love.graphics.newImage("assets/RED-egg-C.png"),
+			love.graphics.newImage("assets/RED-egg-carry-C.png")
+		}
 	},
+	-- BLUE
 	{
-		love.graphics.newImage("assets/BLUE-egg-A.png"),
-		love.graphics.newImage("assets/BLUE-egg-B.png"),
-		love.graphics.newImage("assets/BLUE-egg-C.png")
+		{ 
+			love.graphics.newImage("assets/BLUE-egg-A.png"), 
+			love.graphics.newImage("assets/BLUE-egg-carry-A.png")
+		},
+		{ 
+			love.graphics.newImage("assets/BLUE-egg-B.png"),
+			love.graphics.newImage("assets/BLUE-egg-carry-B.png")
+		},
+		{ 
+			love.graphics.newImage("assets/BLUE-egg-C.png"),
+			love.graphics.newImage("assets/BLUE-egg-carry-C.png")
+		}
 	}
 }
 
@@ -63,18 +83,18 @@ Game loop
 function Egg:draw()
 	--player.bindTeamColour[self.player]()
 
-		local subimage = 1
+		local evolution = 1
 		if self.energy > 0.5 then
 			if self.energy == 1 then
-				subimage = 3
+				evolution = 3
 			else
-				subimage = 2
+				evolution = 2
 			end
 		end
 
+		local carried = useful.tri(self.transport, 2, 1)
 
-
-		love.graphics.draw(Egg.IMAGES[self.player][subimage],
+		love.graphics.draw(Egg.IMAGES[self.player][evolution][carried],
 			self.x, 
 			self.y,
 			0,

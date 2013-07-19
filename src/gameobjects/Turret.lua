@@ -59,7 +59,8 @@ Game loop
 
 function Turret:draw()
 
-  love.graphics.draw(Turret.IMAGES[self.player][1], self.x, self.y,
+  local img = (useful.tri(self.energy < 1, player.COCOON, Turret.IMAGES))[self.player]
+  love.graphics.draw(img, self.x, self.y,
     0, 1, 1, 32, 40)
 
 end
