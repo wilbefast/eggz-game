@@ -129,7 +129,10 @@ function Overlord:update(dt)
   -- Pick up a plant  -------------------------------------------
   elseif inp.lay_trigger == -1 then
     -- pick up tile occupant
-    if self.tile.occupant and (not self.passenger) 
+    if self.tile.occupant and (not self.passenger)
+      and (self.tile.occupant:isType("Egg") 
+        or (self.tile.occupant:isType("Bomb") 
+        and (self.tile.occupant.energy == 1)))
       and (not self.previous_passenger)
       and (self.radial_menu < 1) then
       self.tile.occupant:uproot(self)

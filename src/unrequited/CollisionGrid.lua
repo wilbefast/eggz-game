@@ -26,6 +26,8 @@ local CollisionGrid = Class
   
     -- grab the size of the tiles
     self.tilew, self.tileh = tilew, tileh
+
+    self.total_energy = 1
   
     -- grab the size of the map
     if w and h then
@@ -66,11 +68,17 @@ Game loop
 --]]--
 
 function CollisionGrid:update(dt) 
+
+  local new_total_energy = 0
+
   for x = 1, self.w do
     for y = 1, self.h do
-      self.tiles[x][y]:update(dt)
+      self.tiles[x][y]:update(dt, self.total_energy)
+      new_total_energy = new_total_energy + self.tiles[x][y].energy
     end
   end
+
+  self.total_energy = new_total_energy
 end
 
 function CollisionGrid:draw(view) 
