@@ -24,12 +24,15 @@ local Convertor = Class
 {
   type = GameObject.TYPE.new("Convertor"),
 
-  ENERGY_DRAW_SPEED = 0.1, 						-- per second
-  ENERGY_CONSUME_SPEED = 0,--0.01, 		-- per second
-  ENERGY_DRAW_EFFICIENCY = 0.7, 			-- percent
-  ENERGY_START = 0, --0.3
+  ENERGY_DRAW_SPEED = 0.1,            -- per second
+  ENERGY_CONSUME_SPEED = 0,           -- per second
+  ENERGY_DRAW_EFFICIENCY = 0.7,       -- percent
+  ENERGY_START = 0,
   MAX_W = 24,
   MAX_H = 24,
+
+  maturity = 0,
+  MATURE_SPEED = 0.1,
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
@@ -58,11 +61,8 @@ Game loop
 --]]--
 
 function Convertor:draw()
-  
-  local img = (useful.tri(self.energy < 1, player.COCOON, Convertor.IMAGES))[self.player]
-  love.graphics.draw(img, self.x, self.y,
+  love.graphics.draw(Convertor.IMAGES[self.player][1], self.x, self.y,
     0, 1, 1, 32, 40)
-
 end
 
 --[[------------------------------------------------------------

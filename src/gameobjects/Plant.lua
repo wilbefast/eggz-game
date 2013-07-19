@@ -79,6 +79,7 @@ function Plant:update(dt)
 
   -- Planted? ------------------------------------------------------
   if self.tile then
+
 	  -- Draw energy ------------------------------------------------------
 	  local energy_drawn = math.min(self.tile.energy, 
 	  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)
@@ -86,7 +87,8 @@ function Plant:update(dt)
 	  	energy_drawn = 1 - self.energy
 	  end
 	  self.tile.energy = self.tile.energy - energy_drawn
-	  self.energy = math.min(self.energy + energy_drawn*self.ENERGY_DRAW_EFFICIENCY, 1)
+	  self.energy = math.min(1, self.energy 
+	  						+ energy_drawn*self.ENERGY_DRAW_EFFICIENCY)
 
 	  -- Consume energy ------------------------------------------------------
 	  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)

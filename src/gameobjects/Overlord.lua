@@ -179,7 +179,7 @@ function Overlord:update(dt)
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) then
         self.tile.occupant.purge = true
-        self.SPAWN[self.radial_menu_choice](self.tile, self.player)
+        Cocoon(self.tile, self.player, self.SPAWN[self.radial_menu_choice])
     end
 
     -- Close radial menu

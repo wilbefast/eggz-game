@@ -43,6 +43,7 @@ Turret = require("gameobjects/Turret")
 Convertor = require("gameobjects/Convertor")
 Bomb = require("gameobjects/Bomb")
 Egg = require("gameobjects/Egg")
+Cocoon = require("gameobjects/Cocoon")
 Overlord = require("gameobjects/Overlord")
 
 title = require("gamestates/title")

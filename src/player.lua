@@ -20,10 +20,4 @@ player.bindTeamColour =
 	function () love.graphics.setColor(0, 0, 255) end
 }
 
-player.COCOON =
-{
-	love.graphics.newImage("assets/RED-egg-D.png"),
-	love.graphics.newImage("assets/BLUE-egg-D.png")
-}
-
 return player
