@@ -81,14 +81,14 @@ function Overlord:update(dt)
 	-- Egg transporation -------------------------------------------
 	if inp.lay_trigger == 1 then
 
-    -- pick up tile occupant
-		if self.tile.occupant then
-      self.tile.occupant:uproot(self)
-      self.egg_ready = 0
-
     -- put down passenger
-    elseif self.passenger then
+    if self.passenger and (not self.tile.occupant) then
       self.passenger:plant(self.tile)
+
+    -- pick up tile occupant
+		elseif self.tile.occupant and (not self.passenger) then
+      self.tile.occupant:uproot(self)
+      --self.egg_ready = 0
 
     -- lay egg
     elseif self.egg_ready == 1 then
@@ -98,9 +98,9 @@ function Overlord:update(dt)
   end
 
   -- Egg production ------------------------------------------------------
-  if not self.passenger then
+  --if not self.passenger then
     self.egg_ready = math.min(1, self.egg_ready + dt*0.2)
-  end
+  --end
 end
 
 
@@ -109,7 +109,7 @@ function Overlord:draw()
 	player.bindTeamColour[self.player]()
 
     -- draw body
-		love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.w*1.5, 
+		love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.h*1.5, 
 																		self.w, self.h)
 
     -- draw selected tile
@@ -122,7 +122,7 @@ function Overlord:draw()
       local egg_size = 0.3*32*self.egg_ready
       love.graphics.rectangle(useful.tri(self.egg_ready == 1, "fill", "line"), 
         self.x - egg_size/2, 
-        self.y - egg_size/2, 
+        self.y - self.h*2 - egg_size/2, 
         egg_size, egg_size)
     end
 

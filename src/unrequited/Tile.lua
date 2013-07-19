@@ -28,7 +28,7 @@ Initialisation
 
 local Tile = Class
 {
-		REGROWTH_SPEED = 0.01,
+		REGROWTH_SPEED = 0.001,
 
 		init = function(self, x, y, w, h)
 			self.x, self.y, self.w, self.h = x, y, w, h
@@ -42,13 +42,13 @@ Game loop
 --]]
 
 function Tile:draw()
-	love.graphics.setColor(255*self.energy, 255*self.energy, 255*self.energy)
+	love.graphics.setColor(255*(1-self.energy), 255*(1-self.energy), 255*(1-self.energy))
 		love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 	love.graphics.setColor(255, 255, 255)
 end
 
 function Tile:update(dt)
-	self.energy = math.min(1, self.energy + dt*Tile.REGROWTH_SPEED/self.energy)
+	self.energy = math.min(1, self.energy + dt*Tile.REGROWTH_SPEED/(self.energy*self.energy))
 end
 
 --[[------------------------------------------------------------
