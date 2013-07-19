@@ -34,6 +34,8 @@ local Overlord = Class
 
     self.player = player
     self.egg_ready = 1--0
+    self.z = 1
+    self.radial_menu = 0
   end,
 }
 Overlord:include(GameObject)
@@ -49,27 +51,30 @@ function Overlord:update(dt)
     --local dx, dy = love.joystick.getAxes(1)
   local inp = input[self.player]
 
-  -- Snapped position ---------------------------------------------
+  -- Snap to position -------------------------------------------------
   self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
+  if (inp.x == 0 and inp.y == 0) then
+    self.x = useful.lerp(self.x, self.tile.x + 32, dt*3)
+    self.y = useful.lerp(self.y, self.tile.y + 32, dt*3)
+  end
 
   -- Directional movement ---------------------------------------------
-  if (inp.x == 0) or (self.dx*inp.x < 0) then
-  	self.FRICTION_X = 600
-  else
-  	self.FRICTION_X = 0
-  end
-  self.dx = self.dx + inp.x*dt*self.acceleration
+  if self.z > 0 then
+    if (inp.x == 0) or (self.dx*inp.x < 0) then
+    	self.FRICTION_X = 600
+    else
+    	self.FRICTION_X = useful.tri(self.z ~= 1, 1000, 0)
+    end
+    self.dx = self.dx + inp.x*dt*self.acceleration
 
-  if (inp.y == 0) or (self.dy*inp.y < 0) then
-  	self.FRICTION_Y = 600
+    if (inp.y == 0) or (self.dy*inp.y < 0) then
+    	self.FRICTION_Y = 600
+    else
+    	self.FRICTION_Y = useful.tri(self.z ~= 1, 1000, 0)
+    end 
+    self.dy = self.dy + inp.y*dt*self.acceleration
+  -- Radial menu ---------------------------------------------------------
   else
-  	self.FRICTION_Y = 0
-  end 
-  self.dy = self.dy + inp.y*dt*self.acceleration
-
-  if (inp.x == 0 and inp.y == 0) then
-  	self.x = useful.lerp(self.x, self.tile.x + 32, dt*3)
-  	self.y = useful.lerp(self.y, self.tile.y + 32, dt*3)
   end
 
   -- Transportation ------------------------------------------------------
@@ -78,22 +83,40 @@ function Overlord:update(dt)
     self.passenger.y = self.y
   end
 
-	-- Egg transporation -------------------------------------------
-	if inp.lay_trigger == 1 then
+  -- Land on the ground --------------------------------------------------
+  if inp.lay then
+    self.z = math.max(0, self.z - dt*10)
+    if (self.z == 0) and self.tile.occupant 
+      and self.tile.occupant:isType("Egg")
+      and (self.tile.occupant.energy == 1) then
+    -- Open radial menu
+      self.radial_menu = math.min(1, self.radial_menu + dt*2)
+    end
+  else
+    self.z = math.min(1, self.z + dt*10)
+    self.radial_menu = 0
+  end
 
+	-- Put down a plant  -------------------------------------------
+	if inp.lay_trigger == 1 and (not self.tile.occupant) then
     -- put down passenger
-    if self.passenger and (not self.tile.occupant) then
+    if self.passenger then
+      self.previous_passenger = self.passenger
       self.passenger:plant(self.tile)
-
-    -- pick up tile occupant
-		elseif self.tile.occupant and (not self.passenger) then
-      self.tile.occupant:uproot(self)
-
     -- lay egg
     elseif self.egg_ready == 1 then
-      Egg(self.tile, self.player)
+      self.previous_passenger = Egg(self.tile, self.player)
       self.egg_ready = 0
     end
+  
+  -- Pick up a plant  -------------------------------------------
+  elseif inp.lay_trigger == -1 then
+    -- pick up tile occupant
+    if self.tile.occupant and (not self.passenger) 
+      and (not self.previous_passenger) and self.z > 0 then
+      self.tile.occupant:uproot(self)
+    end
+    self.previous_passenger = nil
   end
 
   -- Egg production ------------------------------------------------------
@@ -106,8 +129,10 @@ function Overlord:draw()
 	player.bindTeamColour[self.player]()
 
     -- draw body
-		love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.h*1.5, 
-																		self.w, self.h)
+		love.graphics.rectangle("fill", 
+      self.x - self.w/2, 
+      self.y - self.h - self.h/2*self.z, 
+			self.w, self.h)
 
     -- draw selected tile
 		love.graphics.setLineWidth(3)
@@ -127,6 +152,10 @@ function Overlord:draw()
     love.graphics.setColor(0, 0, 0, 128)
     love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.h*0.25, 
                                     self.w, self.h/2)
+
+    -- draw radial menu
+    love.graphics.setColor(0, 255, 0)
+    love.graphics.circle("line", self.x, self.y, self.radial_menu*64)
 
 	love.graphics.setColor(255, 255, 255)
 
