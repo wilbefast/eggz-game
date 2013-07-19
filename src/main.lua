@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 MAX_PLAYERS = 4
 
 --[[------------------------------------------------------------
@@ -63,9 +63,17 @@ LOVE CALLBACKS
 function love.load(arg)
     
   -- set up the screen resolution
-  if (not scaling:setup(1280, 720, (not DEBUG))) then --FIXME
-    print("Failed to set mode")
-    love.event.push("quit")
+  local modes = love.graphics.getModes()
+  table.sort(modes, function(a, b) 
+    return (a.width*a.height > b.width*b.height) end)
+  for i, m in ipairs(modes) do
+    if DEBUG then
+      m = modes[#modes - 1]
+    end
+    -- try to set the resolution
+    if love.graphics.setMode(m.width, m.height, not DEBUG) then
+      break
+    end
   end
 
   -- initialise random

@@ -30,7 +30,7 @@ function state:init()
   -- point camera at centre of collision-grid
   self.camera = Camera(0, 0)
   self.camera:lookAt(self.grid:centrePixel())
-  self.camera:zoom(scaling.SCALE_MAX)
+  --self.camera:zoom(scaling.SCALE_MAX)
 
   
 end
