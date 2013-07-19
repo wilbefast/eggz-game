@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false--true
+DEBUG = true
 MAX_PLAYERS = 4
 
 --[[------------------------------------------------------------
@@ -38,6 +38,7 @@ GameObject = require("unrequited/GameObject")
 Tile = require("unrequited/Tile")
 CollisionGrid = require("unrequited/CollisionGrid")
 Overlord = require("gameobjects/Overlord")
+Egg = require("gameobjects/Egg")
 
 title = require("gamestates/title")
 game = require("gamestates/game")

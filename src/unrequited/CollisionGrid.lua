@@ -153,11 +153,9 @@ function CollisionGrid:gridCollision(x, y, type)
   return (self:gridToTile(x, y).type == type)
 end
 
-function CollisionGrid:pixelCollision(x, y, type)
-  type = (type or Tile.TYPE.WALL)
+function CollisionGrid:pixelCollision(x, y)
   local tile = self:pixelToTile(x, y)
-  return ((not tile) or ((tile.type > 1) 
-                        and (tile.type <= type)))
+  return (not tile)
 end
 
 --[[----------------------------------------------------------------------------

@@ -150,4 +150,9 @@ function useful.randIn(table)
   return table[math.random(#table)]
 end
 
+function useful.lerp(a, b, amount)
+  useful.clamp(amount, 0, 1)
+  return ((1-amount)*a + amount*b)
+end
+
 return useful

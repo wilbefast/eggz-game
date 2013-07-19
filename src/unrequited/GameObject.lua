@@ -251,9 +251,10 @@ function GameObject:update(dt)
   if math.abs(self.dy) < 0.01 then self.dy = 0 end
   
   
-  if self.COLLISIONGRID then
+  if GameObject.COLLISIONGRID then
+    local collisiongrid = GameObject.COLLISIONGRID
     -- check if we're on the ground
-    self.airborne = 
+    --[[self.airborne = 
       ((not collisiongrid:pixelCollision(self.x, self.y + self.h + 1, collide_type)
       and (not collisiongrid:pixelCollision(self.x + self.w, self.y + self.h + 1, collide_type))))
     if not self.airborne and self.dy > 0 then
@@ -261,7 +262,7 @@ function GameObject:update(dt)
         self:snap_from_collision(0, -1, collisiongrid, math.abs(self.dy), collide_type)
       end
       self.dy = 0
-    end 
+    end --]]
     
     -- move HORIZONTALLY FIRST
     if self.dx ~= 0 then

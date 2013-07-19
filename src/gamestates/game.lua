@@ -25,6 +25,7 @@ function state:init()
 
   -- create grid
   self.grid = CollisionGrid(64, 64, 11, 11)
+  GameObject.COLLISIONGRID = self.grid
 
   -- point camera at centre of collision-grid
   self.camera = Camera(0, 0)
