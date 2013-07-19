@@ -83,10 +83,7 @@ function CollisionGrid:draw(view)
 
   for x = start_x, end_x do
     for y = start_y, end_y do
-      local type = self.tiles[x][y].type
-      love.graphics.rectangle("line", (x-1)*self.tilew,
-          (y-1)*self.tileh, self.tilew, self.tileh)
-      love.graphics.setColor(255, 255, 255)
+      self.tiles[x][y]:draw((x-1)*self.tilew, (y-1)*self.tileh, self.tilew, 64)--self.tileh)
     end
   end
 

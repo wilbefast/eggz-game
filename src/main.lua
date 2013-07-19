@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false--true
 MAX_PLAYERS = 4
 
 --[[------------------------------------------------------------
@@ -26,6 +26,8 @@ IMPORTS
 Camera = require("hump/camera")
 GameState = require("hump/gamestate")
 Class = require("hump/class")
+
+player = require("player")
 
 useful = require("unrequited/useful")
 audio = require("unrequited/audio")
@@ -39,6 +41,8 @@ Overlord = require("gameobjects/Overlord")
 
 title = require("gamestates/title")
 game = require("gamestates/game")
+
+
 
 --[[------------------------------------------------------------
 SINGLETON SETTINGS
@@ -60,6 +64,15 @@ function love.load(arg)
 
   -- initialise random
   math.randomseed(os.time())
+
+    -- no mouse
+  love.mouse.setVisible(false)
+  
+  -- window title
+  love.graphics.setCaption("Eggz")
+  
+  -- window icon
+  --love.graphics.setIcon()  
 
   -- go to the initial gamestate
   GameState.switch(title)

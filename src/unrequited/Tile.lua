@@ -30,28 +30,18 @@ local Tile = Class
 {
 }
 
--- types
-Tile.TYPE = {}
-
-Tile.TYPE.EMPTY = 1
-Tile.TYPE[1] = "EMPTY"
-
-Tile.TYPE.WALL = 2
-Tile.TYPE[2] = "WALL"
-
-Tile.TYPE.ONESIDED = 3
-Tile.TYPE[3] = "ONESIDED"
-
-Tile.init = function(self, type)
-  self.type = (type or Tile.TYPE.EMPTY)
+Tile.init = function(self)
+	self.energy = math.random()
 end
 
 --[[------------------------------------------------------------
-Accessors
+Game loop
 --]]
 
-function Tile:isWall()
-  return (self.type == Tile.TYPE.WALL) --FIXME
+function Tile:draw(x, y, w, h)
+	love.graphics.setColor(255*self.energy, 255*self.energy, 255*self.energy)
+		love.graphics.rectangle("fill", x, y, w, h)
+	love.graphics.setColor(255, 255, 255)
 end
 
 --[[------------------------------------------------------------

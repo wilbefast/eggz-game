@@ -22,11 +22,8 @@ local Overlord = Class
       
   acceleration = 600,
 
-  MAX_DX = 300,
-  MAX_DY = 300,
-
-  FRICTION_X = 25,
-  FRICTION_Y = 25,
+  MAX_DX = 400,
+  MAX_DY = 400,
 
   init = function(self, x, y, player)
     GameObject.init(self, x, y, 32, 32)
@@ -41,13 +38,28 @@ function Overlord:update(dt)
   
   GameObject.update(self, dt)
   
-  --local dx, dy = love.joystick.getAxes(1)
-  self.dx = self.dx + input[self.player].x*dt*self.acceleration
-  self.dy = self.dy + input[self.player].y*dt*self.acceleration
+    --local dx, dy = love.joystick.getAxes(1)
+  local inp = input[self.player]
+
+  if inp.x == 0 or self.dx*inp.x < 0 then
+  	self.FRICTION_X = 300
+  else
+  	self.FRICTION_X = 0
+  end
+	self.dx = self.dx + inp.x*dt*self.acceleration
+
+  if inp.y == 0 or self.dy*inp.y < 0 then
+  	self.FRICTION_Y = 300
+  else
+  	self.FRICTION_Y = 0
+  end 
+  self.dy = self.dy + inp.y*dt*self.acceleration
 end
 
 function Overlord:draw()
-
+	player.bindTeamColour[self.player]()
+		love.graphics.rectangle("fill", self.x-self.w/2, self.y-self.w/2, self.w, self.h)
+	love.graphics.setColor(255, 255, 255)
 end
 
 --[[------------------------------------------------------------
