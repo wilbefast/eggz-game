@@ -20,15 +20,15 @@ local Egg = Class
 {
   type = GameObject.TYPE.new("Egg"),
 
-  ENERGY_DRAW_SPEED = 0.1, 				-- per second
-  ENERGY_CONSUME_SPEED = 0.03, 				-- per second
+  ENERGY_DRAW_SPEED = 0.3, 				-- per second
+  ENERGY_CONSUME_SPEED = 0.01, 				-- per second
   ENERGY_DRAW_EFFICIENCY = 0.3, 	-- percent
 
-  init = function(self, x, y, player)
-    GameObject.init(self, x, y, 16, 16)
+  init = function(self, tile, player)
+    GameObject.init(self, tile.x, tile.y, 16, 16)
 
-    self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
-    self.tile.occupant = self
+    self.tile = tile
+    tile.occupant = self
 
     self.energy = 0.3
 
@@ -44,25 +44,45 @@ function Egg:update(dt)
   self.w = 32 * self.energy
   self.h = 32 * self.energy
 
-  -- Draw energy ------------------------------------------------------
-  local energy_drawn = math.min(self.tile.energy, self.ENERGY_DRAW_SPEED*dt)
-  if energy_drawn + self.energy > 1 then
-  	energy_drawn = 1 - self.energy
-  end
-  self.tile.energy = self.tile.energy - energy_drawn
-  self.energy = math.min(self.energy + energy_drawn*self.ENERGY_DRAW_EFFICIENCY, 1)
+  -- Planted? ------------------------------------------------------
+  if self.tile then
+	  -- Draw energy ------------------------------------------------------
+	  local energy_drawn = math.min(self.tile.energy, 
+	  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)
+	  if energy_drawn + self.energy > 1 then
+	  	energy_drawn = 1 - self.energy
+	  end
+	  self.tile.energy = self.tile.energy - energy_drawn
+	  self.energy = math.min(self.energy + energy_drawn*self.ENERGY_DRAW_EFFICIENCY, 1)
 
-  -- Consume energy ------------------------------------------------------
-  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)
+	  -- Consume energy ------------------------------------------------------
+	  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)
+
+	else
+		-- Being moved? ------------------------------------------------------
+	end
+
 
 end
 
 function Egg:draw()
 	player.bindTeamColour[self.player]()
+
+  -- Planted? ------------------------------------------------------
+  if self.tile then
 		love.graphics.rectangle("fill", 
 			self.x + 32 - self.w/2, self.y + 32 - self.w/2, self.w, self.h)
 		love.graphics.rectangle("line", 
 			self.x + 16, self.y + 16, 32, 32)	
+	elseif self.transport then
+		love.graphics.rectangle("fill", 
+			self.transport.x - self.w/2,
+			self.transport.y - self.h, 
+			self.w, 
+			self.h)
+	end
+
+
 	love.graphics.setColor(255, 255, 255)
 end
 

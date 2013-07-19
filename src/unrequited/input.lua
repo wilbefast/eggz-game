@@ -14,7 +14,7 @@ Lesser General Public License for more details.
 
 local input = {}
 for i = 1, MAX_PLAYERS do
-  input[i] = { x = 0, y = 0, lay_prev = false, lay = 0}
+  input[i] = { x = 0, y = 0, lay = false, lay_prev = false, lay_trigger = 0}
 end
 input[1].keyleft = "left"
 input[1].keyright = "right"
@@ -54,18 +54,19 @@ function input:update(dt)
 
     -- lay
     if p.keylay then
-      if love.keyboard.isDown(p.keylay) then
+      p.lay = love.keyboard.isDown(p.keylay)
+      if p.lay then
         if not p.lay_prev then
-          p.lay = 1
+          p.lay_trigger = 1
         else
-          p.lay = 0
+          p.lay_trigger = 0
         end
         p.lay_prev = true
       else
         if p.lay_prev then
-          p.lay = -1
+          p.lay_trigger = -1
         else
-          p.lay = 0
+          p.lay_trigger = 0
         end
         p.lay_prev = false
       end
