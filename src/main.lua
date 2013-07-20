@@ -82,12 +82,25 @@ function love.load(arg)
 
     -- no mouse
   love.mouse.setVisible(false)
+
   
   -- window title
   love.graphics.setCaption("Eggz")
   
   -- window icon
   --love.graphics.setIcon()  
+
+  -- load music/sound
+  audio:load_music("loop")
+  audio:load_sound("EGG-pick")
+  audio:load_sound("EGG-drop")
+  audio:load_sound("KNIGHT-attack1")
+  audio:load_sound("KNIGHT-attack2")
+  audio:load_sound("KNIGHT-attack-hit")
+  audio:load_sound("KNIGHT-destroyed")
+
+  -- start music
+  --audio:play_music("loop")
 
   -- go to the initial gamestate
   GameState.switch(title)

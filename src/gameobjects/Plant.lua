@@ -42,6 +42,7 @@ Pick up and put down
 --]]--
 
 function Plant:plant(tile)
+	audio:play_sound("EGG-drop")
 	if self.transport then
 		self.transport.passenger = nil
 		self.transport = nil
@@ -55,6 +56,7 @@ function Plant:plant(tile)
 end
 
 function Plant:uproot(transport)
+	audio:play_sound("EGG-pick")
 	if self.transport then
 		self.transport.passenger = nil
 	end

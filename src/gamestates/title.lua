@@ -17,6 +17,7 @@ Lesser General Public License for more details.
 TITLE GAMESTATE
 --]]------------------------------------------------------------
 
+local image = love.graphics.newImage("assets/menu/MENU-bg.png")
 local state = GameState.new()
 
 function state:init()
@@ -47,7 +48,9 @@ end
 
 
 function state:draw()
-  love.graphics.print("Hello Title", 32, 32)
+  love.graphics.draw(image, 
+  	(love.graphics.getWidth()-image:getWidth())/2, 
+  	(love.graphics.getHeight()-image:getHeight())/2)
 end
 
 

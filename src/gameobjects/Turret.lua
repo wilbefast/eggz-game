@@ -39,7 +39,7 @@ local Turret = Class
   ATTACK_ENERGY_COST = 0.1,
   ATTACK_WARMUP_DURATION = 0.4,
   ATTACK_DURATION = 0.3,
-  ATTACK_COOLDOWN_DURATION = 0.5,
+  ATTACK_COOLDOWN_DURATION = 0.8,
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
@@ -96,6 +96,7 @@ Turret.state_update = { }
 Turret.state_update[Turret.IDLE] = function(self, dt)
   if self.enemies > 0 and (self.energy >= Turret.ATTACK_ENERGY_COST) then
     self.state = Turret.WARMUP
+    audio:play_sound("KNIGHT-attack1", 0.25)
     self.subimage = 2
     self.energy = self.energy - Turret.ATTACK_ENERGY_COST
     self.timer = 0
@@ -104,6 +105,8 @@ end
 
 Turret.state_update[Turret.WARMUP] = function(self, dt)
   if self.timer > self.ATTACK_WARMUP_DURATION then
+    audio:play_sound("KNIGHT-attack2", 0.25)
+    audio:play_sound("KNIGHT-attack-hit", 0.25)
     self.state = Turret.ATTACK
     self.subimage = 1
     self.timer = 0

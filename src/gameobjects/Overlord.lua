@@ -149,7 +149,7 @@ function Overlord:update(dt)
       self.passenger:plant(self.tile)
     -- lay egg
     elseif self.egg_ready == 1 then
-      self.previous_passenger = Turret(self.tile, self.player)
+      self.previous_passenger = Egg(self.tile, self.player)
       self.egg_ready = 0
     end
   
