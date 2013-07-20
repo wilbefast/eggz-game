@@ -85,6 +85,14 @@ Turret.ATTACK_ANIM = Animation(Turret.ATTACK_IMG, 36, 36, 6, 0, 0)
 
 
 --[[------------------------------------------------------------
+Take damage
+--]]--
+
+function Turret:die()
+  audio:play_sound("KNIGHT-destroyed")
+end
+
+--[[------------------------------------------------------------
 State machine
 --]]--
 

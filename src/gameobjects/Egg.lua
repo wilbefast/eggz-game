@@ -43,6 +43,15 @@ local Egg = Class
 Egg:include(Plant)
 
 --[[------------------------------------------------------------
+Take damage
+--]]--
+
+function Egg:die()
+  audio:play_sound("EGG-destroyed")
+end
+
+
+--[[------------------------------------------------------------
 Pick up and put down
 --]]--
 
@@ -123,8 +132,6 @@ function Egg:draw()
 			self.y,
 			0,
 			1, 1, 32, 40)
-
-		love.graphics.print(tostring(self.hitpoints), self.x, self.y + 32)
 end
 
 function Egg:drawTransported()

@@ -95,13 +95,18 @@ function love.load(arg)
 
   -- load music/sound
   audio:load_music("loop")
+
   audio:load_sound("EGG-pick")
   audio:load_sound("EGG-drop")
   audio:load_sound("EGG-hatch")
+  audio:load_sound("EGG-destroyed")
+
   audio:load_sound("KNIGHT-attack1")
   audio:load_sound("KNIGHT-attack2")
   audio:load_sound("KNIGHT-attack-hit")
   audio:load_sound("KNIGHT-destroyed")
+
+  audio:load_sound("FOUNTAIN-destroyed")
 
   -- start music
   --audio:play_music("loop")

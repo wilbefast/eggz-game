@@ -59,6 +59,16 @@ for i = 1, #Convertor.IMAGES do
   Convertor.ANIMS[i] = Animation(Convertor.IMAGES[i], 64, 64, 5)
 end
 
+
+--[[------------------------------------------------------------
+Take damage
+--]]--
+
+function Convertor:die()
+  audio:play_sound("FOUNTAIN-destroyed")
+end
+
+
 --[[------------------------------------------------------------
 Game loop
 --]]--
