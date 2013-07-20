@@ -132,7 +132,6 @@ function Overlord:update(dt)
 
       -- evolve bomb
       if (bomb > 2*turret) and (bomb > 2*converter) then
-        --self.radial_menu_choice = Bomb
         self.radial_menu_choice = 1
 
       -- evolve turret
@@ -141,7 +140,6 @@ function Overlord:update(dt)
 
       -- evolve converter
       elseif (converter > 2*turret) and (converter > 2*bomb) then
-        --self.radial_menu_choice = Converter
         self.radial_menu_choice = 3
 
       else
@@ -162,12 +160,10 @@ function Overlord:update(dt)
     if self.passenger then
       self.previous_passenger = self.passenger
       self.passenger:plant(self.tile)
-      audio:play_sound("EGG-drop")
     -- lay egg
     elseif self.egg_ready == 1 then
-      self.previous_passenger = Egg(self.tile, self.player)
+      self.previous_passenger = Convertor(self.tile, self.player)
       self.egg_ready = 0
-      audio:play_sound("EGG-drop")
     end
   
   -- Pick up a plant  -------------------------------------------
