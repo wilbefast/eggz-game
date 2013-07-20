@@ -37,7 +37,7 @@ local Tile = Class
 
 			self.owner = 0
 			self.conversion = 0 
-
+			self.non_mans_land = true
 		end
 }
 
@@ -56,6 +56,8 @@ Conversion
 --]]
 
 function Tile:convert(amount, player)
+
+	self.non_mans_land = false
 
 	if self.owner ~= player then
 		if self.conversion < amount then
@@ -86,6 +88,15 @@ end
 
 function Tile:update(dt, total_energy)
 	self.energy = math.min(1, self.energy + dt*Tile.REGROWTH_SPEED/(self.energy*total_energy))
+
+	if self.no_mans_land then
+		self.conversion = math.max(0, self.conversion - 0.5*dt)
+		if self.conversion == 0 then
+			self.owner = 0
+		end
+	end
+
+	self.non_mans_land = true
 end
 
 
