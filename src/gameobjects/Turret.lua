@@ -36,9 +36,7 @@ local Turret = Class
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
-
-    
-    
+    self.guardArea = GameObject.COLLISIONGRID:getNeighbours8(tile)
   end,
 }
 Turret:include(Plant)
@@ -66,6 +64,10 @@ Game loop
 function Turret:draw()
   love.graphics.draw(Turret.IMAGES[self.player][1], self.x, self.y,
     0, 1, 1, 32, 40)
+
+  for i, v in pairs(self.guardArea) do
+    love.graphics.rectangle("line", v.x, v.y, v.w, v.h)
+  end
 end
 
 --[[------------------------------------------------------------

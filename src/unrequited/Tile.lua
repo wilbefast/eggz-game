@@ -30,8 +30,9 @@ local Tile = Class
 {
 		REGROWTH_SPEED = 0.01,
 
-		init = function(self, x, y, w, h)
-			self.x, self.y, self.w, self.h = x, y, w, h
+		init = function(self, i, j, w, h)
+			self.i, self.j = i, j
+			self.x, self.y, self.w, self.h = (i-1)*w, (j-1)*h, w, h
 			self.energy = math.random()
 		end
 }

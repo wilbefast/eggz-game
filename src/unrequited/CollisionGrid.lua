@@ -42,7 +42,7 @@ local CollisionGrid = Class
     for x = 1, self.w do
       self.tiles[x] = {}
       for y = 1, self.h do
-        self.tiles[x][y] = Tile((x-1)*self.tilew, (y-1)*self.tileh, self.tilew, self.tileh)
+        self.tiles[x][y] = Tile(x, y, self.tilew, self.tileh)
       end
     end
   end
@@ -60,6 +60,35 @@ function CollisionGrid:mapRectangle(startx, starty, w, h, f)
       end
     end
   end
+end
+
+--[[----------------------------------------------------------------------------
+Tile neighbours
+--]]--
+
+function CollisionGrid:getNeighbours8(t)
+  local result = {}
+  function insertIfNotNil(t, x) if x then table.insert(t, x) end end
+  insertIfNotNil(result, self:gridToTile(t.i-1, t.j-1))  -- NW
+  insertIfNotNil(result, self:gridToTile(t.i-1, t.j))    -- W
+  insertIfNotNil(result, self:gridToTile(t.i, t.j-1))    -- N
+  insertIfNotNil(result, self:gridToTile(t.i+1, t.j-1))  -- NE
+  insertIfNotNil(result, self:gridToTile(t.i-1, t.j+1))  -- SW
+  insertIfNotNil(result, self:gridToTile(t.i, t.j+1))    -- S
+  insertIfNotNil(result, self:gridToTile(t.i+1, t.j))    -- E
+  insertIfNotNil(result, self:gridToTile(t.i+1, t.j+1))  -- SE
+  return result
+end
+
+function CollisionGrid:getNeighbours4(t)
+  local result = {}
+  function insertIfNotNil(x, t) if x then table.insert(t, x) end end
+  insertIfNotNil(result, self:gridToTile(t.i-1, t.j))    -- W
+  insertIfNotNil(result, self:gridToTile(t.i, t.j-1))    -- N
+  insertIfNotNil(result, self:gridToTile(t.i, t.j+1))    -- S
+  insertIfNotNil(result, self:gridToTile(t.i+1, t.j))    -- E
+
+  return result
 end
 
 --[[------------------------------------------------------------
