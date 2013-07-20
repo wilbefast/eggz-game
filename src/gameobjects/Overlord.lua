@@ -149,7 +149,7 @@ function Overlord:update(dt)
       self.passenger:plant(self.tile)
     -- lay egg
     elseif self.egg_ready == 1 then
-      self.previous_passenger = Turret(self.tile, self.player)
+      self.previous_passenger = Egg(self.tile, self.player)
       self.egg_ready = 0
     end
   
@@ -177,11 +177,15 @@ function Overlord:update(dt)
       and (self.tile.occupant.energy == 1) then
     -- Open radial menu
       self.radial_menu = math.min(1, self.radial_menu + dt*6)
+    elseif not self.tile.occupant then
+      -- Close radial menu
+      self.z = math.min(1, self.z + dt*10)
+      self.radial_menu = math.max(0, self.radial_menu - dt*8)
     end
-  else
 
+  else -- if not inp.lay
     -- Select option from radial menu
-    if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) then
+    if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) and (self.tile.occupant) then
         self.tile.occupant.purge = true
         Cocoon(self.tile, self.player, self.SPAWN[self.radial_menu_choice])
     end
