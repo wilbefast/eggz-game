@@ -62,18 +62,24 @@ Game loop
 function Cocoon:update(dt)
   Plant.update(self, dt)
 
-  self.maturity = self.maturity + 0.1*dt
-  if self.maturity > 1 then
-    self.purge = true
-    self.evolvesTo(self.tile, self.player).hitpoints = self.hitpoints
-  end
+  if not self.stunned then
+    self.maturity = self.maturity + 0.1*dt
+    if self.maturity > 1 then
+      self.purge = true
+      self.evolvesTo(self.tile, self.player).hitpoints = self.hitpoints
+    end
+    end
 end
 
 function Cocoon:draw()
 
   love.graphics.draw(Cocoon.IMAGES[1][self.player], self.x, self.y,
     0, 1, 1, 32, 40)
-  if self.maturity*3 > 2 then
+
+  if self.stunned then
+    love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 1.2, -1.2, 32, 20)
+
+  elseif self.maturity*3 > 2 then
 
     -- play sound
     if self.maturity >= 0.9 and not self.soundIsStarted then

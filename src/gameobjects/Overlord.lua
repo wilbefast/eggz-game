@@ -105,6 +105,10 @@ function Overlord:canUproot()
   -- can't uproot if nothing to uproot
   elseif not self.tile.occupant then
     return false
+
+  -- stunned plants are locked down
+  elseif self.tile.occupant.stunned then
+    return false
   
   -- everything else is fine
   else
@@ -117,8 +121,11 @@ function Overlord:canPlant()
   local tile, payload = self.tile, self.passenger
 
   -- bombs can be planted on enemies
-  if payload and payload:isType("Bomb") and (tile.occupant) and (tile.occupant.player ~= self.player) 
-  and tile.occupant:isType("Turret") then
+  if payload 
+  and payload:isType("Bomb") 
+  and (tile.occupant) 
+  and (not tile.occupant:isType("Bomb"))
+  and (tile.occupant.player ~= self.player) then
     return true
 
   elseif not self:canLand() then
@@ -245,6 +252,7 @@ function Overlord:update(dt)
       and self.tile.occupant 
       and (self.tile.occupant.player == self.player)
       and self.tile.occupant:isType("Egg")
+      and (not self.tile.occupant.stunned)
       and (self.tile.occupant.energy == 1) then
     -- Open radial menu
       self.radial_menu = math.min(1, self.radial_menu + dt*6)

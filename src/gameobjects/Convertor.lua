@@ -79,13 +79,20 @@ function Convertor:update(dt)
 
   self.view:update(dt)
 
-  for _, tile in pairs(self.convertArea) do
-    tile:convert(0.3*dt, self.player)
+  if not self.stunned then
+    -- convert surrounding area
+    for _, tile in pairs(self.convertArea) do
+      tile:convert(0.3*dt, self.player)
+    end
   end
 end
 
 function Convertor:draw()
   self.view:draw(self)
+
+  if self.stunned then
+    love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 0.8, 0.8, 32, 18)
+  end
 end
 
 --[[------------------------------------------------------------

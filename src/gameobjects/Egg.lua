@@ -127,11 +127,17 @@ function Egg:draw()
 		if self.transport then
 			return
 		end
-		love.graphics.draw(Egg.IMAGES[self.player][self:getEvolution()][1],
+		local ev = self:getEvolution()
+		love.graphics.draw(Egg.IMAGES[self.player][ev][1],
 			self.x, 
 			self.y,
 			0,
 			1, 1, 32, 40)
+
+	  if self.stunned then
+	  	local size = 0.8 + (ev-1)*0.2
+    	love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, size, -size, 32, 20)
+    end
 end
 
 function Egg:drawTransported()
