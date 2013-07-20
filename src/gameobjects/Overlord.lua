@@ -185,7 +185,9 @@ function Overlord:update(dt)
   -- Land on the ground --------------------------------------------------
   if inp.lay then
     self.z = math.max(0, self.z - dt*10)
-    if (self.z == 0) and self.tile.occupant 
+    if (self.z == 0) 
+      and self.tile.occupant 
+      and (self.tile.occupant.player == self.player)
       and self.tile.occupant:isType("Egg")
       and (self.tile.occupant.energy == 1) then
     -- Open radial menu
