@@ -61,6 +61,7 @@ function Bomb:plant(tile)
     self.transport.passenger = nil
     SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
     audio:play_sound("BOMB-dropped", 0.1)
+    tile.occupant:stun(15)
   else
     Plant.plant(self, tile)
   end

@@ -147,30 +147,30 @@ function Turret:update(dt)
 
   Plant.update(self, dt)
 
-  -- check for enemies
-  self.enemies = {}
-  for _, t in pairs(self.guardArea) do
-    if t.occupant and (t.occupant.player ~= self.player) and (not t.occupant:isType("Bomb")) then
-      table.insert(self.enemies, t.occupant)
+  if not self.stunned then
+    -- check for enemies
+    self.enemies = {}
+    for _, t in pairs(self.guardArea) do
+      if t.occupant and (t.occupant.player ~= self.player) and (not t.occupant:isType("Bomb")) then
+        table.insert(self.enemies, t.occupant)
+      end
     end
+
+    -- update timer
+    self.timer = self.timer + dt
+
+    -- act according to state
+    Turret.state_update[self.state](self, dt)
   end
-
-  -- update timer
-  self.timer = self.timer + dt
-
-  -- act according to state
-  Turret.state_update[self.state](self, dt)
 end
 
 function Turret:draw()
   love.graphics.draw(Turret.IMAGES[self.player][self.subimage], self.x, self.y,
     0, 1, 1, 32, 40)
 
-  --love.graphics.print(tostring(self.hitpoints), self.x, self.y + 32)
-  --[[player.bindTeamColour[self.player]()
-    love.graphics.rectangle("line", self.guardArea_x, self.guardArea_y, 
-      self.guardArea_w, self.guardArea_h)
-  love.graphics.setColor(255, 255, 255)--]]
+    if self.stunned then
+      love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 1, 1, 32, 32)
+    end
 end
 
 --[[------------------------------------------------------------

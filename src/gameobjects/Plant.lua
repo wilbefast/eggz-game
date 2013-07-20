@@ -35,11 +35,18 @@ local Plant = Class
 
     self.energy = self.ENERGY_START
     self.hitpoints = (self.HITPOINTS_START or 1)
+    self.stunned = false
 
     self.player = player
   end,
 }
 Plant:include(GameObject)
+
+--[[------------------------------------------------------------
+Resources
+--]]--
+
+Plant.IMG_STUN = love.graphics.newImage("assets/FX-chains.png")
 
 
 --[[------------------------------------------------------------
@@ -59,6 +66,10 @@ function Plant:takeDamage(amount)
 		self.tile.occupant = nil
 		self:die()
 	end
+end
+
+function Plant:stun(n_seconds)
+	self.stunned = n_seconds
 end
 
 --[[------------------------------------------------------------
@@ -101,8 +112,16 @@ function Plant:update(dt)
   self.w = self.MAX_W * self.energy
   self.h = self.MAX_H * self.energy
 
+  -- Unstunned -------------------------------------------------------
+  if self.stunned then
+  	self.stunned = self.stunned - dt
+  	if self.stunned <= 0 then
+  		self.stunned = false
+  	end
+  end
+
   -- Planted? ------------------------------------------------------
-  if self.tile then
+  if self.tile and (not self.stunned) then
 
 	  -- Draw energy ------------------------------------------------------
 	  local drawn_energy = math.min(self.tile.energy, 
