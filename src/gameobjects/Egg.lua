@@ -39,6 +39,19 @@ local Egg = Class
 }
 Egg:include(Plant)
 
+--[[------------------------------------------------------------
+Pick up and put down
+--]]--
+
+function Egg:plant(tile)
+	Plant.plant(self, tile)
+	audio:play_sound("EGG-drop")
+end
+
+function Egg:uproot(tile)
+	Plant.uproot(self, tile)
+	audio:play_sound("EGG-pick")
+end
 
 --[[------------------------------------------------------------
 Resources

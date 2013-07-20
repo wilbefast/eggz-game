@@ -147,10 +147,12 @@ function Overlord:update(dt)
     if self.passenger then
       self.previous_passenger = self.passenger
       self.passenger:plant(self.tile)
+      audio:play_sound("EGG-drop")
     -- lay egg
     elseif self.egg_ready == 1 then
       self.previous_passenger = Egg(self.tile, self.player)
       self.egg_ready = 0
+      audio:play_sound("EGG-drop")
     end
   
   -- Pick up a plant  -------------------------------------------
@@ -187,7 +189,8 @@ function Overlord:update(dt)
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) and (self.tile.occupant) then
         self.tile.occupant.purge = true
-        Cocoon(self.tile, self.player, self.SPAWN[self.radial_menu_choice])
+        Cocoon(self.tile, self.player, self.SPAWN[self.radial_menu_choice]).hitpoints 
+          = self.tile.occupant.hitpoints
     end
 
     -- Close radial menu
