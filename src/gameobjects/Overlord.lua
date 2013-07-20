@@ -97,12 +97,13 @@ function Overlord:canUproot()
 
   if not self:canLand() then
     return false
-  end
 
-  local tile, cargo = self.tile, self.tile.occupant
+  -- can't uproot if carrying
+  elseif self.passenger then
+    return false
 
-  -- can't uproot nothing
-  if not cargo then
+  -- can't uproot if nothing to uproot
+  elseif not self.tile.occupant then
     return false
   
   -- everything else is fine
@@ -113,20 +114,19 @@ end
 
 function Overlord:canPlant()
 
-  if not self:canLand() then
-    return false
-  end
-
   local tile, payload = self.tile, self.passenger
 
-  -- can't plant nothing
-  if not payload and (self.egg_ready == 0) then
-    return false
-
   -- bombs can be planted on enemies
-  elseif payload and payload:isType("Bomb") and (tile.occupant) and (tile.occupant.player ~= self.player) 
+  if payload and payload:isType("Bomb") and (tile.occupant) and (tile.occupant.player ~= self.player) 
   and tile.occupant:isType("Turret") then
     return true
+
+  elseif not self:canLand() then
+    return false
+
+  -- can't plant nothing
+  elseif not payload and (self.egg_ready == 0) then
+    return false
 
   -- nothing else can go on top of something
   elseif tile.occupant then

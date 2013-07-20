@@ -56,8 +56,9 @@ Resources
 --]]--
 
 function Bomb:plant(tile)
-  if self.transport and tile.occupied then
+  if self.transport and tile.occupant then
     self.purge = true
+    self.transport.passenger = nil
     SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
     audio:play_sound("BOMB-dropped", 0.1)
   else
