@@ -64,6 +64,11 @@ Overlord.IMAGES_RADIAL =
   }
 }
 
+Overlord.IMAGES =
+{
+  love.graphics.newImage("assets/overlord.png")
+}
+
 --[[------------------------------------------------------------
 Game loop
 --]]--
@@ -153,8 +158,7 @@ function Overlord:update(dt)
     -- pick up tile occupant
     if self.tile.occupant and (not self.passenger)
       and (self.tile.occupant:isType("Egg") 
-        or (self.tile.occupant:isType("Bomb") 
-        and (self.tile.occupant.energy == 1)))
+        or (self.tile.occupant:isType("Bomb")))
       and (not self.previous_passenger)
       and (self.radial_menu < 1) then
       self.tile.occupant:uproot(self)
@@ -194,10 +198,8 @@ function Overlord:draw()
 	player.bindTeamColour[self.player]()
 
     -- draw body
-		love.graphics.rectangle("fill", 
-      self.x - self.w/2, 
-      self.y - self.h - self.h/2*self.z, 
-			self.w, self.h)
+    love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
+                              0, 1, 1, 28, 96)
 
     -- draw selected tile
 		love.graphics.setLineWidth(3)
@@ -214,9 +216,9 @@ function Overlord:draw()
     end
 
     -- draw shadow
-    love.graphics.setColor(0, 0, 0, 128)
+    --[[love.graphics.setColor(0, 0, 0, 128)
     love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.h*0.25, 
-                                    self.w, self.h/2)
+                                    self.w, self.h/2)--]]
 
 
     -- draw radial menu

@@ -36,7 +36,6 @@ local Bomb = Class
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
-
   end,
 }
 Bomb:include(Plant)
@@ -48,6 +47,7 @@ Resources
 Bomb.IMAGES = 
 {
   love.graphics.newImage("assets/BOMB.png"),
+  love.graphics.newImage("assets/BOMB-carry.png")
 }
 
 --[[------------------------------------------------------------
@@ -55,8 +55,13 @@ Game loop
 --]]--
 
 function Bomb:draw()
-  love.graphics.draw(Bomb.IMAGES[1], self.x, self.y,
+
+  local carried = useful.tri(self.transport, 2, 1)
+
+  love.graphics.draw(Bomb.IMAGES[carried], self.x, self.y,
     0, 1, 1, 32, 40)
+
+
 end
 
 --[[------------------------------------------------------------

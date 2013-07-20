@@ -99,14 +99,6 @@ function Egg:draw()
 			self.y,
 			0,
 			1, 1, 32, 40)
-
-		--[[if not self.transport then
-			love.graphics.rectangle("line", 
-				self.x - self.MAX_W/2, 
-				self.y - self.MAX_H/2,  
-				self.MAX_W, self.MAX_H,
-				32, 32)	
-		end--]]
 end
 
 
