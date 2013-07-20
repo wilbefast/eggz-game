@@ -70,8 +70,8 @@ function Cocoon:draw()
 
   love.graphics.draw(Cocoon.IMAGES[1][self.player], self.x, self.y,
     0, 1, 1, 32, 40)
-  if self.maturity > 0.7 then
-    love.graphics.setColor(255, 255, 255, (self.maturity-0.7)*3*255)
+  if self.maturity*3 > 2 then
+    love.graphics.setColor(255, 255, 255, (self.maturity*3-2)*255)
     love.graphics.draw(Cocoon.IMAGES[2], self.x, self.y,
       0, 1, 1, 32, 40)
   end

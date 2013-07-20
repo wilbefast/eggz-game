@@ -48,7 +48,6 @@ local CollisionGrid = Class
   end
 }
 
-
 --[[----------------------------------------------------------------------------
 Map functions to all or part of the grid
 --]]--

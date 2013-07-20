@@ -38,13 +38,24 @@ local Tile = Class
 
 
 --[[------------------------------------------------------------
+Resources
+--]]
+
+Tile.IMAGES = {}
+for i = 1, 6 do
+  Tile.IMAGES[i] = love.graphics.newImage("assets/tiles/tile" .. i .. ".png")
+end
+
+
+--[[------------------------------------------------------------
 Game loop
 --]]
 
 function Tile:draw()
-	love.graphics.setColor(255*(1-self.energy), 255*(1-self.energy), 255*(1-self.energy))
-		love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
-	love.graphics.setColor(255, 255, 255)
+	--love.graphics.setColor(255*(1-self.energy), 255*(1-self.energy), 255*(1-self.energy))
+		local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
+		love.graphics.draw(Tile.IMAGES[subimage], self.x, self.y)
+	--love.graphics.setColor(255, 255, 255)
 end
 
 function Tile:update(dt, total_energy)

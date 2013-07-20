@@ -36,6 +36,9 @@ local Turret = Class
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
+
+    
+    
   end,
 }
 Turret:include(Plant)
