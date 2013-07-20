@@ -85,9 +85,6 @@ CONTAINER
 --]]------------------------------------------------------------
 
 function GameObject.updateAll(dt, level, view)
-  
-  local previous = nil
-  
   -- update objects
   -- ...for each object
   useful.map(GameObject.INSTANCES,
@@ -109,16 +106,18 @@ function GameObject.updateAll(dt, level, view)
               end)
         end
       end  
-  end,
-
-  -- sort objects by layer
-  function(object, object_index)
-    if previous and previous.y > object.y then
-      GameObject.INSTANCES[object_index] = previous
-      GameObject.INSTANCES[object_index - 1] = object
-    end 
-    previous = object
   end)
+
+  local previous = nil
+  useful.map(GameObject.INSTANCES,
+    -- sort objects by layer
+    function(object, object_index)
+      if previous and previous.y > object.y then
+        GameObject.INSTANCES[object_index] = previous
+        GameObject.INSTANCES[object_index - 1] = object
+      end 
+      previous = object
+    end)
 end
 
 function GameObject.drawAll(view)
