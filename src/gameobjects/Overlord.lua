@@ -66,8 +66,12 @@ Overlord.IMAGES_RADIAL =
 
 Overlord.IMAGES =
 {
-  love.graphics.newImage("assets/overlord.png")
+  love.graphics.newImage("assets/ALIEN-BODY-idle.png")
 }
+
+Overlord.EYES = love.graphics.newImage("assets/ALIEN-EYES.png")
+
+Overlord.SHADOW = love.graphics.newImage("assets/ALIEN-SHADOW.png")
 
 --[[------------------------------------------------------------
 Collisions
@@ -103,14 +107,14 @@ function Overlord:update(dt)
     if (inp.x == 0) or (self.dx*inp.x < 0) then
     	self.FRICTION_X = 600
     else
-    	self.FRICTION_X = useful.tri(self.z ~= 1, 1000, 0)
+    	self.FRICTION_X = useful.tri(self.z < 1, 2000, 0)
     end
     self.dx = self.dx + inp.x*dt*self.acceleration
 
     if (inp.y == 0) or (self.dy*inp.y < 0) then
     	self.FRICTION_Y = 600
     else
-    	self.FRICTION_Y = useful.tri(self.z ~= 1, 1000, 0)
+    	self.FRICTION_Y = useful.tri(self.z < 1, 2000, 0)
     end 
     self.dy = self.dy + inp.y*dt*self.acceleration
   -- Radial menu ---------------------------------------------------------
@@ -194,7 +198,6 @@ function Overlord:update(dt)
       self.radial_menu = math.min(1, self.radial_menu + dt*6)
     elseif not self.tile.occupant then
       -- Close radial menu
-      self.z = math.min(1, self.z + dt*10)
       self.radial_menu = math.max(0, self.radial_menu - dt*8)
     end
 
@@ -220,8 +223,9 @@ function Overlord:draw()
     end
 
     -- draw shadow
-    love.graphics.setColor(0, 0, 0, 128)
-      love.graphics.circle("fill", self.x, self.y, self.w*0.6)
+    love.graphics.draw(Overlord.SHADOW, 
+      self.x - Overlord.SHADOW:getWidth()/2, 
+      self.y - Overlord.SHADOW:getHeight()/2)
 
     -- set team colour
     player.bindTeamColour[self.player]()
@@ -233,7 +237,10 @@ function Overlord:draw()
 
     -- draw body
     love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
-                              0, 1, 1, 28, 86)
+                               0, 1, 1, 42, 86)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(Overlord.EYES, self.x - Overlord.EYES:getWidth()/2, 
+                                      self.y - (2.2 + 0.5*self.z)*self.h)
 
     -- draw egg being laid
     if self.egg_ready > 0 then
