@@ -47,11 +47,7 @@ local GameObject = Class
     self.prevx    = self.x
     self.prevy    = self.y
     
-    -- are there other objects of this type?
-    if (not GameObject.INSTANCES[self.type]) then
-      GameObject.INSTANCES[self.type] = {}
-    end
-    table.insert(GameObject.INSTANCES[self.type], self) 
+    table.insert(GameObject.INSTANCES, self) 
     
     -- assign identifier
     self.id = GameObject.NEXT_ID
@@ -88,181 +84,54 @@ end
 CONTAINER
 --]]------------------------------------------------------------
 
-function GameObject.purgeAll()
-  for type, _ in pairs(GameObject.INSTANCES) do
-    GameObject.INSTANCES[type] = { }
-  end
-  GameObject.NEXT_ID = 1
-end
-
-function GameObject.get(typename, i)
-  i = (i or 1)
-  local type = GameObject.TYPE[typename]
-  local objects = GameObject.INSTANCES[type] 
-  if objects and (i <= #objects) then
-    return (GameObject.INSTANCES[type][i])
-  else
-    return nil
-  end
-end
-
-function GameObject.getAll(typename)
-  if typename then
-    return 
-      pairs(GameObject.INSTANCES[GameObject.TYPE[typename]])
-  else
-    return pairs(GameObject.INSTANCES)
-  end
-end
-
-function GameObject.count(typename)
-  if typename then
-    return #(GameObject.INSTANCES[GameObject.TYPE[typename]])
-  else
-    local count = 0
-    for _, objects_of_type 
-    in pairs(GameObject.INSTANCES) do
-      count = count + #(objects_of_type)
-    end
-    return count
-  end
-end
-
-function GameObject.getSuchThat(predicate, typename)
-  local set = {}
-  if typename then
-    local type = GameObject.TYPE[typename]
-    if GameObject.INSTANCES[type] then
-      for _, object in pairs(GameObject.INSTANCES[type]) do
-        if predicate(object) then
-          table.insert(set, object)
-        end
-      end
-    end
-  else
-    for _, objects_of_type 
-    in pairs(GameObject.INSTANCES) do
-      for _, object in pairs(objects_of_type) do
-        if predicate(object) then
-          table.insert(set, object)
-        end
-      end
-    end
-  end
-  return set
-end
-
-function GameObject.countSuchThat(predicate, typename)
-  local count = 0
-  if typename then
-    local type = GameObject.TYPE[typename]
-    if GameObject.INSTANCES[type] then
-      for _, object in pairs(GameObject.INSTANCES[type]) do
-        if predicate(object) then
-          count = count + 1
-        end
-      end
-    end
-  else
-    for _, objects_of_type 
-    in pairs(GameObject.INSTANCES) do
-      for _, object in pairs(objects_of_type) do
-        if predicate(object) then
-          count = count + 1
-        end
-      end
-    end
-  end
-  return count
-end
-
 function GameObject.updateAll(dt, level, view)
   
+  local previous = nil
+  
   -- update objects
-  -- ...for each type of object
-  for type, objects_of_type in pairs(GameObject.INSTANCES) do
-    -- ...for each object
-    useful.map(objects_of_type,
-      function(object)
-        -- ...update the object
-        object:update(dt, level, view)
-        -- ...check collisions with other object
-        -- ...... for each other type of object
-        for othertype, objects_of_othertype 
-            in pairs(GameObject.INSTANCES) do
-          if object:collidesType(othertype) then
-            -- ...... for each object of this other type
-            useful.map(objects_of_othertype,
-                function(otherobject)
-                  -- check collisions between objects
-                  if object:isColliding(otherobject) then
-                    object:eventCollision(otherobject, level)
-                  end
-                end)
-          end
-        end  
-    end)
-  end
+  -- ...for each object
+  useful.map(GameObject.INSTANCES,
+    function(object)
+      -- ...update the object
+      object:update(dt, level, view)
+      -- ...check collisions with other object
+      -- ...... for each other type of object
+      for othertype, objects_of_othertype 
+          in pairs(GameObject.INSTANCES) do
+        if object:collidesType(othertype) then
+          -- ...... for each object of this other type
+          useful.map(objects_of_othertype,
+              function(otherobject)
+                -- check collisions between objects
+                if object:isColliding(otherobject) then
+                  object:eventCollision(otherobject, level)
+                end
+              end)
+        end
+      end  
+  end,
+
+  -- sort objects by layer
+  function(object, object_index)
+    if previous and previous.y > object.y then
+      GameObject.INSTANCES[object_index] = previous
+      GameObject.INSTANCES[object_index - 1] = object
+    end 
+    previous = object
+  end)
 end
 
 function GameObject.drawAll(view)
-  -- for each type of object
-  for t, object_type in pairs(GameObject.INSTANCES) do
-    -- for each object
-    useful.map(object_type,
-      function(object)
-        -- if the object is in view...
-        if (not view) or object:isColliding(view) then
-          -- ...draw the object
-          object:draw(view)
-        end
-    end)
-  end
+-- for each object
+  useful.map(GameObject.INSTANCES,
+    function(object)
+      -- if the object is in view...
+      if (not view) or object:isColliding(view) then
+        -- ...draw the object
+        object:draw(view)
+      end
+  end)
 end
-
-function GameObject.mapToAll(f)
-  -- for each type of object
-  for _, type_instances in pairs(GameObject.INSTANCES) do
-    -- for each object
-    useful.map(type_instances, f)
-  end
-end
-
-function GameObject.mapToType(typename, f)
-  local type_instances = 
-    GameObject.INSTANCES[GameObject.TYPE[typename]]
-  if type_instances then
-    useful.map(type_instances, f)
-  end
-end
-
-function GameObject.trueForAny(typename, f)
-  local type_instances = 
-    GameObject.INSTANCES[GameObject.TYPE[typename]]
-  if not type_instances then
-    return false
-  end
-  for id, obj in pairs(type_instances) do
-    if f(obj) then
-      return true
-    end
-  end
-  return false
-end
-
-function GameObject.trueForAll(typename, f)
-  local type_instances = 
-    GameObject.INSTANCES[GameObject.TYPE[typename]]
-  if not type_instances then
-    return false
-  end
-  local result = false
-  for id, obj in pairs(type_instances) do
-    result = (result and f(obj))
-  end
-  return result
-end
-
 
 --[[------------------------------------------------------------
 METHODS

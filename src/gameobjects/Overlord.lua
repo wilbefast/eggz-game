@@ -204,14 +204,15 @@ function Overlord:draw()
     -- set team colour
     player.bindTeamColour[self.player]()
 
+    -- draw selected tile
+    love.graphics.setLineWidth(3)
+      love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
+    love.graphics.setLineWidth(1)
+
     -- draw body
     love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
                               0, 1, 1, 28, 82)
 
-    -- draw selected tile
-		love.graphics.setLineWidth(3)
-			love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
-		love.graphics.setLineWidth(1)
 
     -- draw shadow
     --[[love.graphics.setColor(0, 0, 0, 128)
