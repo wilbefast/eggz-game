@@ -16,8 +16,8 @@ Lesser General Public License for more details.
 IMPORTS
 --]]------------------------------------------------------------
 
-local Class = require("hump/class")
-local useful = require("useful")
+--local Class = require("hump/class")
+--local useful = require("useful")
 
 --[[------------------------------------------------------------
 ANIMATION CLASS

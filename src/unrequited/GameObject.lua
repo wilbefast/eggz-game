@@ -30,6 +30,7 @@ local GameObject = Class
 {
   -- container
   INSTANCES = { },
+  NEW_INSTANCES = { },
       
   -- identifiers
   NEXT_ID = 1,
@@ -47,7 +48,7 @@ local GameObject = Class
     self.prevx    = self.x
     self.prevy    = self.y
     
-    table.insert(GameObject.INSTANCES, self) 
+    table.insert(GameObject.NEW_INSTANCES, self) 
     
     -- assign identifier
     self.id = GameObject.NEXT_ID
@@ -85,6 +86,13 @@ CONTAINER
 --]]------------------------------------------------------------
 
 function GameObject.updateAll(dt, level, view)
+
+  -- add new objects
+  for _, object in pairs(GameObject.NEW_INSTANCES) do
+    table.insert(GameObject.INSTANCES, object)
+  end
+  GameObject.NEW_INSTANCES = { }
+
   -- update objects
   -- ...for each object
   useful.map(GameObject.INSTANCES,
@@ -108,16 +116,18 @@ function GameObject.updateAll(dt, level, view)
       end  
   end)
 
-  local previous = nil
-  useful.map(GameObject.INSTANCES,
-    -- sort objects by layer
-    function(object, object_index)
-      if previous and previous.y > object.y then
-        GameObject.INSTANCES[object_index] = previous
-        GameObject.INSTANCES[object_index - 1] = object
-      end 
-      previous = object
-    end)
+  local oi = 1
+  while oi <= (#GameObject.INSTANCES) do
+    local obj = GameObject.INSTANCES[oi]
+    if oi > 1 then
+      local prev = GameObject.INSTANCES[oi-1]
+      if (prev.y > obj.y) then
+        GameObject.INSTANCES[oi] = prev
+        GameObject.INSTANCES[oi - 1] = obj
+      end
+    end
+    oi = oi + 1
+  end
 end
 
 function GameObject.drawAll(view)

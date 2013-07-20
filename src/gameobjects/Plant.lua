@@ -31,11 +31,27 @@ local Plant = Class
     self:plant(tile)
 
     self.energy = self.ENERGY_START
+    self.hitpoints = self.HITPOINTS_START
 
     self.player = player
   end,
 }
 Plant:include(GameObject)
+
+
+--[[------------------------------------------------------------
+Take damage
+--]]--
+
+function Plant:takeDamage(amount)
+	SpecialEffect(self.x, self.y+1, Turret.ATTACK_ANIM, 7)
+	audio:play_sound("KNIGHT-attack-hit", 0.1)
+	self.hitpoints = self.hitpoints - amount
+	if self.hitpoints < 0 then
+		self.purge = true
+		self.tile.occupant = nil
+	end
+end
 
 --[[------------------------------------------------------------
 Pick up and put down

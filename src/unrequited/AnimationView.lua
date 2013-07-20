@@ -16,7 +16,7 @@ Lesser General Public License for more details.
 IMPORTS
 --]]------------------------------------------------------------
 
-local Class = require("hump/class")
+--local Class = require("hump/class")
 
 --[[------------------------------------------------------------
 ANIMATIONVIEW CLASS
@@ -28,10 +28,12 @@ Initialisation
 
 local AnimationView = Class
 {
-  init = function(self, anim, speed, frame)
+  init = function(self, anim, speed, frame, offx, offy)
     self.anim = anim
     self.speed = (speed or 0.0)
     self.frame = (frame or math.random(self.anim.n_frames))
+    self.offx = (offx or 0)
+    self.offy = (offy or 0)
   end,
 }
   
@@ -41,8 +43,8 @@ Game loop
 --]]
     
 function AnimationView:draw(object)
-  self.anim:draw(object:centreX(), object.y, self.frame, 
-                  self.flip_x, self.flip_y, object.w, self.offy)
+  self.anim:draw(object.x, object.y, self.frame, 
+                  self.flip_x, self.flip_y, self.offx, self.offy)
 end
 
 function AnimationView:update(dt)

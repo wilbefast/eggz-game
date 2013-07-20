@@ -31,6 +31,8 @@ local Egg = Class
   MAX_W = 24,
   MAX_H = 24,
 
+  HITPOINTS_START = 1,
+
   init = function(self, tile, player)
     Plant.init(self, tile, player)
   end,

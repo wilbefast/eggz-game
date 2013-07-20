@@ -15,8 +15,8 @@ Lesser General Public License for more details.
 local useful = { }
 
 -- map a set of functions to a set of objects
-function useful.map(objects, ...)
-  local args = useful.packArgs(...)
+function useful.map(objects, func)--...)
+  --local args = useful.packArgs(...)
   local oi = 1
   -- for each object...
   while oi <= #objects do
@@ -26,12 +26,12 @@ function useful.map(objects, ...)
       table.remove(objects, oi)
     else
       -- for each function...
-      for fi, func in ipairs(args) do
+      --for fi, func in ipairs(args) do
         -- map function to object
-        if type(func)=="function" then -- Make sure it's a function, because, the 1st arguement is an object
+        --if type(func)=="function" then -- Make sure it's a function, because, the 1st arguement is an object
           func(obj, oi, objects)
-        end
-      end -- for fi, func in ipairs(arg)
+        --end
+      --end -- for fi, func in ipairs(arg)
       -- next object
       oi = oi + 1
     end -- if obj.purge

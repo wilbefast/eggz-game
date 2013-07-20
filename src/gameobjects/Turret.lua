@@ -36,10 +36,13 @@ local Turret = Class
   ATTACK = 3,
   COOLDOWN = 4,
 
+  HITPOINTS_START = 5,
+
   ATTACK_ENERGY_COST = 0.1,
   ATTACK_WARMUP_DURATION = 0.4,
   ATTACK_DURATION = 0.3,
   ATTACK_COOLDOWN_DURATION = 0.8,
+  ATTACK_DAMAGE = 0.4,
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
@@ -87,6 +90,10 @@ Turret.IMAGES =
   }
 }
 
+Turret.ATTACK_IMG = love.graphics.newImage("assets/BLUE-fountain-anim.png")
+Turret.ATTACK_ANIM = Animation(Turret.ATTACK_IMG, 64, 64, 5, 0, 0)
+
+
 --[[------------------------------------------------------------
 State machine
 --]]--
@@ -94,9 +101,10 @@ State machine
 Turret.state_update = { }
 
 Turret.state_update[Turret.IDLE] = function(self, dt)
-  if self.enemies > 0 and (self.energy >= Turret.ATTACK_ENERGY_COST) then
+  if (#(self.enemies) > 0) 
+  and (self.energy >= Turret.ATTACK_ENERGY_COST) then
     self.state = Turret.WARMUP
-    audio:play_sound("KNIGHT-attack1", 0.25)
+    audio:play_sound("KNIGHT-attack1", 0.2)
     self.subimage = 2
     self.energy = self.energy - Turret.ATTACK_ENERGY_COST
     self.timer = 0
@@ -104,9 +112,14 @@ Turret.state_update[Turret.IDLE] = function(self, dt)
 end
 
 Turret.state_update[Turret.WARMUP] = function(self, dt)
-  if self.timer > self.ATTACK_WARMUP_DURATION then
-    audio:play_sound("KNIGHT-attack2", 0.25)
-    audio:play_sound("KNIGHT-attack-hit", 0.25)
+
+  if #(self.enemies) == 0 then
+    self.timer = 0
+    self.state = Turret.IDLE
+  elseif self.timer > self.ATTACK_WARMUP_DURATION then
+    audio:play_sound("KNIGHT-attack2", 0.3)
+    local who = useful.randIn(self.enemies)
+    who:takeDamage(self.ATTACK_DAMAGE)
     self.state = Turret.ATTACK
     self.subimage = 1
     self.timer = 0
@@ -114,7 +127,6 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 end
 
 Turret.state_update[Turret.ATTACK] = function(self, dt)
-
   if self.timer > self.ATTACK_DURATION then
     self.state = Turret.COOLDOWN
     self.timer = 0
@@ -137,10 +149,10 @@ function Turret:update(dt)
   Plant.update(self, dt)
 
   -- check for enemies
-  self.enemies = 0
+  self.enemies = {}
   for _, t in pairs(self.guardArea) do
     if t.occupant and (t.occupant.player ~= self.player) then
-      self.enemies = self.enemies + 1
+      table.insert(self.enemies, t.occupant)
     end
   end
 
@@ -154,10 +166,10 @@ end
 function Turret:draw()
   love.graphics.draw(Turret.IMAGES[self.player][self.subimage], self.x, self.y,
     0, 1, 1, 32, 40)
-  player.bindTeamColour[self.player]()
+  --[[player.bindTeamColour[self.player]()
     love.graphics.rectangle("line", self.guardArea_x, self.guardArea_y, 
       self.guardArea_w, self.guardArea_h)
-  love.graphics.setColor(255, 255, 255)
+  love.graphics.setColor(255, 255, 255)--]]
 end
 
 --[[------------------------------------------------------------
