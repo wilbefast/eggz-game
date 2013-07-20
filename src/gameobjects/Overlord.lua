@@ -216,16 +216,16 @@ function Overlord:update(dt)
 end
 
 function Overlord:draw()
-	
-    -- draw transported object
-    if self.passenger then
-      self.passenger:drawTransported()
-    end
 
     -- draw shadow
     love.graphics.draw(Overlord.SHADOW, 
       self.x - Overlord.SHADOW:getWidth()/2, 
       self.y - Overlord.SHADOW:getHeight()/2)
+
+    -- draw transported object
+    if self.passenger then
+      self.passenger:drawTransported()
+    end
 
     -- set team colour
     player.bindTeamColour[self.player]()
