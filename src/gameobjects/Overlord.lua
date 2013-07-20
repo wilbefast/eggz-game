@@ -84,6 +84,63 @@ function Overlord:eventCollision(other, dt)
   end
 end
 
+function Overlord:canLand()
+  -- can't land in enemy territory
+  if (self.tile.owner ~= 0) and (self.tile.owner ~= self.player) and (self.tile.conversion > 0.5) then
+    return false
+  else
+    return true
+  end
+end
+
+function Overlord:canUproot()
+
+  if not self:canLand() then
+    return false
+  end
+
+  local tile, cargo = self.tile, self.tile.occupant
+
+  -- can't uproot nothing
+  if not cargo then
+    return false
+  
+  -- everything else is fine
+  else
+    return true
+  end
+end
+
+function Overlord:canPlant()
+
+  if not self:canLand() then
+    return false
+  end
+
+  local tile, payload = self.tile, self.passenger
+
+  -- can't plant nothing
+  if not payload and (self.egg_ready == 0) then
+    return false
+
+  -- bombs can be planted on enemies
+  elseif payload and payload:isType("Bomb") and (tile.occupant) and (tile.occupant.player ~= self.player) then
+    return true
+
+  -- nothing else can go on top of something
+  elseif tile.occupant then
+    return false
+  
+  -- everything else is fine
+  else
+    return true
+  end
+end
+
+
+
+
+
 --[[------------------------------------------------------------
 Game loop
 --]]--
@@ -155,26 +212,24 @@ function Overlord:update(dt)
   end
 
 	-- Put down a plant  -------------------------------------------
-	if inp.lay_trigger == 1 and (not self.tile.occupant) then
+	if inp.lay_trigger == 1 and self:canPlant() then
     -- put down passenger
     if self.passenger then
       self.previous_passenger = self.passenger
       self.passenger:plant(self.tile)
     -- lay egg
     elseif self.egg_ready == 1 then
-      self.previous_passenger = Convertor(self.tile, self.player)
+      self.previous_passenger = Egg(self.tile, self.player)
       self.egg_ready = 0
     end
   
   -- Pick up a plant  -------------------------------------------
-  elseif inp.lay_trigger == -1 then
+  elseif inp.lay_trigger == -1 and self:canUproot() then
     -- pick up tile occupant
-    if self.tile.occupant and (not self.passenger)
-      and (self.tile.occupant:isType("Egg") 
-        or (self.tile.occupant:isType("Bomb")))
-      and (not self.previous_passenger)
-      and (self.radial_menu < 1) then
-      self.tile.occupant:uproot(self)
+    if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
+    and (not self.previous_passenger)
+    and (self.radial_menu < 1) then
+        self.tile.occupant:uproot(self)
     end
     self.previous_passenger = nil
   end
