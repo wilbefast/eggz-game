@@ -70,6 +70,17 @@ Overlord.IMAGES =
 }
 
 --[[------------------------------------------------------------
+Collisions
+--]]--
+
+function Overlord:eventCollision(other, dt)
+  if other:isType("Overlord") then
+    self.dx = self.dx + (self.x - other.x)*dt*100
+    self.dy = self.dy + (self.y - other.y)*dt*100
+  end
+end
+
+--[[------------------------------------------------------------
 Game loop
 --]]--
 

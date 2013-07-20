@@ -99,21 +99,14 @@ function GameObject.updateAll(dt, level, view)
     function(object)
       -- ...update the object
       object:update(dt, level, view)
-      -- ...check collisions with other object
-      -- ...... for each other type of object
-      for othertype, objects_of_othertype 
-          in pairs(GameObject.INSTANCES) do
-        if object:collidesType(othertype) then
-          -- ...... for each object of this other type
-          useful.map(objects_of_othertype,
-              function(otherobject)
-                -- check collisions between objects
-                if object:isColliding(otherobject) then
-                  object:eventCollision(otherobject, level)
-                end
-              end)
-        end
-      end  
+      -- ...check collisions with other objects
+      useful.map(GameObject.INSTANCES,
+          function(otherobject)
+            -- check collisions between objects
+            if object:isColliding(otherobject) then
+              object:eventCollision(otherobject, dt)
+            end
+          end) 
   end)
 
   local oi = 1
@@ -182,7 +175,7 @@ function GameObject:snap_to_collision(dx, dy, collisiongrid, max, type)
   end
 end
 
-function GameObject:eventCollision(other)
+function GameObject:eventCollision(other, dt)
   -- override me!
 end
 

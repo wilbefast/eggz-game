@@ -27,7 +27,7 @@ local Turret = Class
   ENERGY_DRAW_SPEED = 0.3,              -- per second
   ENERGY_CONSUME_SPEED = 0,           -- per second
   ENERGY_DRAW_EFFICIENCY = 15,       -- percent
-  ENERGY_START = 0,
+  ENERGY_START = 1,
   MAX_W = 24,
   MAX_H = 24,
 
