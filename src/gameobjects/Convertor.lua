@@ -43,6 +43,9 @@ local Convertor = Class
     Plant.init(self, tile, player)
 
     self.view = AnimationView(Convertor.ANIMS[self.player], 7, 0, 32, 32)
+
+    -- set guard area
+    self.convertArea = GameObject.COLLISIONGRID:getNeighbours4(tile, true) -- center
   end,
 }
 Convertor:include(Plant)
@@ -61,8 +64,14 @@ Game loop
 --]]--
 
 function Convertor:update(dt)
+
   Plant.update(self, dt)
+
   self.view:update(dt)
+
+  for _, tile in pairs(self.convertArea) do
+    tile:convert(0.3*dt, self.player)
+  end
 end
 
 function Convertor:draw()

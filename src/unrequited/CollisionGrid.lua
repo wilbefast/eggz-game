@@ -66,7 +66,7 @@ end
 Tile neighbours
 --]]--
 
-function CollisionGrid:getNeighbours8(t)
+function CollisionGrid:getNeighbours8(t, centre)
   local result = {}
   function insertIfNotNil(t, x) if x then table.insert(t, x) end end
   insertIfNotNil(result, self:gridToTile(t.i-1, t.j-1))  -- NW
@@ -80,14 +80,16 @@ function CollisionGrid:getNeighbours8(t)
   return result
 end
 
-function CollisionGrid:getNeighbours4(t)
+function CollisionGrid:getNeighbours4(t, centre)
   local result = {}
-  function insertIfNotNil(x, t) if x then table.insert(t, x) end end
+  function insertIfNotNil(t, x) if x then table.insert(t, x) end end
   insertIfNotNil(result, self:gridToTile(t.i-1, t.j))    -- W
   insertIfNotNil(result, self:gridToTile(t.i, t.j-1))    -- N
   insertIfNotNil(result, self:gridToTile(t.i, t.j+1))    -- S
   insertIfNotNil(result, self:gridToTile(t.i+1, t.j))    -- E
-
+  if centre then
+    insertIfNotNil(result, self:gridToTile(t.i, t.j))
+  end
   return result
 end
 
