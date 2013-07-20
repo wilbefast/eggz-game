@@ -31,9 +31,6 @@ local Bomb = Class
   MAX_W = 24,
   MAX_H = 24,
 
-  maturity = 0,
-  MATURE_SPEED = 0.1,
-
   init = function(self, tile, player)
     Plant.init(self, tile, player)
   end,

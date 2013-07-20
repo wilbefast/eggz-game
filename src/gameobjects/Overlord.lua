@@ -243,10 +243,6 @@ function Overlord:draw()
       drawRadial(self.radial_menu*64, 0, 1)
       drawRadial(0, -self.radial_menu*64, 2)
       drawRadial(-self.radial_menu*64, 0, 3)
-
-      --love.graphics.circle("fill", 
-        --self.x + self.radial_menu_x*self.radial_menu*64, 
-        --self.y + self.radial_menu_y*self.radial_menu*64, 10)
     end
 
 	love.graphics.setColor(255, 255, 255)

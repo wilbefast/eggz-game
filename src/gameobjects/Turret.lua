@@ -24,20 +24,35 @@ local Turret = Class
 {
   type = GameObject.TYPE.new("Turret"),
 
-  ENERGY_DRAW_SPEED = 0.1,            -- per second
+  ENERGY_DRAW_SPEED = 0.3,              -- per second
   ENERGY_CONSUME_SPEED = 0,           -- per second
-  ENERGY_DRAW_EFFICIENCY = 0.7,       -- percent
+  ENERGY_DRAW_EFFICIENCY = 15,       -- percent
   ENERGY_START = 0,
   MAX_W = 24,
   MAX_H = 24,
 
-  maturity = 0,
-  MATURE_SPEED = 0.1,
+  IDLE = 1,
+  WARMUP = 2,
+  ATTACK = 3,
+  COOLDOWN = 4,
+
+  ATTACK_ENERGY_COST = 0.1,
+  ATTACK_WARMUP_DURATION = 0.4,
+  ATTACK_DURATION = 0.3,
+  ATTACK_COOLDOWN_DURATION = 0.5,
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
-    self.guardArea = GameObject.COLLISIONGRID:getNeighbours8(tile)
+    
+    -- set state
+    self.state = Turret.IDLE
+    self.timer = 0
 
+    -- animation
+    self.subimage = 1
+
+    -- set guard area
+    self.guardArea = GameObject.COLLISIONGRID:getNeighbours8(tile)
     self.guardArea_x = self.x
     local endx = self.x
     self.guardArea_y = self.y
@@ -73,17 +88,68 @@ Turret.IMAGES =
 }
 
 --[[------------------------------------------------------------
+State machine
+--]]--
+
+Turret.state_update = { }
+
+Turret.state_update[Turret.IDLE] = function(self, dt)
+  if self.enemies > 0 and (self.energy >= Turret.ATTACK_ENERGY_COST) then
+    self.state = Turret.WARMUP
+    self.subimage = 2
+    self.energy = self.energy - Turret.ATTACK_ENERGY_COST
+    self.timer = 0
+  end
+end
+
+Turret.state_update[Turret.WARMUP] = function(self, dt)
+  if self.timer > self.ATTACK_WARMUP_DURATION then
+    self.state = Turret.ATTACK
+    self.subimage = 1
+    self.timer = 0
+  end
+end
+
+Turret.state_update[Turret.ATTACK] = function(self, dt)
+
+  if self.timer > self.ATTACK_DURATION then
+    self.state = Turret.COOLDOWN
+    self.timer = 0
+  end
+end
+
+Turret.state_update[Turret.COOLDOWN] = function(self, dt)
+  if self.timer > self.ATTACK_COOLDOWN_DURATION then
+    self.state = Turret.IDLE
+    self.timer = 0
+  end
+end
+
+--[[------------------------------------------------------------
 Game loop
 --]]--
 
 function Turret:update(dt)
+
+  Plant.update(self, dt)
+
+  -- check for enemies
+  self.enemies = 0
   for _, t in pairs(self.guardArea) do
-   -- love.graphics.rectangle("line", t.x, v.y, v.w, v.h)
+    if t.occupant and (t.occupant.player ~= self.player) then
+      self.enemies = self.enemies + 1
+    end
   end
+
+  -- update timer
+  self.timer = self.timer + dt
+
+  -- act according to state
+  Turret.state_update[self.state](self, dt)
 end
 
 function Turret:draw()
-  love.graphics.draw(Turret.IMAGES[self.player][1], self.x, self.y,
+  love.graphics.draw(Turret.IMAGES[self.player][self.subimage], self.x, self.y,
     0, 1, 1, 32, 40)
   player.bindTeamColour[self.player]()
     love.graphics.rectangle("line", self.guardArea_x, self.guardArea_y, 
