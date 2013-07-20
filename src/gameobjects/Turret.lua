@@ -37,6 +37,21 @@ local Turret = Class
   init = function(self, tile, player)
     Plant.init(self, tile, player)
     self.guardArea = GameObject.COLLISIONGRID:getNeighbours8(tile)
+
+    self.guardArea_x = self.x
+    local endx = self.x
+    self.guardArea_y = self.y
+    local endy = self.y
+    for _, t in pairs(self.guardArea) do
+      love.graphics.rectangle("line", t.x, t.y, t.w, t.h)
+      self.guardArea_x = math.min(self.guardArea_x, t.x)
+      endx = math.max(endx, t.x + t.w)
+      self.guardArea_y = math.min(self.guardArea_y, t.y)
+      endy = math.max(endy, t.y + t.h)
+    end
+    self.guardArea_w = endx - self.guardArea_x
+    self.guardArea_h = endy - self.guardArea_y
+    
   end,
 }
 Turret:include(Plant)
@@ -61,13 +76,19 @@ Turret.IMAGES =
 Game loop
 --]]--
 
+function Turret:update(dt)
+  for _, t in pairs(self.guardArea) do
+   -- love.graphics.rectangle("line", t.x, v.y, v.w, v.h)
+  end
+end
+
 function Turret:draw()
   love.graphics.draw(Turret.IMAGES[self.player][1], self.x, self.y,
     0, 1, 1, 32, 40)
-
-  for i, v in pairs(self.guardArea) do
-    love.graphics.rectangle("line", v.x, v.y, v.w, v.h)
-  end
+  player.bindTeamColour[self.player]()
+    love.graphics.rectangle("line", self.guardArea_x, self.guardArea_y, 
+      self.guardArea_w, self.guardArea_h)
+  love.graphics.setColor(255, 255, 255)
 end
 
 --[[------------------------------------------------------------
