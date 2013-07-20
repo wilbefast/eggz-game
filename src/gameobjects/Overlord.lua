@@ -213,7 +213,7 @@ function Overlord:draw()
 
     -- draw body
     love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
-                              0, 1, 1, 28, 82)
+                              0, 1, 1, 28, 86)
 
     -- draw egg being laid
     if self.egg_ready > 0 then
