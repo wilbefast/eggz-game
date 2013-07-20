@@ -33,9 +33,9 @@ local SpecialEffect = Class
 {
   type = GameObject.TYPE.new("SpecialEffect"),
   
-  init = function(self, x, y, anim, speed, follow)
+  init = function(self, x, y, anim, speed, offx, offy, follow)
       GameObject.init(self, x, y, 0, 0)
-    self.view = AnimationView(anim, speed, 1, anim.frame_w/2, anim.frame_h/2)
+    self.view = AnimationView(anim, speed, 1, anim.frame_w/2 + offx, anim.frame_h/2 + offy)
     self.follow = follow
   end,
 }

@@ -24,6 +24,9 @@ local Plant = Class
 {
   type = GameObject.TYPE.new("Plant"),
 
+  REGEN_SPEED = 0.1,
+  REGEN_EFFICIENCY = 0.1,
+
   init = function(self, tile, player)
     GameObject.init(self, tile.x + tile.w/2, tile.y + tile.h/2, 
     											self.MAX_W, self.MAX_H)
@@ -31,7 +34,7 @@ local Plant = Class
     self:plant(tile)
 
     self.energy = self.ENERGY_START
-    self.hitpoints = self.HITPOINTS_START
+    self.hitpoints = (self.HITPOINTS_START or 1)
 
     self.player = player
   end,
@@ -44,9 +47,9 @@ Take damage
 --]]--
 
 function Plant:takeDamage(amount)
-	SpecialEffect(self.x, self.y+1, Turret.ATTACK_ANIM, 7)
+	SpecialEffect(self.x, self.y+1, Turret.ATTACK_ANIM, 7, 0, 12)
 	audio:play_sound("KNIGHT-attack-hit", 0.1)
-	self.hitpoints = self.hitpoints - amount
+	self.hitpoints = self.hitpoints - amount/(1 + self.ARMOUR)
 	if self.hitpoints < 0 then
 		self.purge = true
 		self.tile.occupant = nil
@@ -111,9 +114,13 @@ function Plant:update(dt)
 	  -- Consume energy ------------------------------------------------------
 	  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)
 
-	else
-		-- Being moved? ------------------------------------------------------
-	end
+	  -- Regenerate ------------------------------------------------------
+	  local regen = math.min(self.energy, self.REGEN_SPEED*dt) 
+	  regen = math.min(regen, (1 - self.hitpoints)/self.REGEN_EFFICIENCY)
+	  self.energy = self.energy - regen
+	  self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
+
+  end
 end
 
 --[[------------------------------------------------------------

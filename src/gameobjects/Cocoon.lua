@@ -31,6 +31,8 @@ local Cocoon = Class
   MAX_W = 24,
   MAX_H = 24,
 
+  ARMOUR = 1,
+
   init = function(self, tile, player, evolvesTo)
     Plant.init(self, tile, player)
     self.maturity = 0

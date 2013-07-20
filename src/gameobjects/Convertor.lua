@@ -31,7 +31,7 @@ local Convertor = Class
   MAX_W = 24,
   MAX_H = 24,
 
-  HITPOINTS_START = 2,
+  ARMOUR = 0,
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)

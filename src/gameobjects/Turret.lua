@@ -36,13 +36,16 @@ local Turret = Class
   ATTACK = 3,
   COOLDOWN = 4,
 
-  HITPOINTS_START = 5,
+  ARMOUR = 3,
 
   ATTACK_ENERGY_COST = 0.1,
   ATTACK_WARMUP_DURATION = 0.4,
   ATTACK_DURATION = 0.3,
   ATTACK_COOLDOWN_DURATION = 0.8,
   ATTACK_DAMAGE = 0.4,
+
+  REGEN_SPEED = 0.01,
+  REGEN_EFFICIENCY = 1,
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
@@ -90,8 +93,8 @@ Turret.IMAGES =
   }
 }
 
-Turret.ATTACK_IMG = love.graphics.newImage("assets/BLUE-fountain-anim.png")
-Turret.ATTACK_ANIM = Animation(Turret.ATTACK_IMG, 64, 64, 5, 0, 0)
+Turret.ATTACK_IMG = love.graphics.newImage("assets/FX-attack.png")
+Turret.ATTACK_ANIM = Animation(Turret.ATTACK_IMG, 36, 36, 6, 0, 0)
 
 
 --[[------------------------------------------------------------
@@ -101,6 +104,7 @@ State machine
 Turret.state_update = { }
 
 Turret.state_update[Turret.IDLE] = function(self, dt)
+  -- fight
   if (#(self.enemies) > 0) 
   and (self.energy >= Turret.ATTACK_ENERGY_COST) then
     self.state = Turret.WARMUP
@@ -166,6 +170,8 @@ end
 function Turret:draw()
   love.graphics.draw(Turret.IMAGES[self.player][self.subimage], self.x, self.y,
     0, 1, 1, 32, 40)
+
+  --love.graphics.print(tostring(self.hitpoints), self.x, self.y + 32)
   --[[player.bindTeamColour[self.player]()
     love.graphics.rectangle("line", self.guardArea_x, self.guardArea_y, 
       self.guardArea_w, self.guardArea_h)
