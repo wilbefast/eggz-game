@@ -31,6 +31,9 @@ local Egg = Class
   MAX_W = 24,
   MAX_H = 24,
 
+  REGEN_SPEED = 1,
+  REGEN_EFFICIENCY = 1,
+
   ARMOUR = 0,
 
   init = function(self, tile, player)
@@ -120,6 +123,8 @@ function Egg:draw()
 			self.y,
 			0,
 			1, 1, 32, 40)
+
+		love.graphics.print(tostring(self.hitpoints), self.x, self.y + 32)
 end
 
 function Egg:drawTransported()

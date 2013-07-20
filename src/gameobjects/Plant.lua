@@ -100,23 +100,26 @@ function Plant:update(dt)
   if self.tile then
 
 	  -- Draw energy ------------------------------------------------------
-	  local energy_drawn = math.min(self.tile.energy, 
+	  local drawn_energy = math.min(self.tile.energy, 
 	  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)
-	  if energy_drawn + self.energy > 1 then
-	  	energy_drawn = 1 - self.energy
+
+	  -- Regenerate ------------------------------------------------------
+	  local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
+	  											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)
+	  drawn_energy = drawn_energy - regen
+	  self.tile.energy = self.tile.energy - regen
+	  self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
+
+	  -- Store energy not consume by regeneration ------------------------
+	  if drawn_energy + self.energy > 1 then
+	  	drawn_energy = 1 - self.energy
 	  end
-	  self.tile.energy = self.tile.energy - energy_drawn
+	  self.tile.energy = self.tile.energy - drawn_energy
 	  self.energy = math.min(1, self.energy 
-	  						+ energy_drawn*self.ENERGY_DRAW_EFFICIENCY)
+	  						+ drawn_energy*self.ENERGY_DRAW_EFFICIENCY)
 
 	  -- Consume energy ------------------------------------------------------
 	  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)
-
-	  -- Regenerate ------------------------------------------------------
-	  local regen = math.min(self.energy, self.REGEN_SPEED*dt) 
-	  regen = math.min(regen, (1 - self.hitpoints)/self.REGEN_EFFICIENCY)
-	  self.energy = self.energy - regen
-	  self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
 
   end
 end

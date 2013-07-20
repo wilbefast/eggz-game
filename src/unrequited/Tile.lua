@@ -28,7 +28,7 @@ Initialisation
 
 local Tile = Class
 {
-		REGROWTH_SPEED = 0.01,
+		REGROWTH_SPEED = 0.05,
 
 		init = function(self, i, j, w, h)
 			self.i, self.j = i, j
