@@ -124,7 +124,8 @@ function Overlord:canPlant()
     return false
 
   -- bombs can be planted on enemies
-  elseif payload and payload:isType("Bomb") and (tile.occupant) and (tile.occupant.player ~= self.player) then
+  elseif payload and payload:isType("Bomb") and (tile.occupant) and (tile.occupant.player ~= self.player) 
+  and tile.occupant:isType("Turret") then
     return true
 
   -- nothing else can go on top of something

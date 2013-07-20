@@ -31,8 +31,8 @@ local Bomb = Class
   MAX_W = 24,
   MAX_H = 24,
 
-  init = function(self, tile, player)
-    Plant.init(self, tile, player)
+  init = function(self, tile)
+    Plant.init(self, tile, 0)
   end,
 }
 Bomb:include(Plant)
@@ -46,6 +46,24 @@ Bomb.IMAGES =
   love.graphics.newImage("assets/BOMB.png"),
   love.graphics.newImage("assets/BOMB-carry.png")
 }
+
+Bomb.EXPLODE_IMG = love.graphics.newImage("assets/FX-bomb.png")
+
+Bomb.EXPLODE_ANIM = Animation(Bomb.EXPLODE_IMG , 36, 36, 6)
+
+--[[------------------------------------------------------------
+Resources
+--]]--
+
+function Bomb:plant(tile)
+  if self.transport and tile.occupied then
+    self.purge = true
+    SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
+    audio:play_sound("BOMB-dropped", 0.1)
+  else
+    Plant.plant(self, tile)
+  end
+end
 
 --[[------------------------------------------------------------
 Game loop

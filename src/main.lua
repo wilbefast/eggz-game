@@ -108,6 +108,8 @@ function love.load(arg)
 
   audio:load_sound("FOUNTAIN-destroyed")
 
+  audio:load_sound("BOMB-dropped")
+
   -- start music
   --audio:play_music("loop")
 
