@@ -17,7 +17,10 @@ Lesser General Public License for more details.
 TITLE GAMESTATE
 --]]------------------------------------------------------------
 
-local image = love.graphics.newImage("assets/menu/MENU-bg.png")
+local bg = love.graphics.newImage("assets/menu/MENU-bg.png")
+local play = love.graphics.newImage("assets/menu/MENU-play-EN.png")
+
+
 local state = GameState.new()
 
 function state:init()
@@ -48,9 +51,13 @@ end
 
 
 function state:draw()
-  love.graphics.draw(image, 
-  	(love.graphics.getWidth()-image:getWidth())/2, 
-  	(love.graphics.getHeight()-image:getHeight())/2)
+  love.graphics.draw(bg, 
+  	(love.graphics.getWidth()-bg:getWidth())/2, 
+  	(love.graphics.getHeight()-bg:getHeight())/2)
+
+  love.graphics.draw(play, 
+  	(love.graphics.getWidth()-play:getWidth())/2, 
+  	514)
 end
 
 

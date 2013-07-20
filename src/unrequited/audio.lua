@@ -33,7 +33,7 @@ function audio:load_music(filename)
 end
 
 -- playing
-function audio:play_music(name)
+function audio:play_music(name, volume)
   local new_music = self[name]
   if new_music ~= self.music then
     if self.music then
@@ -41,6 +41,7 @@ function audio:play_music(name)
     end
     new_music:setLooping(true)
     if not self.mute then
+      new_music:setVolume(volume or 1)
       new_music:play()
     end
     self.music = new_music

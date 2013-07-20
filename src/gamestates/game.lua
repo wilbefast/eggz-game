@@ -48,9 +48,9 @@ function state:keypressed(key, uni)
   
   -- quit game
   if key=="escape" then
-    love.event.push("quit")
+    GameState.switch(title)
   end
-  
+
 end
 
 function state:update(dt)

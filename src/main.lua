@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 MAX_PLAYERS = 4
 
 --[[------------------------------------------------------------
@@ -68,16 +68,19 @@ function love.load(arg)
     
   -- set up the screen resolution
   local modes = love.graphics.getModes()
+  local success = false
   table.sort(modes, function(a, b) 
     return (a.width*a.height > b.width*b.height) end)
   for i, m in ipairs(modes) do
-    if DEBUG then
-      m = modes[#modes - 1]
-    end
     -- try to set the resolution
-    if love.graphics.setMode(m.width, m.height, not DEBUG) then
+    if love.graphics.setMode(m.width, m.height, true) then
+      success = true
       break
     end
+  end
+  if not success then
+    print("Failed to set video mode")
+    love.event.push("quit")
   end
 
   -- initialise random
@@ -85,7 +88,6 @@ function love.load(arg)
 
     -- no mouse
   love.mouse.setVisible(false)
-
   
   -- window title
   love.graphics.setCaption("Eggz")
@@ -111,7 +113,7 @@ function love.load(arg)
   audio:load_sound("BOMB-dropped")
 
   -- start music
-  --audio:play_music("loop")
+  audio:play_music("loop", 0.3)
 
   -- go to the initial gamestate
   GameState.switch(title)
