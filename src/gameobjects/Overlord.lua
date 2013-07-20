@@ -192,14 +192,16 @@ function Overlord:update(dt)
   end
 end
 
-
-
 function Overlord:draw()
 	
     -- draw transported object
     if self.passenger then
       self.passenger:drawTransported()
     end
+
+    -- draw shadow
+    love.graphics.setColor(0, 0, 0, 128)
+      love.graphics.circle("fill", self.x, self.y, self.w*0.6)
 
     -- set team colour
     player.bindTeamColour[self.player]()
@@ -212,12 +214,6 @@ function Overlord:draw()
     -- draw body
     love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
                               0, 1, 1, 28, 82)
-
-
-    -- draw shadow
-    --[[love.graphics.setColor(0, 0, 0, 128)
-    love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.h*0.25, 
-                                    self.w, self.h/2)--]]
 
     -- draw egg being laid
     if self.egg_ready > 0 then
