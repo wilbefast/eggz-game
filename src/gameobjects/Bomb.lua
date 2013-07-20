@@ -55,13 +55,16 @@ Game loop
 --]]--
 
 function Bomb:draw()
-
-  local carried = useful.tri(self.transport, 2, 1)
-
-  love.graphics.draw(Bomb.IMAGES[carried], self.x, self.y,
+  if self.transport then
+    return
+  end
+  love.graphics.draw(Bomb.IMAGES[1], self.x, self.y,
     0, 1, 1, 32, 40)
+end
 
-
+function Bomb:drawTransported()
+  love.graphics.draw(Bomb.IMAGES[2], self.x, self.y,
+    0, 1, 1, 32, 40)
 end
 
 --[[------------------------------------------------------------

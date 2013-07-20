@@ -77,24 +77,38 @@ Egg.IMAGES =
 }
 
 --[[------------------------------------------------------------
+Accessors
+--]]--
+
+function Egg:getEvolution()
+	local evolution = 1
+	if self.energy > 0.5 then
+		if self.energy == 1 then
+			evolution = 3
+		else
+			evolution = 2
+		end
+	end
+	return evolution
+end
+
+--[[------------------------------------------------------------
 Game loop
 --]]--
 
 function Egg:draw()
-	--player.bindTeamColour[self.player]()
-
-		local evolution = 1
-		if self.energy > 0.5 then
-			if self.energy == 1 then
-				evolution = 3
-			else
-				evolution = 2
-			end
+		if self.transport then
+			return
 		end
+		love.graphics.draw(Egg.IMAGES[self.player][self:getEvolution()][1],
+			self.x, 
+			self.y,
+			0,
+			1, 1, 32, 40)
+end
 
-		local carried = useful.tri(self.transport, 2, 1)
-
-		love.graphics.draw(Egg.IMAGES[self.player][evolution][carried],
+function Egg:drawTransported()
+		love.graphics.draw(Egg.IMAGES[self.player][self:getEvolution()][2],
 			self.x, 
 			self.y,
 			0,

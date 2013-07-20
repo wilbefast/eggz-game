@@ -195,31 +195,38 @@ end
 
 
 function Overlord:draw()
-	player.bindTeamColour[self.player]()
+	
+    -- draw transported object
+    if self.passenger then
+      self.passenger:drawTransported()
+    end
+
+    -- set team colour
+    player.bindTeamColour[self.player]()
 
     -- draw body
     love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
-                              0, 1, 1, 28, 96)
+                              0, 1, 1, 28, 82)
 
     -- draw selected tile
 		love.graphics.setLineWidth(3)
 			love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
 		love.graphics.setLineWidth(1)
 
-    -- draw egg being laid
-    if self.egg_ready > 0 then
-      local egg_size = 0.3*Egg.MAX_W*self.egg_ready
-      love.graphics.rectangle(useful.tri(self.egg_ready == 1, "fill", "line"), 
-        self.x - egg_size/2, 
-        self.y - self.h*2 - egg_size/2, 
-        egg_size, egg_size)
-    end
-
     -- draw shadow
     --[[love.graphics.setColor(0, 0, 0, 128)
     love.graphics.rectangle("fill", self.x-self.w/2, self.y - self.h*0.25, 
                                     self.w, self.h/2)--]]
 
+    -- draw egg being laid
+    if self.egg_ready > 0 then
+      local egg_size = 0.3*Egg.MAX_W*self.egg_ready
+
+      love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
+      love.graphics.draw(Egg.IMAGES[self.player][1][2], 
+        self.x, self.y - (2.5 + 0.5*self.z)*self.h, 
+        0, 0.1 + self.egg_ready*0.7, 0.1 + self.egg_ready*0.7, 32, 40)
+    end
 
     -- draw radial menu
     if self.radial_menu > 0 then
