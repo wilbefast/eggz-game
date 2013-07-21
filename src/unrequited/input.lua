@@ -23,9 +23,9 @@ input[1].keydown = "down"
  input[1].keylay = "rctrl"
 --input[1].keylay = " "
 
-input[2].keyleft = "q"
+input[2].keyleft = "a"
 input[2].keyright = "d"
-input[2].keyup = "z"
+input[2].keyup = "w"
 input[2].keydown = "s"
 input[2].keylay = "lctrl"
 
