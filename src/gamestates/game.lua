@@ -20,8 +20,9 @@ local state = GameState.new()
 
 function state:init()
 
-  Overlord(64*11 - 32,  64*6 - 32, 1)
-  Overlord(32,          64*6 - 32, 2)
+  self.player = {}
+  self.player[1] = Overlord(64*11 - 32,  64*6 - 32, 1)
+  self.player[2] = Overlord(32,          64*6 - 32, 2)
 
   -- create grid
   self.grid = CollisionGrid(64, 64, 11, 11)
@@ -64,9 +65,15 @@ function state:draw()
 
 	self.camera:attach()
 
+    -- game objects
 		self.grid:draw()
-
   	GameObject.drawAll()
+
+    -- gui overlay
+    for _, p in ipairs(self.player) do
+      p:draw_gui()
+    end
+
 
 	self.camera:detach()
 

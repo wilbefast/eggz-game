@@ -276,66 +276,72 @@ function Overlord:update(dt)
 end
 
 function Overlord:draw()
+  -- draw shadow
+  love.graphics.draw(Overlord.SHADOW, 
+    self.x - Overlord.SHADOW:getWidth()/2, 
+    self.y - Overlord.SHADOW:getHeight()/2)
 
-    -- draw shadow
-    love.graphics.draw(Overlord.SHADOW, 
-      self.x - Overlord.SHADOW:getWidth()/2, 
-      self.y - Overlord.SHADOW:getHeight()/2)
+  -- draw transported object
+  if self.passenger then
+    self.passenger:drawTransported()
+  end
 
-    -- draw transported object
-    if self.passenger then
-      self.passenger:drawTransported()
-    end
+  -- set team colour
+  player.bindTeamColour[self.player]()
 
-    -- set team colour
-    player.bindTeamColour[self.player]()
+  -- draw selected tile
+  love.graphics.setLineWidth(3)
+    love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
+  love.graphics.setLineWidth(1)
 
-    -- draw selected tile
-    love.graphics.setLineWidth(3)
-      love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
-    love.graphics.setLineWidth(1)
+  -- draw body
+  love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
+                             0, 1, 1, 42, 86)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(Overlord.EYES, self.x - Overlord.EYES:getWidth()/2, 
+                                    self.y - (2.2 + 0.5*self.z)*self.h)
 
-    -- draw body
-    love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
-                               0, 1, 1, 42, 86)
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(Overlord.EYES, self.x - Overlord.EYES:getWidth()/2, 
-                                      self.y - (2.2 + 0.5*self.z)*self.h)
+  -- draw egg being laid
+  if self.egg_ready > 0 then
+    local egg_size = 0.3*Egg.MAX_W*self.egg_ready
 
-    -- draw egg being laid
-    if self.egg_ready > 0 then
-      local egg_size = 0.3*Egg.MAX_W*self.egg_ready
+    love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
+    love.graphics.draw(Egg.IMAGES[self.player][1][2], 
+      self.x, self.y - (2.5 + 0.5*self.z)*self.h, 
+      0, 0.1 + self.egg_ready*0.7, 0.1 + self.egg_ready*0.7, 32, 40)
+  end
 
-      love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
-      love.graphics.draw(Egg.IMAGES[self.player][1][2], 
-        self.x, self.y - (2.5 + 0.5*self.z)*self.h, 
-        0, 0.1 + self.egg_ready*0.7, 0.1 + self.egg_ready*0.7, 32, 40)
-    end
-
-    -- draw radial menu
-    if self.radial_menu > 0 then
-      love.graphics.setColor(255, 255, 255, self.radial_menu*255)
-
-      function drawRadial(x, y, i)
-        local scale, image
-        if i == self.radial_menu_choice then
-          scale, image = 1.3*self.radial_menu, Overlord.IMAGES_RADIAL[i][2]
-        else
-          scale, image = 1*self.radial_menu, Overlord.IMAGES_RADIAL[i][1]
-        end
-        love.graphics.draw(image, self.x + x, self.y + y, 
-                            0, scale, scale, 18, 18)
-      end
-
-      drawRadial(self.radial_menu*64, 0, 1)
-      drawRadial(0, -self.radial_menu*64, 2)
-      drawRadial(-self.radial_menu*64, 0, 3)
-    end
-
+  -- reset colours
 	love.graphics.setColor(255, 255, 255)
 
 
 end
+
+function Overlord:draw_gui()
+  -- draw radial menu
+  if self.radial_menu > 0 then
+    love.graphics.setColor(255, 255, 255, self.radial_menu*255)
+
+    function drawRadial(x, y, i)
+      local scale, image
+      if i == self.radial_menu_choice then
+        scale, image = 1.3*self.radial_menu, Overlord.IMAGES_RADIAL[i][2]
+      else
+        scale, image = 1*self.radial_menu, Overlord.IMAGES_RADIAL[i][1]
+      end
+      love.graphics.draw(image, self.x + x, self.y + y, 
+                          0, scale, scale, 18, 18)
+    end
+
+    drawRadial(self.radial_menu*64, 0, 1)
+    drawRadial(0, -self.radial_menu*64, 2)
+    drawRadial(-self.radial_menu*64, 0, 3)
+
+    -- reset colours
+    love.graphics.setColor(255, 255, 255)
+  end
+end
+
 
 --[[----------------------------------------------------------------------------
 Export
