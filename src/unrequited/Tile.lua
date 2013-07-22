@@ -84,8 +84,6 @@ function Tile:draw()
 			love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 		love.graphics.setColor(255, 255, 255)
 	end
-
-	--love.graphics.print(tostring(self.conversion) .. " / " .. tostring(self.no_mans_land), self.x, self.y) 
 end
 
 function Tile:update(dt, total_energy)
