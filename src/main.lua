@@ -98,22 +98,22 @@ function love.load(arg)
   -- load music/sound
   audio:load_music("loop")
 
-  audio:load_sound("EGG-pick")
-  audio:load_sound("EGG-drop")
-  audio:load_sound("EGG-hatch")
-  audio:load_sound("EGG-destroyed")
+  audio:load_sound("EGG-pick", 0.5, 2)
+  audio:load_sound("EGG-drop", 0.5, 2)
+  audio:load_sound("EGG-hatch", 1, 4)
+  audio:load_sound("EGG-destroyed", 2.3, 3)
 
-  audio:load_sound("KNIGHT-attack1")
-  audio:load_sound("KNIGHT-attack2")
-  audio:load_sound("KNIGHT-attack-hit")
-  audio:load_sound("KNIGHT-destroyed")
+  audio:load_sound("KNIGHT-attack1", 0.2, 4)
+  audio:load_sound("KNIGHT-attack2", 0.3, 4)
+  audio:load_sound("KNIGHT-attack-hit", 0.2, 4)
+  audio:load_sound("KNIGHT-destroyed", 3.8, 4)
 
-  audio:load_sound("FOUNTAIN-destroyed")
+  audio:load_sound("FOUNTAIN-destroyed", 1, 4)
 
-  audio:load_sound("BOMB-dropped")
+  audio:load_sound("BOMB-dropped", 2, 2)
 
   -- start music
-  audio:play_music("loop", 0.1)
+  audio:play_music("loop", 0.06)
 
   -- go to the initial gamestate
   GameState.switch(title)

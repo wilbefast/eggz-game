@@ -20,11 +20,13 @@ function audio:load(filename, type)
   return love.audio.newSource(filepath, type)
 end
 
-function audio:load_sound(filename, n_sources)
+function audio:load_sound(filename, volume, n_sources)
   n_sources = (n_sources or 1)
   self[filename] = {}
   for i = 1, n_sources do 
-    self[filename][i] = self:load(filename, "static")
+    local new_source = self:load(filename, "static") 
+    new_source:setVolume(volume or 1)
+    self[filename][i] = new_source
   end
 end
 
@@ -48,7 +50,7 @@ function audio:play_music(name, volume)
   end
 end
 
-function audio:play_sound(name, pitch_shift, x, y, fixed_pitch)
+function audio:play_sound(name, pitch_shift)
   if not name then return end
   for _, src in ipairs(self[name]) do
     if src:isStopped() then
@@ -56,13 +58,6 @@ function audio:play_sound(name, pitch_shift, x, y, fixed_pitch)
       -- shift the pitch
       if pitch_shift and (pitch_shift ~= 0) then
         src:setPitch(1 + useful.signedRand(pitch_shift))
-      elseif fixed_pitch then
-        src:setPitch(fixed_pitch)
-      end
-      
-      -- use 3D sound
-      if x and y then
-        src:setPosition(x, y, 0)
       end
       
       if not self.mute then
