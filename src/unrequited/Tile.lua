@@ -89,7 +89,8 @@ function Tile:draw()
 end
 
 function Tile:update(dt, total_energy)
-	self.energy = math.min(1, self.energy + dt*Tile.REGROWTH_SPEED/(self.energy*total_energy))
+	self.energy = math.min(1, 
+		self.energy + dt*Tile.REGROWTH_SPEED/(self.energy*total_energy)*(1+2*self.conversion))
 
 	if self.no_mans_land then
 		self.conversion = math.max(0, self.conversion - 0.5*dt)
