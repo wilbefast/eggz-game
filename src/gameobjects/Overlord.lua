@@ -84,22 +84,19 @@ function Overlord:eventCollision(other, dt)
   end
 end
 
-function Overlord:canLand()
+function Overlord:enemyTerritory()
   -- can't land in enemy territory
   if (self.tile.owner ~= 0) and (self.tile.owner ~= self.player) and (self.tile.conversion > 0.5) then
-    return false
-  else
     return true
+  else
+    return false
   end
 end
 
 function Overlord:canUproot()
 
-  if not self:canLand() then
-    return false
-
   -- can't uproot if carrying
-  elseif self.passenger then
+  if self.passenger then
     return false
 
   -- can't uproot if nothing to uproot
@@ -108,6 +105,10 @@ function Overlord:canUproot()
 
   -- stunned plants are locked down
   elseif self.tile.occupant.stunned then
+    return false
+
+  -- can't uproot enemy's plants from their territory
+  elseif (self.tile.occupant.player ~= self.player) and self:enemyTerritory() then
     return false
   
   -- everything else is fine
@@ -128,7 +129,7 @@ function Overlord:canPlant()
   and (tile.occupant.player ~= self.player) then
     return true
 
-  elseif not self:canLand() then
+  elseif self:enemyTerritory() then
     return false
 
   -- can't plant nothing

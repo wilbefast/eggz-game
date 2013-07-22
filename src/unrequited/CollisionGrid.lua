@@ -201,11 +201,11 @@ end
 function CollisionGrid:pixelCollision(x, y, object)
   local tile = self:pixelToTile(x, y)
 
-  if object:isType("Overlord") then
+  --[[if object:isType("Overlord") then
     return ((not tile) or (tile.overlord and (tile.overlord ~= object)))
-  else
+  else--]]
     return (not tile)
-  end
+  --end
 end
 
 --[[----------------------------------------------------------------------------
