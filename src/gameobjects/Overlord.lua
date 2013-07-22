@@ -167,6 +167,9 @@ function Overlord:update(dt)
     self.y = useful.lerp(self.y, self.tile.y + 32, dt*3)
   end
 
+  -- Convert time
+  self.tile:convert(dt, self.player)
+
   -- Directional movement ---------------------------------------------
   if self.z > 0 then
     if (inp.x == 0) or (self.dx*inp.x < 0) then
