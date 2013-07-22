@@ -17,6 +17,7 @@ GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
 DEBUG = false
+CHEATS = true
 MAX_PLAYERS = 4
 
 --[[------------------------------------------------------------
@@ -131,9 +132,14 @@ function love.keypressed(key, uni)
   GameState.keypressed(key, uni)
 
   -- toggle music
-  if key == "m" then
+  if key == "m" then -- music
     audio:toggle_music()
+  elseif key == "f" and CHEATS then -- fast
+    Egg.ENERGY_DRAW_EFFICIENCY = 100
+    Cocoon.MATURATION_SPEED = 100
   end
+
+
 end
 
 function keyreleased(key, uni)

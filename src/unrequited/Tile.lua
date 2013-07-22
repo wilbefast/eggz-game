@@ -80,7 +80,7 @@ function Tile:draw()
 	love.graphics.draw(Tile.IMAGES[subimage], self.x, self.y)
 
 	if self.owner ~= 0 then
-		player.bindTeamColour[self.owner]((self.conversion*0.5)*255)
+		player.bindTeamColour[self.owner]((self.conversion*0.35)*255)
 			love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 		love.graphics.setColor(255, 255, 255)
 	end

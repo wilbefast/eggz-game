@@ -31,6 +31,8 @@ local Cocoon = Class
   MAX_W = 24,
   MAX_H = 24,
 
+  MATURATION_SPEED = 0.1,
+
   ARMOUR = 1,
 
   init = function(self, tile, player, evolvesTo)
@@ -63,7 +65,7 @@ function Cocoon:update(dt)
   Plant.update(self, dt)
 
   if not self.stunned then
-    self.maturity = self.maturity + 0.1*dt
+    self.maturity = self.maturity + self.MATURATION_SPEED*dt
     if self.maturity > 1 then
       self.purge = true
       self.evolvesTo(self.tile, self.player).hitpoints = self.hitpoints
