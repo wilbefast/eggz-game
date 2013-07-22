@@ -70,6 +70,7 @@ end
 
 function Plant:stun(n_seconds)
 	self.stunned = n_seconds
+	self.energy = 0
 end
 
 --[[------------------------------------------------------------
