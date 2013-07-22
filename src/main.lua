@@ -113,7 +113,7 @@ function love.load(arg)
   audio:load_sound("BOMB-dropped")
 
   -- start music
-  --audio:play_music("loop", 0.1)
+  audio:play_music("loop", 0.1)
 
   -- go to the initial gamestate
   GameState.switch(title)
@@ -129,6 +129,11 @@ end
 
 function love.keypressed(key, uni)
   GameState.keypressed(key, uni)
+
+  -- toggle music
+  if key == "m" then
+    audio:toggle_music()
+  end
 end
 
 function keyreleased(key, uni)

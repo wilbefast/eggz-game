@@ -12,7 +12,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 --]]
 
-local audio = {}
+local audio = { }
 
 -- loading
 function audio:load(filename, type)
@@ -70,6 +70,18 @@ function audio:play_sound(name, pitch_shift, x, y, fixed_pitch)
       end
       return
     end
+  end
+end
+
+-- mute
+
+function audio:toggle_music()
+  if not self.music then
+    return
+  elseif self.music:isPaused() then
+    self.music:resume()
+  else
+    self.music:pause()
   end
 end
 
