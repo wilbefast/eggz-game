@@ -55,6 +55,11 @@ Bomb.EXPLODE_ANIM = Animation(Bomb.EXPLODE_IMG , 36, 36, 6)
 Resources
 --]]--
 
+function Bomb:uproot(transport)
+  Plant.uproot(self, transport)
+  audio:play_sound("EGG-pick")
+end
+
 function Bomb:plant(tile)
   if self.transport and tile.occupant then
     self.purge = true
@@ -64,6 +69,7 @@ function Bomb:plant(tile)
     tile.occupant:stun(15)
   else
     Plant.plant(self, tile)
+    audio:play_sound("EGG-drop") --FIXME
   end
 end
 
