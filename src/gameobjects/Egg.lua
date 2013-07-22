@@ -27,7 +27,7 @@ local Egg = Class
   ENERGY_DRAW_SPEED = 0.3, 						-- per second
   ENERGY_CONSUME_SPEED = 0, 					-- per second
   ENERGY_DRAW_EFFICIENCY = 0.7, 				-- percent
-  ENERGY_START = 0, 									--0.3
+  ENERGY_START = 0.1, 									--0.3
   MAX_W = 24,
   MAX_H = 24,
 
@@ -123,10 +123,17 @@ end
 Game loop
 --]]--
 
+function Egg:update(dt)
+	Plant.update(self, dt)
+
+	self.ARMOUR = (self:getEvolution() - 1)
+end
+
 function Egg:draw()
 		if self.transport then
 			return
 		end
+
 		local ev = self:getEvolution()
 		love.graphics.draw(Egg.IMAGES[self.player][ev][1],
 			self.x, 

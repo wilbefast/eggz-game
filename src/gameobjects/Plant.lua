@@ -120,31 +120,38 @@ function Plant:update(dt)
   	end
   end
 
-  -- Planted? ------------------------------------------------------
-  if self.tile and (not self.stunned) then
+  -- Planted ? ------------------------------------------------------
+  if self.tile then
 
-	  -- Draw energy ------------------------------------------------------
-	  local drawn_energy = math.min(self.tile.energy, 
-	  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)
+  	-- On enemy territory
+		if (self.tile.conversion > 0.5) and (self.tile.owner ~= self.player) then
+			self.energy = math.max(0, self.energy - 0.1*dt)
+		else
+			-- Not stunned ?
+			if (not stunned) then
+			  -- Draw energy ------------------------------------------------------
+			  local drawn_energy = math.min(self.tile.energy, 
+			  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)
 
-	  -- Regenerate ------------------------------------------------------
-	  local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
-	  											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)
-	  drawn_energy = drawn_energy - regen
-	  self.tile.energy = self.tile.energy - regen
-	  self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
+			  -- Regenerate ------------------------------------------------------
+			  local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
+			  											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)
+			  drawn_energy = drawn_energy - regen
+			  self.tile.energy = self.tile.energy - regen
+			  self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
 
-	  -- Store energy not consume by regeneration ------------------------
-	  if drawn_energy + self.energy > 1 then
-	  	drawn_energy = 1 - self.energy
+			  -- Store energy not consume by regeneration ------------------------
+			  if drawn_energy + self.energy > 1 then
+			  	drawn_energy = 1 - self.energy
+			  end
+			  self.tile.energy = self.tile.energy - drawn_energy
+			  self.energy = math.min(1, self.energy 
+			  						+ drawn_energy*self.ENERGY_DRAW_EFFICIENCY)
+
+			  -- Consume energy ------------------------------------------------------
+			  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)
+		  end
 	  end
-	  self.tile.energy = self.tile.energy - drawn_energy
-	  self.energy = math.min(1, self.energy 
-	  						+ drawn_energy*self.ENERGY_DRAW_EFFICIENCY)
-
-	  -- Consume energy ------------------------------------------------------
-	  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)
-
   end
 end
 

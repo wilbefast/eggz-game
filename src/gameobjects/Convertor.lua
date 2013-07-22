@@ -77,7 +77,10 @@ function Convertor:update(dt)
 
   Plant.update(self, dt)
 
-  self.view:update(dt)
+  if self.energy >= 0.1 then
+    self.view:update(dt)
+  end
+  
 
   if not self.stunned then
     -- convert surrounding area
@@ -88,11 +91,18 @@ function Convertor:update(dt)
 end
 
 function Convertor:draw()
+
+  if self.energy < 0.1 then
+    love.graphics.setColor(96, 96, 96)
+  end
+
   self.view:draw(self)
 
   if self.stunned then
     love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 0.8, 0.8, 32, 18)
   end
+
+  love.graphics.setColor(255, 255, 255)
 end
 
 --[[------------------------------------------------------------

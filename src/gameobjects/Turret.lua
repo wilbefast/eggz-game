@@ -165,12 +165,19 @@ function Turret:update(dt)
 end
 
 function Turret:draw()
+
+  if self.energy < self.ATTACK_ENERGY_COST then
+    love.graphics.setColor(96, 96, 96)
+  end
+
   love.graphics.draw(Turret.IMAGES[self.player][self.subimage], self.x, self.y,
     0, 1, 1, 32, 40)
 
-    if self.stunned then
-      love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 1, 1, 32, 32)
-    end
+  if self.stunned then
+    love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 1, 1, 32, 32)
+  end
+
+  love.graphics.setColor(255, 255, 255)
 end
 
 --[[------------------------------------------------------------
