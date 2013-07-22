@@ -23,12 +23,14 @@ local bg = love.graphics.newImage("assets/menu/MENU-bg.png")
 local button =
 {
   love.graphics.newImage("assets/menu/MENU-play-" .. LANGUAGE ..  ".png"),
+  love.graphics.newImage("assets/menu/MENU-controls-" .. LANGUAGE ..  ".png"),
   love.graphics.newImage("assets/menu/MENU-credits-" .. LANGUAGE ..  ".png"),
   love.graphics.newImage("assets/menu/MENU-leave-" .. LANGUAGE ..  ".png")
 }
 local PLAY = 1
-local CREDITS = 2
-local LEAVE = 3
+local CONTROLS = 2
+local CREDITS = 3
+local LEAVE = 4
 local current_button = PLAY
 
 local before = function(i)
@@ -79,6 +81,7 @@ function state:keypressed(key, uni)
   elseif key=="return" then
     if current_button == PLAY then GameState.switch(game)
     elseif current_button == CREDITS then GameState.switch(credits)
+      elseif current_button == CONTROLS then GameState.switch(controls)
     elseif current_button == LEAVE then love.event.push("quit")
     end
 

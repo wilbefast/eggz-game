@@ -54,6 +54,8 @@ Overlord = require("gameobjects/Overlord")
 
 title = require("gamestates/title")
 game = require("gamestates/game")
+credits = require("gamestates/credits")
+controls = require("gamestates/controls")
 
 
 
@@ -134,7 +136,7 @@ function love.keypressed(key, uni)
   GameState.keypressed(key, uni)
 
   -- toggle music
-  if key == "m" then -- music
+  if key == "backspace" then -- music
     audio:toggle_music()
   elseif key == "f" and CHEATS then -- fast
     Egg.ENERGY_DRAW_EFFICIENCY = 100
