@@ -27,6 +27,11 @@ local CollisionGrid = Class
     -- grab the size of the tiles
     self.tilew, self.tileh = tilew, tileh
 
+    -- takes
+    self.total_conversion = { }
+    for i = 1, MAX_PLAYERS do 
+      self.total_conversion[i] = 0
+    end
     self.total_energy = 1
   
     -- grab the size of the map
@@ -100,11 +105,19 @@ Game loop
 function CollisionGrid:update(dt) 
 
   local new_total_energy = 0
+  for i = 1, MAX_PLAYERS do 
+    self.total_conversion[i] = 0
+  end
 
   for x = 1, self.w do
     for y = 1, self.h do
-      self.tiles[x][y]:update(dt, self.total_energy)
-      new_total_energy = new_total_energy + self.tiles[x][y].energy
+      local t = self.tiles[x][y]
+      t:update(dt, self.total_energy)
+      new_total_energy = new_total_energy + t.energy
+
+      if t.conversion > 0.5 then
+        self.total_conversion[t.owner] = self.total_conversion[t.owner] + 1
+      end
     end
   end
 
