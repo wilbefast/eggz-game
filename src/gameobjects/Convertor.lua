@@ -77,15 +77,12 @@ function Convertor:update(dt)
 
   Plant.update(self, dt)
 
-  if self.energy >= 0.1 then
+  if (self.energy >= 0.1) and (not stunned) then
     self.view:update(dt)
-  end
-  
 
-  if not self.stunned then
     -- convert surrounding area
     for _, tile in pairs(self.convertArea) do
-      tile:convert(0.3*dt, self.player)
+      tile:convert(3*dt*(1/#self.convertArea), self.player)
     end
   end
 end
