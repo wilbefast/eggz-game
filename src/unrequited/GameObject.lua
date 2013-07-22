@@ -189,21 +189,25 @@ function GameObject:isColliding(other)
   if self == other then
     return false
   end
+
+  local result = true
+  self.x, self.y, other.x, other.y = self.x - self.w/2, self.y - self.h/2, other.x - other.w/2, other.y - other.h/2
+
   -- horizontally seperate ? 
   local v1x = (other.x + other.w) - self.x
   local v2x = (self.x + self.w) - other.x
   if useful.sign(v1x) ~= useful.sign(v2x) then
-    return false
+    result = false
   end
   -- vertically seperate ?
   local v1y = (self.y + self.h) - other.y
   local v2y = (other.y + other.h) - self.y
   if useful.sign(v1y) ~= useful.sign(v2y) then
-    return false
+    result = false
   end
   
-  -- in every other case there is a collision
-  return true
+  self.x, self.y, other.x, other.y = self.x + self.w/2, self.y + self.h/2, other.x + other.w/2, other.y + other.h/2
+  return result
 end
 
 

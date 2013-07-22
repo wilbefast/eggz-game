@@ -161,13 +161,17 @@ function Overlord:update(dt)
   local inp = input[self.player]
 
   -- Snap to position -------------------------------------------------
+  if self.tile then self.tile.overlord = nil end
   self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
   if (inp.x == 0 and inp.y == 0) then
     self.x = useful.lerp(self.x, self.tile.x + 32, dt*3)
     self.y = useful.lerp(self.y, self.tile.y + 32, dt*3)
   end
 
-  -- Convert time
+  -- current tile is inacessible to the other player
+  self.tile.overlord = self
+
+  -- Convert tile
   self.tile:convert(dt, self.player)
 
   -- Directional movement ---------------------------------------------
@@ -316,7 +320,6 @@ function Overlord:draw()
 
   -- reset colours
 	love.graphics.setColor(255, 255, 255)
-
 
 end
 

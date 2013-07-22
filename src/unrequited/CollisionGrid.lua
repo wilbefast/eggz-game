@@ -198,25 +198,30 @@ function CollisionGrid:gridCollision(x, y, type)
   return (self:gridToTile(x, y).type == type)
 end
 
-function CollisionGrid:pixelCollision(x, y)
+function CollisionGrid:pixelCollision(x, y, object)
   local tile = self:pixelToTile(x, y)
-  return (not tile)
+
+  if object:isType("Overlord") then
+    return ((not tile) or (tile.overlord and (tile.overlord ~= object)))
+  else
+    return (not tile)
+  end
 end
 
 --[[----------------------------------------------------------------------------
 GameObject collision tests
 --]]--
 
-function CollisionGrid:collision(go, x, y, type)
+function CollisionGrid:collision(go, x, y)
   -- x & y are optional: leave them out to test the object where it actually is
   x = (x or go.x)
   y = (y or go.y)
   
   -- rectangle collision mask, origin is at the top-left
-  return (self:pixelCollision(x,         y,        type) 
-      or  self:pixelCollision(x + go.w,  y,         type) 
-      or  self:pixelCollision(x,         y + go.h,  type)
-      or  self:pixelCollision(x + go.w,  y + go.h, type))
+  return (self:pixelCollision(x - go.w/2,         y - go.h/2,         go) 
+      or  self:pixelCollision(x + go.w/2,         y,                  go) 
+      or  self:pixelCollision(x,                  y + go.h/2,         go)
+      or  self:pixelCollision(x + go.w/2,         y + go.h/2,         go))
 end
 
 function CollisionGrid:collision_next(go, dt)
