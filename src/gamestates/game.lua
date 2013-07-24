@@ -18,7 +18,13 @@ GAME GAMESTATE
 
 local state = GameState.new() 
 
-function state:init()
+function state:init()  
+end
+
+function state:enter()
+
+  GameObject.INSTANCES = { }
+  GameObject.NEW_INSTANCES = { }
 
   self.player = {}
   self.player[1] = Overlord(64*11 - 32,  64*6 - 32, 1)
@@ -31,13 +37,6 @@ function state:init()
   -- point camera at centre of collision-grid
   self.camera = Camera(0, 0)
   self.camera:lookAt(self.grid:centrePixel())
-  --self.camera:zoom(scaling.SCALE_MAX)
-
-  
-end
-
-function state:enter()
-  
 end
 
 
