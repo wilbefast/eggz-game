@@ -156,8 +156,6 @@ MAX_DT = 1/30
 function love.update(dt)
   dt = math.max(MIN_DT, math.min(MAX_DT, dt))
 	
-	print(love.joystick.getAxis(1, 1))
-	
   input:update(dt)
   GameState.update(dt)
 end
