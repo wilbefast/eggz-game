@@ -122,10 +122,11 @@ function state:draw()
   love.graphics.draw(bg, bgx, bgy)
 
   -- buttons
-  love.graphics.draw(button[current_button], (w - bw)/2, h*0.7 - bh/2)
+	local by = bgy + bgh*0.725
+  love.graphics.draw(button[current_button], (w - bw)/2, by - bh/2)
   love.graphics.setColor(255, 255, 255, 64)
-    love.graphics.draw(button[before(current_button)], bgx-bw*0.7, h*0.7 - bh/2)
-    love.graphics.draw(button[after(current_button)], bgx+bgw-bw*0.3, h*0.7 - bh/2)
+    love.graphics.draw(button[before(current_button)], bgx-bw*0.7, by - bh/2)
+    love.graphics.draw(button[after(current_button)], bgx+bgw-bw*0.3, by - bh/2)
   love.graphics.setColor(0, 0, 0, 255)
     love.graphics.rectangle("fill", 0, 0, bgx, h)
     love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
