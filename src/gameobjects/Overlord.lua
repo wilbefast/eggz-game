@@ -28,6 +28,8 @@ local Overlord = Class
 
   MAX_DX = 400,
   MAX_DY = 400,
+	
+	CONVERT_SPEED = 1,
 
   SPAWN = { Bomb, Turret, Convertor}, -- FIXME
 
@@ -35,7 +37,7 @@ local Overlord = Class
     GameObject.init(self, x, y, 32, 32)
 
     self.player = player
-    self.egg_ready = 1--0
+    self.egg_ready = 0.7
     self.z = 1
     self.radial_menu = 0
     self.radial_menu_x = 0
@@ -173,7 +175,9 @@ function Overlord:update(dt)
   self.tile.overlord = self
 
   -- Convert tile
-  self.tile:convert(dt, self.player)
+	if (self.tile.owner == 0) or (self.tile.owner == self.player) then
+		self.tile:convert(self.CONVERT_SPEED * dt, self.player)
+	end
 
   -- Directional movement ---------------------------------------------
   if self.z > 0 then
