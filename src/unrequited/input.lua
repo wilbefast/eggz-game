@@ -18,8 +18,12 @@ for i = 1, MAX_PLAYERS do
 end
 
 if USE_GAMEPADS then
-	input[1].keylay = function () return love.joystick.isDown(1, 1) end
-	input[2].keylay = function ()return love.joystick.isDown(2, 1) end
+	for i = 1, MAX_PLAYERS do
+		input[i].keylay = function () return love.joystick.isDown(i, 1) end
+		input[i].keyEast = function () return love.joystick.isDown(i, 1) end
+		input[i].keyNorth = function () return love.joystick.isDown(i, 1) end
+		input[i].keyWest = function () return love.joystick.isDown(i, 1) end
+	end
 else
 	input[1].keyleft = function () return love.keyboard.isDown("left") end
 	input[1].keyright = function () return love.keyboard.isDown("right") end

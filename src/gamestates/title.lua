@@ -67,24 +67,34 @@ end
 function state:leave()
 end
 
+function cancel()
+	if current_button ~= LEAVE then 
+		current_button = LEAVE
+	else
+		love.event.push("quit")
+	end
+end
+
+function accept()
+	if current_button == PLAY then 
+		GameState.switch(game)
+	elseif current_button == CREDITS then 
+		GameState.switch(credits)
+	elseif current_button == CONTROLS then 
+		GameState.switch(controls)
+	elseif current_button == LEAVE then 
+		love.event.push("quit")
+	end
+end
 
 function state:keypressed(key, uni)
   
   -- quit game
   if key=="escape" then
-    if current_button ~= LEAVE then 
-      current_button = LEAVE
-    else
-      love.event.push("quit")
-    end
+		cancel()
     
   elseif key=="return" then
-    if current_button == PLAY then GameState.switch(game)
-    elseif current_button == CREDITS then GameState.switch(credits)
-      elseif current_button == CONTROLS then GameState.switch(controls)
-    elseif current_button == LEAVE then love.event.push("quit")
-    end
-
+		accept()
 
   elseif key=="left" then
     current_button = before(current_button)
@@ -96,6 +106,13 @@ function state:keypressed(key, uni)
 end
 
 function state:update(dt)
+	if USE_GAMEPADS then
+		if input[1].keylay() then
+			accept()
+		elseif input[1].keyEast() then
+			cancel()
+		end
+	end
 end
 
 
