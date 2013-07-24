@@ -160,7 +160,6 @@ function Overlord:update(dt)
   
   GameObject.update(self, dt)
   
-    --local dx, dy = love.joystick.getAxes(1)
   local inp = input[self.player]
 
   -- Snap to position -------------------------------------------------

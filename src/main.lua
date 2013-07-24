@@ -16,11 +16,12 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false
-CHEATS = true
+DEBUG = true
+CHEATS = DEBUG
 MAX_PLAYERS = 4
 
 LANGUAGE = "FR"
+USE_GAMEPADS = true
 
 --[[------------------------------------------------------------
 IMPORTS
@@ -78,7 +79,7 @@ function love.load(arg)
     return (a.width*a.height > b.width*b.height) end)
   for i, m in ipairs(modes) do
     -- try to set the resolution
-    if love.graphics.setMode(m.width, m.height, true) then
+    if love.graphics.setMode(m.width, m.height, (not DEBUG)) then
       success = true
       break
     end
@@ -154,6 +155,9 @@ MIN_DT = 1/60
 MAX_DT = 1/30
 function love.update(dt)
   dt = math.max(MIN_DT, math.min(MAX_DT, dt))
+	
+	print(love.joystick.getAxis(1, 1))
+	
   input:update(dt)
   GameState.update(dt)
 end
