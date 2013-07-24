@@ -21,7 +21,7 @@ CHEATS = DEBUG
 MAX_PLAYERS = 4
 
 LANGUAGE = "FR"
-USE_GAMEPADS = true
+USE_GAMEPADS = (love.joystick.getNumJoysticks() >= 2)
 
 --[[------------------------------------------------------------
 IMPORTS
@@ -59,7 +59,6 @@ credits = require("gamestates/credits")
 controls = require("gamestates/controls")
 
 
-
 --[[------------------------------------------------------------
 SINGLETON SETTINGS
 --]]------------------------------------------------------------
@@ -94,7 +93,12 @@ function love.load(arg)
 
     -- no mouse
   love.mouse.setVisible(false)
+
+  -- font
+  local font = love.graphics.newImageFont("assets/GUI/GUI-digits.png", "0123456789%") 
+  love.graphics.setFont(font)
   
+
   -- window title
   love.graphics.setCaption("Eggz")
   
