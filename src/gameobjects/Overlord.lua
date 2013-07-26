@@ -66,13 +66,17 @@ Overlord.IMAGES_RADIAL =
   }
 }
 
-Overlord.IMAGES =
-{
-  love.graphics.newImage("assets/ALIEN-BODY-idle.png")
-}
+Overlord.IDLE = love.graphics.newImage("assets/ALIEN-BODY-idle.png")
+
+Overlord.LEFT = love.graphics.newImage("assets/ALIEN-BODY-left.png")
+Overlord.RIGHT = love.graphics.newImage("assets/ALIEN-BODY-right.png")
+Overlord.UP = love.graphics.newImage("assets/ALIEN-BODY-up.png")
+Overlord.DOWN = love.graphics.newImage("assets/ALIEN-BODY-down.png")
+
+Overlord.CARRY_FRONT = love.graphics.newImage("assets/ALIEN-BODY-carry-front.png")
+Overlord.CARRY_BACK = love.graphics.newImage("assets/ALIEN-BODY-carry-back.png")
 
 Overlord.EYES = love.graphics.newImage("assets/ALIEN-EYES.png")
-
 Overlord.SHADOW = love.graphics.newImage("assets/ALIEN-SHADOW.png")
 
 --[[------------------------------------------------------------
@@ -161,6 +165,9 @@ function Overlord:update(dt)
   GameObject.update(self, dt)
   
   local inp = input[self.player]
+
+  -- Desired move, for animation
+  self.desired_dx, self.desired_dy = inp.x, inp.y
 
   -- Snap to position -------------------------------------------------
   if self.tile then self.tile.overlord = nil end
@@ -306,11 +313,28 @@ function Overlord:draw()
   love.graphics.setLineWidth(1)
 
   -- draw body
-  love.graphics.draw(Overlord.IMAGES[1], self.x, self.y - self.h/2*self.z, 
+  local x,y = self.desired_dx, self.desired_dy
+  local image
+  if x < 0 then
+    image = Overlord.LEFT
+  elseif x > 0 then
+    image = Overlord.RIGHT
+  elseif y > 0 then
+    image = Overlord.DOWN
+  elseif y < 0 then
+    image = Overlord.UP
+  else
+    image = Overlord.IDLE
+  end
+
+  love.graphics.draw(image, self.x, self.y - self.h/2*self.z, 
                              0, 1, 1, 42, 86)
+  -- draw eyes
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(Overlord.EYES, self.x - Overlord.EYES:getWidth()/2, 
-                                    self.y - (2.2 + 0.5*self.z)*self.h)
+  if (y >= 0) then
+    love.graphics.draw(Overlord.EYES, self.x - Overlord.EYES:getWidth()/2 + 3 + x*8, 
+                                      self.y - (2.2 + 0.5*self.z)*self.h)
+  end
 
   -- draw egg being laid
   if self.egg_ready > 0 then
