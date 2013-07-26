@@ -73,6 +73,8 @@ function state:draw()
       p:draw_gui()
     end
 
+    --love.graphics.print("100%", 32, 32)
+
 
 	self.camera:detach()
 

@@ -129,7 +129,7 @@ function Plant:update(dt)
 			self.energy = math.max(0, self.energy - 0.1*dt)
 		else
 			-- Not stunned ?
-			if (not stunned) then
+			if (not self.stunned) then
 			  -- Draw energy ------------------------------------------------------
 			  local drawn_energy = math.min(self.tile.energy, 
 			  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)

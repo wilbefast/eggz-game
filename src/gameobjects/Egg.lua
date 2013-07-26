@@ -143,7 +143,7 @@ function Egg:draw()
 
 	  if self.stunned then
 	  	local size = 0.8 + (ev-1)*0.2
-    	love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, size, -size, 32, 20)
+    	love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, size, -size, 32, 30 - (ev-1)*5)
     end
 end
 
