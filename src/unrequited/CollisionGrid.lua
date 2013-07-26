@@ -112,32 +112,36 @@ function CollisionGrid:update(dt)
     for y = 1, self.h do
       local t = self.tiles[x][y]
 
+      function allied(t1, t2)
+        return ((t1.owner == t2.owner) and (t1.conversion > 0.1) and (t2.conversion > 0.1))
+      end
+
       -- check tile neighbours for territory contour drawing
       if x > 1 then
-        t.leftContiguous = (self.tiles[x-1][y].owner == t.owner)
+        t.leftContiguous = allied(self.tiles[x-1][y], t)
         if y > 1 then
-          t.nwContiguous = (self.tiles[x-1][y-1].owner == t.owner)
+          t.nwContiguous = allied(self.tiles[x-1][y-1], t)
         end
         if y < self.h then
-          t.swContiguous = (self.tiles[x-1][y+1].owner == t.owner)
+          t.swContiguous = allied(self.tiles[x-1][y+1], t)
         end
       end
 
       if x < self.w then
-        t.rightContiguous = (self.tiles[x+1][y].owner == t.owner)
+        t.rightContiguous = allied(self.tiles[x+1][y], t)
         if y > 1 then
-          t.neContiguous = (self.tiles[x+1][y-1].owner == t.owner)
+          t.neContiguous = allied(self.tiles[x+1][y-1], t)
         end
         if y < self.h then
-          t.seContiguous = (self.tiles[x+1][y+1].owner == t.owner)
+          t.seContiguous = allied(self.tiles[x+1][y+1], t)
         end
       end
 
       if y > 1 then
-        t.aboveContiguous = (self.tiles[x][y-1].owner == t.owner)
+        t.aboveContiguous = allied(self.tiles[x][y-1], t)
       end
       if y < self.h then
-        t.belowContiguous = (self.tiles[x][y+1].owner == t.owner)
+        t.belowContiguous = allied(self.tiles[x][y+1], t)
       end
 
       -- update the tile

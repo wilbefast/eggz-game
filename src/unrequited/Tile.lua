@@ -55,20 +55,25 @@ end
 Conversion
 --]]
 
-function Tile:convert(amount, player)
+function Tile:convert(amount, converter)
 
 	self.no_mans_land = false
 
-	if self.owner ~= player then
+	-- convert enemy
+	if self.owner ~= converter then
+		amount = amount*(1 + self.conversion)
 		if self.conversion < amount then
 			self.conversion = (amount - self.conversion)
-			self.owner = player
+			self.owner = converter
 		else 
 			self.conversion = math.min(1, self.conversion - amount)
 		end
+
+	-- reinforce ally
 	else
-		self.conversion = math.min(1, self.conversion + amount)
+		self.conversion = math.min(1, self.conversion + amount*(1 - self.conversion))
 	end
+
 end
 
 --[[------------------------------------------------------------
@@ -83,7 +88,7 @@ function Tile:draw()
 end
 
 function Tile:drawContours()
-	if self.owner ~= 0 then
+	if (self.owner ~= 0) and (self.conversion > 0.1) then
 		love.graphics.setLineWidth(LINE_WIDTH)
 		player.bindTeamColour[self.owner]((self.conversion*0.2)*255)
 			love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
