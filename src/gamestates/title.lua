@@ -123,14 +123,13 @@ function state:draw()
   local tx, ty = (w - TITLE_IMG:getWidth())/2, h/3 - TITLE_IMG:getHeight()/2
   love.graphics.draw(TITLE_IMG, tx, ty)
 
-
   -- buttons
-	local bw, bh = 400, button[current_button]:getHeight()
-  local bx, by = (w - bw)/2, bgy + bgh*0.725 - bh/2
-  love.graphics.draw(button[current_button], bx, by)
+	local bw, bh = button[current_button]:getWidth(), button[current_button]:getHeight()
+  local bx, by = w/2, bgy + bgh*0.725
+  love.graphics.draw(button[current_button], bx, by, 0, 1, 1, bw/2, bh/2)
   love.graphics.setColor(255, 255, 255, 64)
-    love.graphics.draw(button[before(current_button)], bx - bw, by)
-    love.graphics.draw(button[after(current_button)], bx + bw, by)
+    love.graphics.draw(button[before(current_button)], bx - bw, by, 0, 1, 1, bw/2, bh/2)
+    love.graphics.draw(button[after(current_button)], bx + bw, by, 0, 1, 1, bw/2, bh/2)
   love.graphics.setColor(love.graphics.getBackgroundColor())
     love.graphics.rectangle("fill", 0, 0, bgx, h)
     love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
