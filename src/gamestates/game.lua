@@ -52,7 +52,7 @@ end
 function state:keypressed(key, uni)
   
   -- quit game
-  if (key=="escape") or (self.winner) then
+  if (key=="escape") then
     GameState.switch(title)
   end
 

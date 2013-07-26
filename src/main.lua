@@ -150,6 +150,7 @@ function love.keypressed(key, uni)
   elseif key == "f" and CHEATS then -- fast
     Egg.ENERGY_DRAW_EFFICIENCY = 100
     Cocoon.MATURATION_SPEED = 100
+    Overlord.EGG_PRODUCTION_SPEED = 100
   end
 
 

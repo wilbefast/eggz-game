@@ -30,6 +30,7 @@ local Overlord = Class
   MAX_DY = 400,
 	
 	CONVERT_SPEED = 1,
+  EGG_PRODUCTION_SPEED = 0.2,
 
   SPAWN = { Bomb, Turret, Convertor}, -- FIXME
 
@@ -271,7 +272,7 @@ function Overlord:update(dt)
   end
 
   -- Egg production ------------------------------------------------------
-  self.egg_ready = math.min(1, self.egg_ready + dt*0.2)
+  self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
 
   -- Land on the ground --------------------------------------------------
   if inp.lay then
