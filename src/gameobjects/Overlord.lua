@@ -34,7 +34,7 @@ local Overlord = Class
   BLINK_PERIOD_VAR = 5,
   BLINK_LENGTH = 0.1,
 	
-	CONVERT_SPEED = 1,
+	CONVERT_SPEED = 0,--1,
   EGG_PRODUCTION_SPEED = 0.2,
 
   init = function(self, x, y, player)
@@ -282,9 +282,7 @@ function Overlord:update(dt)
     if (self.z == 0) 
     and self.tile.occupant 
     and (self.tile.occupant.player == self.player)
-    and self.tile.occupant.EVOLUTION
-    and (not self.tile.occupant.stunned)
-    and (self.tile.occupant.energy == 1) then
+    and (self.tile.occupant:canEvolve()) then
       -- Open radial menu
       self.evolvee = self.tile.occupant
       self.radial_menu = math.min(1, self.radial_menu + dt*6)

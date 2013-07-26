@@ -48,7 +48,7 @@ local Convertor = Class
     self.view = AnimationView(Convertor.ANIMS[self.player], 7, 0, 32, 32)
 
     -- set guard area
-    self.convertArea = GameObject.COLLISIONGRID:getNeighbours4(tile, true) -- center
+    self.convertArea = GameObject.COLLISIONGRID:getNeighbours4(tile) -- center
   end,
 }
 Convertor:include(Plant)
@@ -87,6 +87,9 @@ function Convertor:update(dt)
     for _, tile in pairs(self.convertArea) do
       tile:convert(3*dt*(1/#self.convertArea), self.player)
     end
+
+    -- convert center tile faster
+    self.tile:convert(3*dt, self.player)
   end
 end
 

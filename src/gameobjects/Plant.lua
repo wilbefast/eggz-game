@@ -61,7 +61,13 @@ Plant.EVOLUTION_ICONS =
   nil,
 }
 
+--[[------------------------------------------------------------
+Evolve
+--]]--
 
+function Plant:canEvolve()
+	return (self.EVOLUTION and (not self.stunned)) -- override me!
+end
 
 --[[------------------------------------------------------------
 Take damage

@@ -133,6 +133,14 @@ Egg.IMAGES =
 }
 
 --[[------------------------------------------------------------
+Evolve
+--]]--
+
+function Egg:canEvolve()
+	return (Plant.canEvolve(self) and self.energy == 1)
+end
+
+--[[------------------------------------------------------------
 Take damage
 --]]--
 
