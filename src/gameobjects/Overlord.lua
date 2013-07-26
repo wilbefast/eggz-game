@@ -298,7 +298,7 @@ function Overlord:update(dt)
         self.tile.occupant.purge = true
         local cocoon = Cocoon(self.tile, self.player, self.tile.occupant.EVOLUTION[self.radial_menu_choice])
         cocoon.hitpoints = self.tile.occupant.hitpoints
-        cocoon.child_energy = 1
+        cocoon.child_energy = 1--self.tile.occupant.child_energy
         self.radial_menu_x, self.radial_menu_y = 0, 0
     end
 

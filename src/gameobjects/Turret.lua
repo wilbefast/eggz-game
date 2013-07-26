@@ -96,6 +96,13 @@ function Turret:die()
   audio:play_sound("KNIGHT-destroyed")
 end
 
+function Turret:takeDamage(amount, attacker)
+  Plant.takeDamage(self, amount, attacker)
+  if not self.aggro then
+    self.aggro = attacker
+  end
+end
+
 --[[------------------------------------------------------------
 State machine
 --]]--
@@ -121,8 +128,8 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
     self.state = Turret.IDLE
   elseif self.timer > self.ATTACK_WARMUP_DURATION then
     audio:play_sound("KNIGHT-attack2", 0.3)
-    local who = useful.randIn(self.enemies)
-    who:takeDamage(self.ATTACK_DAMAGE)
+    local who = (self.aggro or useful.randIn(self.enemies))
+    who:takeDamage(self.ATTACK_DAMAGE, self)
     self.state = Turret.ATTACK
     self.subimage = 1
     self.timer = 0
@@ -152,6 +159,12 @@ function Turret:update(dt)
   Plant.update(self, dt)
 
   if not self.stunned then
+
+    -- if 'aggro' still alive?
+    if self.aggro and self.aggro.purge then
+      self.aggro = nil
+    end
+
     -- check for enemies
     self.enemies = {}
     for _, t in pairs(self.guardArea) do
