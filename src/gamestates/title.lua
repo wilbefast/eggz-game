@@ -125,11 +125,12 @@ function state:draw()
 
 
   -- buttons
-	local bw, bh, by = button[current_button]:getWidth(), button[current_button]:getHeight(),bgy + bgh*0.725
-  love.graphics.draw(button[current_button], (w - bw)/2, by - bh/2)
+	local bw, bh = 400, button[current_button]:getHeight()
+  local bx, by = (w - bw)/2, bgy + bgh*0.725 - bh/2
+  love.graphics.draw(button[current_button], bx, by)
   love.graphics.setColor(255, 255, 255, 64)
-    love.graphics.draw(button[before(current_button)], bgx-bw*0.7, by - bh/2)
-    love.graphics.draw(button[after(current_button)], bgx+bgw-bw*0.3, by - bh/2)
+    love.graphics.draw(button[before(current_button)], bx - bw, by)
+    love.graphics.draw(button[after(current_button)], bx + bw, by)
   love.graphics.setColor(love.graphics.getBackgroundColor())
     love.graphics.rectangle("fill", 0, 0, bgx, h)
     love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
