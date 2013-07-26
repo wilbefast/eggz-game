@@ -34,7 +34,7 @@ local Overlord = Class
   BLINK_PERIOD_VAR = 5,
   BLINK_LENGTH = 0.1,
 	
-	CONVERT_SPEED = 1,
+	CONVERT_SPEED = 0, --1,
   EGG_PRODUCTION_SPEED = 0.2,
 
   init = function(self, x, y, player)
@@ -318,7 +318,9 @@ function Overlord:draw()
   -- draw selected tile
   if not game.winner then
     love.graphics.setLineWidth(3)
-      love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
+      --love.graphics.line(self.tile.x + 16, self.tile.y + 16, self.tile.x + 48, self.tile.y + 48)
+      --love.graphics.line(self.tile.x + 48, self.tile.y + 16, self.tile.x + 16, self.tile.y + 48)
+      --love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
     love.graphics.setLineWidth(1)
   end
 

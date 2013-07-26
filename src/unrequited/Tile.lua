@@ -75,13 +75,65 @@ end
 Game loop
 --]]
 
+local LINE_WIDTH = 3
+
 function Tile:draw()
 	local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
 	love.graphics.draw(Tile.IMAGES[subimage], self.x, self.y)
+end
 
+function Tile:drawContours()
 	if self.owner ~= 0 then
-		player.bindTeamColour[self.owner]((self.conversion*0.35)*255)
+		love.graphics.setLineWidth(LINE_WIDTH)
+		player.bindTeamColour[self.owner]((self.conversion*0.2)*255)
 			love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+		player.bindTeamColour[self.owner]()	
+
+			-- calculate offsets
+			local left, right = self.x, self.x+self.w
+			local top, bottom = self.y, self.y+self.h
+	    if not self.leftContiguous then
+	    	left = left + LINE_WIDTH
+	    end
+	    if not self.rightContiguous  then
+	    	right = right - LINE_WIDTH
+	    end
+	    if not self.aboveContiguous  then
+	    	top = top + LINE_WIDTH
+	    end
+	    if not self.belowContiguous  then
+	    	bottom = bottom - LINE_WIDTH
+	    end
+
+	   	-- draw boundaries
+	    if not self.leftContiguous then
+	    	love.graphics.line(left, top, left, bottom)
+	    end
+	    if not self.rightContiguous  then
+	    	love.graphics.line(right, top, right, bottom)
+	    end
+	    if not self.aboveContiguous  then
+	    	love.graphics.line(left, top, right, top)
+	    end
+	    if not self.belowContiguous  then
+	    	love.graphics.line(left, bottom, right, bottom)
+	    end
+
+	    -- draw boundary corners
+			if self.leftContiguous and self.aboveContiguous and (not self.nwContiguous) then -- NW
+				love.graphics.line(self.x - LINE_WIDTH, self.y + LINE_WIDTH, self.x + LINE_WIDTH, self.y - LINE_WIDTH)
+			end
+			if self.leftContiguous and self.belowContiguous and (not self.swContiguous) then -- SW
+				love.graphics.line(self.x - LINE_WIDTH, self.y + self.h - LINE_WIDTH, self.x + LINE_WIDTH, self.y + self.h + LINE_WIDTH)
+			end
+			if self.rightContiguous and self.aboveContiguous and (not self.neContiguous) then -- NE
+				love.graphics.line(self.x + self.w - LINE_WIDTH, self.y - LINE_WIDTH, self.x + self.w + LINE_WIDTH, self.y + LINE_WIDTH)
+			end
+			if self.rightContiguous and self.belowContiguous and (not self.seContiguous) then -- SE
+				love.graphics.line(self.x + self.w - LINE_WIDTH, self.y + self.h + LINE_WIDTH, self.x + self.w + LINE_WIDTH, self.y + self.h - LINE_WIDTH)
+			end
+
+		love.graphics.setLineWidth(1)
 		love.graphics.setColor(255, 255, 255)
 	end
 end

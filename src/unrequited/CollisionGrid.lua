@@ -102,17 +102,51 @@ function CollisionGrid:update(dt)
   -- previous total energy defines growth this turn
   local new_total_energy = 0
 
-  -- reset total conversion
+  -- reset total conversion counter
   for i = 1, MAX_PLAYERS do 
     player.total_conversion[i] = 0
   end
 
+  -- update tiles
   for x = 1, self.w do
     for y = 1, self.h do
       local t = self.tiles[x][y]
+
+      -- check tile neighbours for territory contour drawing
+      if x > 1 then
+        t.leftContiguous = (self.tiles[x-1][y].owner == t.owner)
+        if y > 1 then
+          t.nwContiguous = (self.tiles[x-1][y-1].owner == t.owner)
+        end
+        if y < self.h then
+          t.swContiguous = (self.tiles[x-1][y+1].owner == t.owner)
+        end
+      end
+
+      if x < self.w then
+        t.rightContiguous = (self.tiles[x+1][y].owner == t.owner)
+        if y > 1 then
+          t.neContiguous = (self.tiles[x+1][y-1].owner == t.owner)
+        end
+        if y < self.h then
+          t.seContiguous = (self.tiles[x+1][y+1].owner == t.owner)
+        end
+      end
+
+      if y > 1 then
+        t.aboveContiguous = (self.tiles[x][y-1].owner == t.owner)
+      end
+      if y < self.h then
+        t.belowContiguous = (self.tiles[x][y+1].owner == t.owner)
+      end
+
+      -- update the tile
       t:update(dt, self.total_energy)
+
+      -- add energy to total (to determine growth next turn)
       new_total_energy = new_total_energy + t.energy
 
+      -- award the "point" to the owner if control is over 0.5
       if t.conversion > 0.5 then
         player.total_conversion[t.owner] = player.total_conversion[t.owner] + 1
       end
@@ -145,13 +179,21 @@ function CollisionGrid:draw(view)
     end_x, end_y = self.w, self.h
   end
 
+
+  -- draw tile backgrond images
   for x = start_x, end_x do
     for y = start_y, end_y do
       self.tiles[x][y]:draw()
     end
   end
 
-    --TODO use sprite batches
+  -- draw team-colour contours
+  for x = start_x, end_x do
+    for y = start_y, end_y do
+      self.tiles[x][y]:drawContours()
+    end
+  end
+
 end
 
 --[[----------------------------------------------------------------------------
