@@ -14,28 +14,13 @@ Lesser General Public License for more details.
 
 
 --[[------------------------------------------------------------
-TITLE GAMESTATE
+CONTROLS GAMESTATE
 --]]------------------------------------------------------------
 
-
-
-local bg = love.graphics.newImage("assets/menu/Controls-" .. LANGUAGE .. ".png")
-
+local CONTROLS_IMG = love.graphics.newImage("assets/menu/Controls-" .. 
+	useful.tri(USE_GAMEPADS, "Gamepad-", "") .. LANGUAGE .. ".png")
 
 local state = GameState.new()
-
-function state:init()
-  w, h = love.graphics.getWidth(), love.graphics.getHeight()
-  bgw, bgh = bg:getWidth(), bg:getHeight()
-end
-
-function state:enter()
-end
-
-
-function state:leave()
-end
-
 
 function state:keypressed(key, uni)
   -- return to title
@@ -50,8 +35,13 @@ end
 
 function state:draw()
   -- background
-  local bgx, bgy = (w - bgw)/2, (h - bgh)/2
-  love.graphics.draw(bg, bgx, bgy)
+  local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+  local bgx, bgy = (w - MENU_BG:getWidth())/2, (h - MENU_BG:getHeight())/2
+  love.graphics.draw(MENU_BG, bgx, bgy)
+
+  -- controls elements
+  local x, y = (w - CONTROLS_IMG:getWidth())/2, (h - CONTROLS_IMG:getHeight())/2
+  love.graphics.draw(CONTROLS_IMG, x, y)
 end
 
 

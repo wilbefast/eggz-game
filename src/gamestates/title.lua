@@ -17,9 +17,8 @@ Lesser General Public License for more details.
 TITLE GAMESTATE
 --]]------------------------------------------------------------
 
+local TITLE_IMG = love.graphics.newImage("assets/menu/Title.png")
 
-
-local bg = love.graphics.newImage("assets/menu/MENU-bg.png")
 local button =
 {
   love.graphics.newImage("assets/menu/MENU-play-" .. LANGUAGE ..  ".png"),
@@ -49,15 +48,9 @@ local after = function(i)
   return result
 end
 
-local w, h, bgw, bgh
-
-
 local state = GameState.new()
 
 function state:init()
-  w, h = love.graphics.getWidth(), love.graphics.getHeight()
-  bgw, bgh = bg:getWidth(), bg:getHeight()
-  bw, bh = button[1]:getWidth(), button[1]:getHeight()
 end
 
 function state:enter()
@@ -120,12 +113,19 @@ end
 
 
 function state:draw()
+
   -- background
+  local bgw, bgh, w, h = MENU_BG:getWidth(), MENU_BG:getHeight(), love.graphics.getWidth(), love.graphics.getHeight()
   local bgx, bgy = (w - bgw)/2, (h - bgh)/2
-  love.graphics.draw(bg, bgx, bgy)
+  love.graphics.draw(MENU_BG, bgx, bgy)
+
+  -- title
+  local tx, ty = (w - TITLE_IMG:getWidth())/2, h/3 - TITLE_IMG:getHeight()/2
+  love.graphics.draw(TITLE_IMG, tx, ty)
+
 
   -- buttons
-	local by = bgy + bgh*0.725
+	local bw, bh, by = button[current_button]:getWidth(), button[current_button]:getHeight(),bgy + bgh*0.725
   love.graphics.draw(button[current_button], (w - bw)/2, by - bh/2)
   love.graphics.setColor(255, 255, 255, 64)
     love.graphics.draw(button[before(current_button)], bgx-bw*0.7, by - bh/2)
@@ -133,7 +133,7 @@ function state:draw()
   love.graphics.setColor(love.graphics.getBackgroundColor())
     love.graphics.rectangle("fill", 0, 0, bgx, h)
     love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
-  love.graphics.setColor(255, 255, 255, 255)
+  love.graphics.setColor(255, 255, 255, 255)--]]
 end
 
 
