@@ -16,12 +16,12 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 CHEATS = DEBUG
 MAX_PLAYERS = 4
 n_players = 2
 
-LANGUAGE = "EN"
+LANGUAGE = "FR"
 USE_GAMEPADS = (love.joystick.getNumJoysticks() >= 2)
 
 MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")

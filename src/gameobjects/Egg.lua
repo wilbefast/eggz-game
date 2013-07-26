@@ -33,7 +33,7 @@ local Egg = Class
 
   EVOLUTION = { Bomb, Turret, Convertor},
 
-  maturationTime = 5, -- seconds - after being recycled
+  maturationTime = 6.5, -- seconds - after being recycled
 
   REGEN_SPEED = 1,
   REGEN_EFFICIENCY = 1,
