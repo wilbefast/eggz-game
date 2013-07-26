@@ -61,6 +61,9 @@ function state:init()
 end
 
 function state:enter()
+  if audio.music:isStopped() then
+    audio.music:play()
+  end
 end
 
 

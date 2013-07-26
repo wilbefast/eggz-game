@@ -31,6 +31,8 @@ local Convertor = Class
   MAX_W = 24,
   MAX_H = 24,
 
+  maturationTime = 10, -- seconds
+
   ARMOUR = 0,
 
   IMAGES = 

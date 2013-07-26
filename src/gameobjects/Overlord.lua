@@ -24,7 +24,8 @@ local Overlord = Class
 {
   type = GameObject.TYPE.new("Overlord"),
       
-  acceleration = 1000,
+  ACCELERATION = 1000,
+  ACCELERATION_BURDENED = 500,
 
   MAX_DX = 400,
   MAX_DY = 400,
@@ -187,19 +188,20 @@ function Overlord:update(dt)
 
   -- Directional movement ---------------------------------------------
   if self.z > 0 then
+    local acceleration = useful.tri(self.passenger, self.ACCELERATION_BURDENED, self.ACCELERATION)
     if (inp.x == 0) or (self.dx*inp.x < 0) then
     	self.FRICTION_X = 600
     else
     	self.FRICTION_X = useful.tri(self.z < 1, 2000, 0)
     end
-    self.dx = self.dx + inp.x*dt*self.acceleration
+    self.dx = self.dx + inp.x*dt*acceleration
 
     if (inp.y == 0) or (self.dy*inp.y < 0) then
     	self.FRICTION_Y = 600
     else
     	self.FRICTION_Y = useful.tri(self.z < 1, 2000, 0)
     end 
-    self.dy = self.dy + inp.y*dt*self.acceleration
+    self.dy = self.dy + inp.y*dt*acceleration
   -- Radial menu ---------------------------------------------------------
   else
     self.dx, self.dx = 0, 0
@@ -261,6 +263,8 @@ function Overlord:update(dt)
           swap:plant(self.tile)
           self.passenger = occ
         end
+        self.dx = self.dx * 0.5
+        self.dy = self.dy * 0.5
     end
     self.previous_passenger = nil
   end
@@ -334,6 +338,8 @@ function Overlord:draw()
   local image
   if self.passenger then
     image = Overlord.CARRY_FRONT
+  elseif self.radial_menu > 0 then
+    image = Overlord.IDLE
   else
     if x < 0 then
       image = Overlord.LEFT

@@ -31,7 +31,7 @@ local Cocoon = Class
   MAX_W = 24,
   MAX_H = 24,
 
-  MATURATION_SPEED = 0.1,
+  MATURATION_SPEED = 1,
 
   ARMOUR = 4,
 
@@ -39,6 +39,7 @@ local Cocoon = Class
     Plant.init(self, tile, player)
     self.maturity = 0
     self.evolvesTo = evolvesTo
+    self.maturationTime = evolvesTo.maturationTime
     self.soundIsStarted = false
   end,
 }
@@ -65,8 +66,8 @@ function Cocoon:update(dt)
   Plant.update(self, dt)
 
   if not self.stunned then
-    self.maturity = self.maturity + self.MATURATION_SPEED*dt
-    if self.maturity > 1 then
+    self.maturity = self.maturity + dt*self.MATURATION_SPEED
+    if self.maturity > self.maturationTime then
       self.purge = true
       self.evolvesTo(self.tile, self.player).hitpoints = self.hitpoints
     end
@@ -80,20 +81,21 @@ function Cocoon:draw()
 
   if self.stunned then
     love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 1.2, -1.2, 32, 20)
+  else
+    local finishedness = (self.maturity - 0.66*self.maturationTime) / (0.34*self.maturationTime)
+    if finishedness > 0 then -- over 66%
+      -- play sound
+      if self.maturity >= self.maturationTime-1 and not self.soundIsStarted then
+        audio:play_sound("EGG-hatch")
+        self.soundIsStarted = true
+      end
 
-  elseif self.maturity*3 > 2 then
-
-    -- play sound
-    if self.maturity >= 0.9 and not self.soundIsStarted then
-      audio:play_sound("EGG-hatch")
-      self.soundIsStarted = true
+      -- Pokemon evolution effect (tm)
+      love.graphics.setColor(255, 255, 255, finishedness*255)
+        love.graphics.draw(Cocoon.IMAGES[2], self.x, self.y,
+        0, 1, 1, 32, 40)
+      love.graphics.setColor(255, 255, 255, 255)
     end
-
-    -- Pokemon evolution effect (tm)
-    love.graphics.setColor(255, 255, 255, (self.maturity*3-2)*255)
-      love.graphics.draw(Cocoon.IMAGES[2], self.x, self.y,
-      0, 1, 1, 32, 40)
-    love.graphics.setColor(255, 255, 255, 255)
   end
 end
 

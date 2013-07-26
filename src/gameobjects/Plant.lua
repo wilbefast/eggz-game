@@ -24,8 +24,10 @@ local Plant = Class
 {
   type = GameObject.TYPE.new("Plant"),
 
+  -- defaults
   REGEN_SPEED = 0.1,
   REGEN_EFFICIENCY = 0.1,
+  maturationTime = 1,
 
   init = function(self, tile, player)
     GameObject.init(self, tile.x + tile.w/2, tile.y + tile.h/2, 

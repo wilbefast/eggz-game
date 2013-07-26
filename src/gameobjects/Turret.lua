@@ -38,6 +38,8 @@ local Turret = Class
 
   ARMOUR = 3,
 
+  maturationTime = 8, -- seconds
+
   ATTACK_ENERGY_COST = 0.1,
   ATTACK_WARMUP_DURATION = 0.4,
   ATTACK_DURATION = 0.3,
