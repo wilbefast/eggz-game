@@ -115,12 +115,8 @@ function Overlord:canPlant()
 
   local tile, payload = self.tile, self.passenger
 
-  -- bombs can be planted on enemies
-  if payload 
-  and payload:isType("Bomb") 
-  and (tile.occupant) 
-  and (not tile.occupant:isType("Bomb"))
-  and (tile.occupant.player ~= self.player) then
+  -- bombs can be planted on anywhere
+  if payload and payload:isType("Bomb") then
     return true
 
   elseif self:enemyTerritory() then

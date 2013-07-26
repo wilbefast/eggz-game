@@ -35,6 +35,7 @@ local Bomb = Class
 
   init = function(self, tile)
     Plant.init(self, tile, 0)
+    self.player = 0
   end,
 }
 Bomb:include(Plant)
