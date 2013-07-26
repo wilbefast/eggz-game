@@ -90,8 +90,10 @@ function Plant:takeDamage(amount, attacker)
 end
 
 function Plant:stun(n_seconds)
-	self.stunned = n_seconds
-	self.energy = 0
+	if self.CAN_BE_STUNNED then
+		self.stunned = n_seconds
+		--self.energy = 0
+	end
 end
 
 --[[------------------------------------------------------------

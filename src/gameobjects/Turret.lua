@@ -50,6 +50,8 @@ local Turret = Class
   REGEN_SPEED = 0.01,
   REGEN_EFFICIENCY = 1,
 
+  CAN_BE_STUNNED = true,
+
   init = function(self, tile, player)
     Plant.init(self, tile, player)
     
