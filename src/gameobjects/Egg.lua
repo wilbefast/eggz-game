@@ -184,7 +184,7 @@ function Egg:drawTransported()
 			self.x, 
 			self.y,
 			0,
-			1, 1, 32, 55)
+			1, 1, 26, 55)
 end
 
 

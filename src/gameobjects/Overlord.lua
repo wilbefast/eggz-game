@@ -39,9 +39,12 @@ local Overlord = Class
     self.player = player
     self.egg_ready = 0.7
     self.z = 1
+
     self.radial_menu = 0
     self.radial_menu_x = 0
     self.radial_menu_y = 0
+
+    self.percent_gui = 0
   end,
 }
 Overlord:include(GameObject)
@@ -168,6 +171,13 @@ function Overlord:update(dt)
 
   -- Desired move, for animation
   self.desired_dx, self.desired_dy = inp.x, inp.y
+
+  -- Display percent control GUI
+  if (math.abs(self.dx) < 10) and (math.abs(self.dy) < 10) then
+    self.percent_gui = math.min(1, self.percent_gui + dt*5)
+  else
+    self.percent_gui = math.max(0, self.percent_gui - dt*3)
+  end
 
   -- Snap to position -------------------------------------------------
   if self.tile then self.tile.overlord = nil end
@@ -299,11 +309,6 @@ function Overlord:draw()
     self.x - Overlord.SHADOW:getWidth()/2, 
     self.y - Overlord.SHADOW:getHeight()/2)
 
-  -- draw transported object
-  if self.passenger then
-    self.passenger:drawTransported()
-  end
-
   -- set team colour
   player.bindTeamColour[self.player]()
 
@@ -312,21 +317,33 @@ function Overlord:draw()
     love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
   love.graphics.setLineWidth(1)
 
+  -- draw transported object
+  if self.passenger then
+    love.graphics.draw(Overlord.CARRY_BACK, self.x, self.y - self.h/2*self.z, 
+                               0, 1, 1, 42, 86)
+    love.graphics.setColor(255, 255, 255)
+      self.passenger:drawTransported()
+    player.bindTeamColour[self.player]()
+  end
+
   -- draw body
   local x,y = self.desired_dx, self.desired_dy
   local image
-  if x < 0 then
-    image = Overlord.LEFT
-  elseif x > 0 then
-    image = Overlord.RIGHT
-  elseif y > 0 then
-    image = Overlord.DOWN
-  elseif y < 0 then
-    image = Overlord.UP
+  if self.passenger then
+    image = Overlord.CARRY_FRONT
   else
-    image = Overlord.IDLE
+    if x < 0 then
+      image = Overlord.LEFT
+    elseif x > 0 then
+      image = Overlord.RIGHT
+    elseif y > 0 then
+      image = Overlord.DOWN
+    elseif y < 0 then
+      image = Overlord.UP
+    else
+      image = Overlord.IDLE
+    end
   end
-
   love.graphics.draw(image, self.x, self.y - self.h/2*self.z, 
                              0, 1, 1, 42, 86)
   -- draw eyes
@@ -369,14 +386,16 @@ function Overlord:draw_gui()
     drawRadial(self.radial_menu*64, 0, 1)
     drawRadial(0, -self.radial_menu*64, 2)
     drawRadial(-self.radial_menu*64, 0, 3)
-
-    -- reset colours
-    love.graphics.setColor(255, 255, 255)
   end
 
   -- draw percent conversion
+
   local total_conversion = math.floor(player.total_conversion[self.player]*100)
-  love.graphics.printf(tostring(total_conversion) .. "%", self.x, self.y+32, 0, 'center')
+    love.graphics.setColor(5, 15, 5, 255*self.percent_gui)
+      love.graphics.printf(tostring(total_conversion) .. "%", self.x+3, self.y+23+20*self.percent_gui, 0, 'center')
+    player.bindTeamColour[self.player](255*self.percent_gui)
+      love.graphics.printf(tostring(total_conversion) .. "%", self.x, self.y+20+20*self.percent_gui, 0, 'center')
+  love.graphics.setColor(255, 255, 255)
 end
 
 
