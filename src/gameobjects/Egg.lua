@@ -31,6 +31,8 @@ local Egg = Class
   MAX_W = 24,
   MAX_H = 24,
 
+  EVOLUTION = { Bomb, Turret, Convertor},
+
   REGEN_SPEED = 1,
   REGEN_EFFICIENCY = 1,
 
@@ -43,31 +45,24 @@ local Egg = Class
 Egg:include(Plant)
 
 --[[------------------------------------------------------------
-Take damage
---]]--
-
-function Egg:die()
-  audio:play_sound("EGG-destroyed")
-end
-
-
---[[------------------------------------------------------------
-Pick up and put down
---]]--
-
-function Egg:plant(tile)
-	Plant.plant(self, tile)
-	audio:play_sound("EGG-drop")
-end
-
-function Egg:uproot(tile)
-	Plant.uproot(self, tile)
-	audio:play_sound("EGG-pick")
-end
-
---[[------------------------------------------------------------
 Resources
 --]]--
+
+Egg.EVOLUTION_ICONS =
+{
+  { 
+    love.graphics.newImage("assets/radial_bomb_B.png"), 
+    love.graphics.newImage("assets/radial_bomb_hl_B.png")
+  },
+  {
+    love.graphics.newImage("assets/radial_turret_Y.png"),
+    love.graphics.newImage("assets/radial_turret_hl_Y.png")
+  },
+  {
+    love.graphics.newImage("assets/radial_fountain_X.png"),
+    love.graphics.newImage("assets/radial_fountain_hl_X.png")
+  }
+}
 
 Egg.IMAGES = 
 {
@@ -134,6 +129,29 @@ Egg.IMAGES =
 		}
 	},
 }
+
+--[[------------------------------------------------------------
+Take damage
+--]]--
+
+function Egg:die()
+  audio:play_sound("EGG-destroyed")
+end
+
+
+--[[------------------------------------------------------------
+Pick up and put down
+--]]--
+
+function Egg:plant(tile)
+	Plant.plant(self, tile)
+	audio:play_sound("EGG-drop")
+end
+
+function Egg:uproot(tile)
+	Plant.uproot(self, tile)
+	audio:play_sound("EGG-pick")
+end
 
 --[[------------------------------------------------------------
 Accessors

@@ -87,7 +87,7 @@ end
 
 function Bomb:drawTransported()
   love.graphics.draw(Bomb.IMAGES[2], self.x, self.y,
-    0, 1, 1, 32, 40)
+    0, 1, 1, 24, 64)
 end
 
 --[[------------------------------------------------------------

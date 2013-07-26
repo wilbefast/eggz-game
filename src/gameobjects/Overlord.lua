@@ -28,11 +28,13 @@ local Overlord = Class
 
   MAX_DX = 400,
   MAX_DY = 400,
+
+  BLINK_PERIOD = 5,
+  BLINK_PERIOD_VAR = 5,
+  BLINK_LENGTH = 0.1,
 	
 	CONVERT_SPEED = 1,
   EGG_PRODUCTION_SPEED = 0.2,
-
-  SPAWN = { Bomb, Turret, Convertor}, -- FIXME
 
   init = function(self, x, y, player)
     GameObject.init(self, x, y, 32, 32)
@@ -46,6 +48,8 @@ local Overlord = Class
     self.radial_menu_y = 0
 
     self.percent_gui = 0
+
+    self.blink = math.random()*self.BLINK_PERIOD
   end,
 }
 Overlord:include(GameObject)
@@ -53,22 +57,6 @@ Overlord:include(GameObject)
 --[[------------------------------------------------------------
 Resources
 --]]--
-
-Overlord.IMAGES_RADIAL =
-{
-  { 
-    love.graphics.newImage("assets/radial_bomb_B.png"), 
-    love.graphics.newImage("assets/radial_bomb_hl_B.png")
-  },
-  {
-    love.graphics.newImage("assets/radial_turret_Y.png"),
-    love.graphics.newImage("assets/radial_turret_hl_Y.png")
-  },
-  {
-    love.graphics.newImage("assets/radial_fountain_X.png"),
-    love.graphics.newImage("assets/radial_fountain_hl_X.png")
-  }
-}
 
 Overlord.IDLE = love.graphics.newImage("assets/ALIEN-BODY-idle.png")
 
@@ -164,6 +152,12 @@ function Overlord:update(dt)
   GameObject.update(self, dt)
   
   local inp = input[self.player]
+
+  -- Blink periodically
+  self.blink = self.blink - dt 
+  if self.blink < 0 then
+    self.blink = self.BLINK_PERIOD + self.BLINK_PERIOD_VAR*math.random()
+  end
 
   -- Desired move, for animation
   self.desired_dx, self.desired_dy = inp.x, inp.y
@@ -278,12 +272,13 @@ function Overlord:update(dt)
   if inp.lay then
     self.z = math.max(0, self.z - dt*10)
     if (self.z == 0) 
-      and self.tile.occupant 
-      and (self.tile.occupant.player == self.player)
-      and self.tile.occupant:isType("Egg")
-      and (not self.tile.occupant.stunned)
-      and (self.tile.occupant.energy == 1) then
-    -- Open radial menu
+    and self.tile.occupant 
+    and (self.tile.occupant.player == self.player)
+    and self.tile.occupant.EVOLUTION
+    and (not self.tile.occupant.stunned)
+    and (self.tile.occupant.energy == 1) then
+      -- Open radial menu
+      self.evolvee = self.tile.occupant
       self.radial_menu = math.min(1, self.radial_menu + dt*6)
     elseif not self.tile.occupant then
       -- Close radial menu
@@ -294,8 +289,9 @@ function Overlord:update(dt)
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) and (self.tile.occupant) then
         self.tile.occupant.purge = true
-        Cocoon(self.tile, self.player, self.SPAWN[self.radial_menu_choice]).hitpoints 
-          = self.tile.occupant.hitpoints
+        Cocoon(self.tile, self.player, self.tile.occupant.EVOLUTION[self.radial_menu_choice])
+                .hitpoints = self.tile.occupant.hitpoints
+        self.radial_menu_x, self.radial_menu_y = 0, 0
     end
 
     -- Close radial menu
@@ -355,9 +351,14 @@ function Overlord:draw()
                              0, 1, 1, 42, 86)
   -- draw eyes
   love.graphics.setColor(255, 255, 255)
-  if (y >= 0) then
+  if (y >= 0)  then
+
+    local scaley, offy = 1, 0
+    if self.blink <= self.BLINK_LENGTH then
+      scaley, offy = 0.3, 6
+    end
     love.graphics.draw(Overlord.EYES, self.x - Overlord.EYES:getWidth()/2 + 3 + x*8, 
-                                      self.y - (2.2 + 0.5*self.z)*self.h)
+                                      self.y - (2.2 + 0.5*self.z)*self.h + offy, 0, 1, scaley)
   end
 
   -- draw egg being laid
@@ -381,9 +382,9 @@ function Overlord:draw_radial_menu()
     function drawRadial(x, y, i)
       local scale, image
       if i == self.radial_menu_choice then
-        scale, image = 1.3*self.radial_menu, Overlord.IMAGES_RADIAL[i][2]
+        scale, image = 1.3*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][2]
       else
-        scale, image = 1*self.radial_menu, Overlord.IMAGES_RADIAL[i][1]
+        scale, image = 1*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][2]
       end
       love.graphics.draw(image, self.x + x, self.y + y, 
                           0, scale, scale, 18, 18)

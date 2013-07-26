@@ -80,7 +80,7 @@ Pick up and put down
 
 function Plant:plant(tile)
 	if self.transport then
-		self.transport.passenger = tile.occupant
+		self.transport.passenger = nil
 		self.transport = nil
 	end
 	if self.tile then
