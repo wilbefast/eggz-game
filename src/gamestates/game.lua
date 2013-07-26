@@ -67,7 +67,7 @@ function state:update(dt)
     self.grid:update(dt)
 
     for i = 1, n_players do
-      if player.total_conversion[i] > 1/10 then--1/n_players then
+      if player.total_conversion[i] > 1/n_players then
         self.winner = i
         audio.music:stop()
         audio:play_sound("intro")
