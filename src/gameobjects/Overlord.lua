@@ -34,7 +34,7 @@ local Overlord = Class
   BLINK_PERIOD_VAR = 5,
   BLINK_LENGTH = 0.1,
 	
-	CONVERT_SPEED = 0, --1,
+	CONVERT_SPEED = 1,
   EGG_PRODUCTION_SPEED = 0.2,
 
   init = function(self, x, y, player)
@@ -161,7 +161,11 @@ function Overlord:update(dt)
   end
 
   -- Desired move, for animation
-  self.desired_dx, self.desired_dy = inp.x, inp.y
+  if self.radial_menu == 0 then
+    self.desired_dx, self.desired_dy = inp.x, inp.y
+  else
+    self.desired_dx, self.desired_dy = 0, 0
+  end
 
   -- Display percent control GUI
   if (math.abs(self.dx) < 10) and (math.abs(self.dy) < 10) then
@@ -216,15 +220,15 @@ function Overlord:update(dt)
       local converter = -self.radial_menu_x
 
       -- evolve bomb
-      if (bomb > 2*turret) and (bomb > 2*converter) then
+      if (bomb > 0.1) and (bomb > 2*turret) and (bomb > 2*converter) then
         self.radial_menu_choice = 1
 
       -- evolve turret
-      elseif (turret > 2*bomb) and (turret > 2*converter) then
+      elseif (turret > 0.1) and (turret > 2*bomb) and (turret > 2*converter) then
         self.radial_menu_choice = 2
 
       -- evolve converter
-      elseif (converter > 2*turret) and (converter > 2*bomb) then
+      elseif (converter > 0.1) and (converter > 2*turret) and (converter > 2*bomb) then
         self.radial_menu_choice = 3
 
       else
