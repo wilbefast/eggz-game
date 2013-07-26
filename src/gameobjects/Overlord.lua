@@ -291,10 +291,12 @@ function Overlord:update(dt)
 
   else -- if not inp.lay
     -- Select option from radial menu
-    if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) and (self.tile.occupant) then
+    if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
+    and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) and (self.tile.occupant) then
         self.tile.occupant.purge = true
-        Cocoon(self.tile, self.player, self.tile.occupant.EVOLUTION[self.radial_menu_choice])
-                .hitpoints = self.tile.occupant.hitpoints
+        local cocoon = Cocoon(self.tile, self.player, self.tile.occupant.EVOLUTION[self.radial_menu_choice])
+        cocoon.hitpoints = self.tile.occupant.hitpoints
+        cocoon.child_energy = 1
         self.radial_menu_x, self.radial_menu_y = 0, 0
     end
 
@@ -386,14 +388,16 @@ function Overlord:draw_radial_menu()
     love.graphics.setColor(255, 255, 255, self.radial_menu*255)
 
     function drawRadial(x, y, i)
-      local scale, image
-      if i == self.radial_menu_choice then
-        scale, image = 1.3*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][2]
-      else
-        scale, image = 1*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][2]
+      if self.evolvee.EVOLUTION[i] then
+        local scale, image
+        if i == self.radial_menu_choice then
+          scale, image = 1.3*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][2]
+        else
+          scale, image = 1*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][1]
+        end
+        love.graphics.draw(image, self.x + x, self.y + y, 
+                            0, scale, scale, 18, 18)
       end
-      love.graphics.draw(image, self.x + x, self.y + y, 
-                          0, scale, scale, 18, 18)
     end
 
     drawRadial(self.radial_menu*64, 0, 1)

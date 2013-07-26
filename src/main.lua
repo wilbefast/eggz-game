@@ -51,6 +51,7 @@ Turret = require("gameobjects/Turret")
 Convertor = require("gameobjects/Convertor")
 Bomb = require("gameobjects/Bomb")
 Egg = require("gameobjects/Egg")
+  Turret.EVOLUTION = { nil, Egg, nil}
 Cocoon = require("gameobjects/Cocoon")
 Overlord = require("gameobjects/Overlord")
 

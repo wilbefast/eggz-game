@@ -69,7 +69,11 @@ function Cocoon:update(dt)
     self.maturity = self.maturity + dt*self.MATURATION_SPEED
     if self.maturity > self.maturationTime then
       self.purge = true
-      self.evolvesTo(self.tile, self.player).hitpoints = self.hitpoints
+      local evolution = self.evolvesTo(self.tile, self.player)
+      evolution.hitpoints = self.hitpoints
+      if self.child_energy then
+        evolution.energy = self.child_energy
+      end
     end
     end
 end

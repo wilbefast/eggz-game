@@ -32,6 +32,7 @@ local Convertor = Class
   MAX_H = 24,
 
   maturationTime = 10, -- seconds
+  child_energy = 1,
 
   ARMOUR = 0,
 

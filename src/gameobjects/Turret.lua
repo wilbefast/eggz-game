@@ -39,6 +39,9 @@ local Turret = Class
   ARMOUR = 3,
 
   maturationTime = 8, -- seconds
+  child_energy = 1,
+
+  EVOLUTION = { nil, Egg, nil },
 
   ATTACK_ENERGY_COST = 0.1,
   ATTACK_WARMUP_DURATION = 0.4,
@@ -69,6 +72,16 @@ Turret:include(Plant)
 --[[------------------------------------------------------------
 Resources
 --]]--
+
+Turret.EVOLUTION_ICONS =
+{
+  nil,
+  { 
+    love.graphics.newImage("assets/radial_recycle_Y.png"), 
+    love.graphics.newImage("assets/radial_recycle_hl_Y.png")
+  },
+  nil,
+}
 
 Turret.IMAGES = 
 {
