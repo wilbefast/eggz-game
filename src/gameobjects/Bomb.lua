@@ -63,12 +63,17 @@ function Bomb:uproot(transport)
 end
 
 function Bomb:plant(tile)
-  if self.transport and tile.occupant then
+  if self.transport then --and tile.occupant then
     self.purge = true
     self.transport.passenger = nil
     SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
     audio:play_sound("BOMB-dropped", 0.1)
-    tile.occupant:stun(15)
+    local area_of_effect = game.grid:getNeighbours8(tile, true)
+    for _, affected in pairs(area_of_effect) do
+      if affected.occupant then
+        affected.occupant:stun(15)
+      end
+    end
   else
     Plant.plant(self, tile)
     audio:play_sound("EGG-drop") --FIXME

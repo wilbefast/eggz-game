@@ -78,6 +78,9 @@ function CollisionGrid:getNeighbours8(t, centre)
   insertIfNotNil(result, self:gridToTile(t.i, t.j+1))    -- S
   insertIfNotNil(result, self:gridToTile(t.i+1, t.j))    -- E
   insertIfNotNil(result, self:gridToTile(t.i+1, t.j+1))  -- SE
+  if centre then
+    insertIfNotNil(result, self:gridToTile(t.i, t.j))
+  end
   return result
 end
 
