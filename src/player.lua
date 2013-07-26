@@ -17,7 +17,11 @@ local player = {}
 player.bindTeamColour = 
 {
 	function (a) love.graphics.setColor(255, 0, 0, a or 255) end,
-	function (a) love.graphics.setColor(0, 0, 255, a or 255) end
+	function (a) love.graphics.setColor(0, 0, 255, a or 255) end,
+	function (a) love.graphics.setColor(255, 0, 255, a or 255) end,
+	function (a) love.graphics.setColor(255, 255, 0, a or 255) end
 }
+
+player.total_conversion = { 0, 0, 0, 0 }
 
 return player

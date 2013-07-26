@@ -27,8 +27,10 @@ function state:enter()
   GameObject.NEW_INSTANCES = { }
 
   self.player = {}
-  self.player[1] = Overlord(64*11 - 32,  64*6 - 32, 1)
-  self.player[2] = Overlord(32,          64*6 - 32, 2)
+  self.player[1] = Overlord(64*11 - 32,         64*6 - 32,    1)
+  self.player[2] = Overlord(32,                 64*6 - 32,    2)
+  --self.player[3] = Overlord(64*6 - 32,          32,           3)
+  --self.player[4] = Overlord(64*6 - 32,          64*11 - 32,   4)
 
   -- create grid
   self.grid = CollisionGrid(64, 64, 11, 11)

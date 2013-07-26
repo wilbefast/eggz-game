@@ -324,7 +324,6 @@ function Overlord:draw()
 
   -- reset colours
 	love.graphics.setColor(255, 255, 255)
-
 end
 
 function Overlord:draw_gui()
@@ -350,6 +349,10 @@ function Overlord:draw_gui()
     -- reset colours
     love.graphics.setColor(255, 255, 255)
   end
+
+  -- draw percent conversion
+  local total_conversion = math.floor(player.total_conversion[self.player]*100)
+  love.graphics.printf(tostring(total_conversion) .. "%", self.x, self.y+32, 0, 'center')
 end
 
 

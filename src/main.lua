@@ -95,7 +95,11 @@ function love.load(arg)
   love.mouse.setVisible(false)
 
   -- font
-  local font = love.graphics.newImageFont("assets/GUI/GUI-digits.png", "0123456789%") 
+  font = love.graphics.newImageFont("assets/GUI/GUI-digits.png", "0123456789%")
+  --[[font = love.graphics.newImageFont("assets/GUI/font_example.png",
+    " abcdefghijklmnopqrstuvwxyz" ..
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
+    "123456789.,!?-+/():;%&`'*#=[]\"")--]]
   love.graphics.setFont(font)
   
 

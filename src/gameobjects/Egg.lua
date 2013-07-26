@@ -100,7 +100,39 @@ Egg.IMAGES =
 			love.graphics.newImage("assets/BLUE-egg-C.png"),
 			love.graphics.newImage("assets/BLUE-egg-carry-C.png")
 		}
-	}
+	},
+	-- VIOLET
+	-- todo
+	{
+		{ 
+			love.graphics.newImage("assets/BLUE-egg-A.png"), 
+			love.graphics.newImage("assets/BLUE-egg-carry-A.png")
+		},
+		{ 
+			love.graphics.newImage("assets/BLUE-egg-B.png"),
+			love.graphics.newImage("assets/BLUE-egg-carry-B.png")
+		},
+		{ 
+			love.graphics.newImage("assets/BLUE-egg-C.png"),
+			love.graphics.newImage("assets/BLUE-egg-carry-C.png")
+		}
+	},
+	-- YELLOW
+	-- todo
+	{
+		{ 
+			love.graphics.newImage("assets/RED-egg-A.png"), 
+			love.graphics.newImage("assets/RED-egg-carry-A.png")
+		},
+		{ 
+			love.graphics.newImage("assets/RED-egg-B.png"),
+			love.graphics.newImage("assets/RED-egg-carry-B.png")
+		},
+		{ 
+			love.graphics.newImage("assets/RED-egg-C.png"),
+			love.graphics.newImage("assets/RED-egg-carry-C.png")
+		}
+	},
 }
 
 --[[------------------------------------------------------------
