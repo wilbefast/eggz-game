@@ -39,6 +39,9 @@ function state:enter()
   -- point camera at centre of collision-grid
   self.camera = Camera(0, 0)
   self.camera:lookAt(self.grid:centrePixel())
+
+  -- not victory (yet)
+  self.winner = false
 end
 
 
@@ -49,16 +52,28 @@ end
 function state:keypressed(key, uni)
   
   -- quit game
-  if key=="escape" then
+  if (key=="escape") or (self.winner) then
     GameState.switch(title)
   end
 
 end
 
 function state:update(dt)
-  GameObject.updateAll(dt)
 
-  self.grid:update(dt)
+  if not self.winner then
+
+    GameObject.updateAll(dt)
+
+    self.grid:update(dt)
+
+    for i = 1, n_players do
+      if player.total_conversion[i] > 1/n_players then
+        self.winner = i
+      end
+    end
+
+  end
+
 end
 
 
@@ -70,12 +85,28 @@ function state:draw()
 		self.grid:draw()
   	GameObject.drawAll()
 
-    -- gui overlay
-    for _, p in ipairs(self.player) do
-      p:draw_gui()
-    end
+    if not self.winner then
 
-    --love.graphics.print("100%", 32, 32)
+      -- gui overlay
+      for _, p in ipairs(self.player) do
+        p:draw_radial_menu()
+        p:draw_percent_conversion()
+      end
+
+    else
+      
+      -- dark overlay
+      local r, g, b = love.graphics.getBackgroundColor()
+      love.graphics.setColor(r, g, b, 200)
+        love.graphics.rectangle("fill", 0, 0, self.grid.tilew*self.grid.w, self.grid.tileh*self.grid.h)
+      love.graphics.setColor(255, 255, 255)
+
+      -- draw avatars
+      for _, p in ipairs(self.player) do
+        p:draw()
+        p:draw_percent_conversion()
+      end
+    end
 
 
 	self.camera:detach()

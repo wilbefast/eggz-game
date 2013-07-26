@@ -16,9 +16,10 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 CHEATS = DEBUG
 MAX_PLAYERS = 4
+n_players = 2
 
 LANGUAGE = "FR"
 USE_GAMEPADS = (love.joystick.getNumJoysticks() >= 2)
@@ -96,10 +97,6 @@ function love.load(arg)
 
   -- font
   font = love.graphics.newImageFont("assets/GUI/GUI-digits.png", "0123456789%")
-  --[[font = love.graphics.newImageFont("assets/GUI/font_example.png",
-    " abcdefghijklmnopqrstuvwxyz" ..
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
-    "123456789.,!?-+/():;%&`'*#=[]\"")--]]
   love.graphics.setFont(font)
   
 
@@ -108,6 +105,9 @@ function love.load(arg)
   
   -- window icon
   --love.graphics.setIcon()  
+
+  -- clear colour
+  love.graphics.setBackgroundColor(3, 9, 3)
 
   -- load music/sound
   audio:load_music("loop")

@@ -313,9 +313,11 @@ function Overlord:draw()
   player.bindTeamColour[self.player]()
 
   -- draw selected tile
-  love.graphics.setLineWidth(3)
-    love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
-  love.graphics.setLineWidth(1)
+  if not game.winner then
+    love.graphics.setLineWidth(3)
+      love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
+    love.graphics.setLineWidth(1)
+  end
 
   -- draw transported object
   if self.passenger then
@@ -328,6 +330,10 @@ function Overlord:draw()
 
   -- draw body
   local x,y = self.desired_dx, self.desired_dy
+  if game.winner then
+    x, y = 0, 0
+  end
+
   local image
   if self.passenger then
     image = Overlord.CARRY_FRONT
@@ -354,7 +360,7 @@ function Overlord:draw()
   end
 
   -- draw egg being laid
-  if self.egg_ready > 0 then
+  if self.egg_ready > 0 and not game.winner then
     local egg_size = 0.3*Egg.MAX_W*self.egg_ready
 
     love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
@@ -367,8 +373,7 @@ function Overlord:draw()
 	love.graphics.setColor(255, 255, 255)
 end
 
-function Overlord:draw_gui()
-  -- draw radial menu
+function Overlord:draw_radial_menu()
   if self.radial_menu > 0 then
     love.graphics.setColor(255, 255, 255, self.radial_menu*255)
 
@@ -387,14 +392,20 @@ function Overlord:draw_gui()
     drawRadial(0, -self.radial_menu*64, 2)
     drawRadial(-self.radial_menu*64, 0, 3)
   end
+end
 
-  -- draw percent conversion
-
+function Overlord:draw_percent_conversion()
+  local alpha, offset_y
+  if not game.winner then
+    alpha, offset_y = 255*self.percent_gui, 20*self.percent_gui
+  else
+    alpha, offset_y = 255, -24
+  end
   local total_conversion = math.floor(player.total_conversion[self.player]*100)
-    love.graphics.setColor(5, 15, 5, 255*self.percent_gui)
-      love.graphics.printf(tostring(total_conversion) .. "%", self.x+3, self.y+23+20*self.percent_gui, 0, 'center')
-    player.bindTeamColour[self.player](255*self.percent_gui)
-      love.graphics.printf(tostring(total_conversion) .. "%", self.x, self.y+20+20*self.percent_gui, 0, 'center')
+    love.graphics.setColor(5, 15, 5, alpha)
+      love.graphics.printf(tostring(total_conversion) .. "%", self.x+3, self.y+23+offset_y, 0, 'center')
+    player.bindTeamColour[self.player](alpha)
+      love.graphics.printf(tostring(total_conversion) .. "%", self.x, self.y+20+offset_y, 0, 'center')
   love.graphics.setColor(255, 255, 255)
 end
 

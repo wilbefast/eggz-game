@@ -63,6 +63,7 @@ function Plant:takeDamage(amount)
 	self.hitpoints = self.hitpoints - amount/(1 + self.ARMOUR)
 	if self.hitpoints < 0 then
 		self.purge = true
+		self.tile.energy = math.min(1, self.energy/self.ENERGY_DRAW_EFFICIENCY)
 		self.tile.occupant = nil
 		self:die()
 	end
