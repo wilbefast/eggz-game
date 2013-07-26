@@ -104,13 +104,8 @@ function Overlord:enemyTerritory()
 end
 
 function Overlord:canUproot()
-
-  -- can't uproot if carrying
-  if self.passenger then
-    return false
-
   -- can't uproot if nothing to uproot
-  elseif not self.tile.occupant then
+  if not self.tile.occupant then
     return false
 
   -- stunned plants are locked down
@@ -266,7 +261,12 @@ function Overlord:update(dt)
     if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
     and (not self.previous_passenger)
     and (self.radial_menu < 1) then
-        self.tile.occupant:uproot(self)
+        local swap, occ = self.passenger, self.tile.occupant
+        occ:uproot(self)
+        if swap then
+          swap:plant(self.tile)
+          self.passenger = occ
+        end
     end
     self.previous_passenger = nil
   end
