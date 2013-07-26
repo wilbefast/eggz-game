@@ -50,6 +50,18 @@ Resources
 
 Plant.IMG_STUN = love.graphics.newImage("assets/FX-chains.png")
 
+-- default: recycle only
+Plant.EVOLUTION_ICONS =
+{
+  nil,
+  { 
+    love.graphics.newImage("assets/radial_recycle_Y.png"), 
+    love.graphics.newImage("assets/radial_recycle_hl_Y.png")
+  },
+  nil,
+}
+
+
 
 --[[------------------------------------------------------------
 Take damage
