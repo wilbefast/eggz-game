@@ -26,11 +26,10 @@ function state:enter()
   GameObject.INSTANCES = { }
   GameObject.NEW_INSTANCES = { }
 
-  self.player = {}
-  self.player[1] = Overlord(64*11 - 32,         64*6 - 32,    1)
-  self.player[2] = Overlord(32,                 64*6 - 32,    2)
-  --self.player[3] = Overlord(64*6 - 32,          32,           3)
-  --self.player[4] = Overlord(64*6 - 32,          64*11 - 32,   4)
+  self.overlords = {}
+  for i = 1, n_players do
+    self.overlords[i] = Overlord(player.startPosition[i].x, player.startPosition[i].y, i)
+  end
 
   -- create grid
   self.grid = CollisionGrid(64, 64, 11, 11)
@@ -60,6 +59,7 @@ end
 
 function state:update(dt)
 
+  -- no winner yet
   if not self.winner then
 
     GameObject.updateAll(dt)
@@ -68,12 +68,28 @@ function state:update(dt)
 
     for i = 1, n_players do
       if player.total_conversion[i] > 1/n_players then
+        -- we have a winner !
         self.winner = i
         audio.music:stop()
         audio:play_sound("intro")
+        break
       end
     end
 
+    -- as soon as winner is announced
+    if self.winner then
+      self.scoreboard = { }
+      for i, overlord in ipairs(self.overlords) do
+        self.scoreboard[i] = { x = overlord.x, y = overlord.y }
+      end
+    end
+
+  -- winner previously announced
+  else
+    for i, score in ipairs(self.scoreboard) do
+      score.x, score.y = useful.lerp(score.x, player.startPosition[i].x, 3*dt), 
+                                useful.lerp(score.y, player.startPosition[i].y, 3*dt)
+    end
   end
 
 end
@@ -90,9 +106,9 @@ function state:draw()
     if not self.winner then
 
       -- gui overlay
-      for _, p in ipairs(self.player) do
-        p:draw_radial_menu()
-        p:draw_percent_conversion()
+      for _, overlord in ipairs(self.overlords) do
+        overlord:draw_radial_menu()
+        overlord:draw_percent_conversion()
       end
 
     else
@@ -104,10 +120,12 @@ function state:draw()
       love.graphics.setColor(255, 255, 255)
 
       -- draw avatars
-      for _, p in ipairs(self.player) do
-        p:draw()
-        p:draw_percent_conversion()
+      for i, score in ipairs(self.scoreboard) do
+        self.overlords[i]:draw(score.x, score.y)
+        self.overlords[i]:draw_percent_conversion(score.x, score.y)
       end
+
+      -- draw score
     end
 
 

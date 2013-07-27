@@ -19,13 +19,16 @@ TITLE GAMESTATE
 
 local TITLE_IMG = love.graphics.newImage("assets/menu/Title.png")
 
-local button =
+local ARROWS_IMG = love.graphics.newImage("assets/menu/MENU-arrows.png")
+
+local BUTTON_IMG =
 {
   love.graphics.newImage("assets/menu/MENU-play-" .. LANGUAGE ..  ".png"),
   love.graphics.newImage("assets/menu/MENU-controls-" .. LANGUAGE ..  ".png"),
   love.graphics.newImage("assets/menu/MENU-credits-" .. LANGUAGE ..  ".png"),
   love.graphics.newImage("assets/menu/MENU-leave-" .. LANGUAGE ..  ".png")
 }
+
 local PLAY = 1
 local CONTROLS = 2
 local CREDITS = 3
@@ -35,14 +38,14 @@ local current_button = PLAY
 local before = function(i)
   local result = i - 1
   if result < 1 then
-    result = #button
+    result = #BUTTON_IMG
   end
   return result
 end
 
 local after = function(i)
   local result = i + 1
-  if result > #button then
+  if result > #BUTTON_IMG then
     result = 1
   end
   return result
@@ -101,7 +104,15 @@ function state:keypressed(key, uni)
   
 end
 
+local button_rotation = 0
+
 function state:update(dt)
+
+  button_rotation = button_rotation + 2*dt
+  if button_rotation > math.pi*2 then
+    button_rotation = button_rotation - math.pi*2
+  end
+
 	if USE_GAMEPADS then
 		if input[1].keylay() then
 			accept()
@@ -123,17 +134,28 @@ function state:draw()
   local tx, ty = (w - TITLE_IMG:getWidth())/2, h/3 - TITLE_IMG:getHeight()/2
   love.graphics.draw(TITLE_IMG, tx, ty)
 
+  -- animation
+  local anim1, anim2 = math.cos(button_rotation), math.sin(button_rotation)
+
   -- buttons
-	local bw, bh = button[current_button]:getWidth(), button[current_button]:getHeight()
+	local bw, bh = BUTTON_IMG[current_button]:getWidth(), BUTTON_IMG[current_button]:getHeight()
   local bx, by = w/2, bgy + bgh*0.725
-  love.graphics.draw(button[current_button], bx, by, 0, 1, 1, bw/2, bh/2)
+  love.graphics.draw(BUTTON_IMG[current_button], bx, by, anim1/10, 1.1, 1.1, bw/2, bh/2)
   love.graphics.setColor(255, 255, 255, 64)
-    love.graphics.draw(button[before(current_button)], bx - bw, by, 0, 1, 1, bw/2, bh/2)
-    love.graphics.draw(button[after(current_button)], bx + bw, by, 0, 1, 1, bw/2, bh/2)
+    love.graphics.draw(BUTTON_IMG[before(current_button)], bx - bw, by, 0, 0.9, 0.9, bw/2, bh/2)
+    love.graphics.draw(BUTTON_IMG[after(current_button)], bx + bw, by, 0, 0.9, 0.9, bw/2, bh/2)
   love.graphics.setColor(love.graphics.getBackgroundColor())
     love.graphics.rectangle("fill", 0, 0, bgx, h)
     love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
-  love.graphics.setColor(255, 255, 255, 255)--]]
+  love.graphics.setColor(255, 255, 255, 255)
+
+  -- arrows
+  love.graphics.setColor(255, 255, 255, 255 - (anim2+2)*64)
+    love.graphics.draw(ARROWS_IMG, bx, by, 0, 
+      1.15 + 0.05*anim2, 
+      1.15 + 0.05*anim2, 
+      ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
+  love.graphics.setColor(255, 255, 255, 255)
 end
 
 

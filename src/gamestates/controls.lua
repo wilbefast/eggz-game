@@ -24,7 +24,7 @@ local state = GameState.new()
 
 function state:keypressed(key, uni)
   -- return to title
-  if key=="escape" then
+  if key=="escape" or key=="return" then
     GameState.switch(title)
   end
 end

@@ -304,27 +304,30 @@ function Overlord:update(dt)
   end
 end
 
-function Overlord:draw()
+function Overlord:draw(x, y)
+
+  x, y = (x or self.x), (y or self.y)
+
   -- draw shadow
   love.graphics.draw(Overlord.SHADOW, 
-    self.x - Overlord.SHADOW:getWidth()/2, 
-    self.y - Overlord.SHADOW:getHeight()/2)
+    x - Overlord.SHADOW:getWidth()/2, 
+    y - Overlord.SHADOW:getHeight()/2)
 
   -- set team colour
   player.bindTeamColour[self.player]()
 
   -- draw selected tile
-  if not game.winner then
-    love.graphics.setLineWidth(3)
-      --love.graphics.line(self.tile.x + 16, self.tile.y + 16, self.tile.x + 48, self.tile.y + 48)
-      --love.graphics.line(self.tile.x + 48, self.tile.y + 16, self.tile.x + 16, self.tile.y + 48)
-      --love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
-    love.graphics.setLineWidth(1)
-  end
+  -- if not game.winner then
+  --   love.graphics.setLineWidth(3)
+  --     love.graphics.line(self.tile.x + 16, self.tile.y + 16, self.tile.x + 48, self.tile.y + 48)
+  --     love.graphics.line(self.tile.x + 48, self.tile.y + 16, self.tile.x + 16, self.tile.y + 48)
+  --     love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
+  --   love.graphics.setLineWidth(1)
+  -- end
 
   -- draw transported object
   if self.passenger then
-    love.graphics.draw(Overlord.CARRY_BACK, self.x, self.y - self.h/2*self.z, 
+    love.graphics.draw(Overlord.CARRY_BACK, x, y - self.h/2*self.z, 
                                0, 1, 1, 42, 86)
     love.graphics.setColor(255, 255, 255)
       self.passenger:drawTransported()
@@ -332,9 +335,9 @@ function Overlord:draw()
   end
 
   -- draw body
-  local x,y = self.desired_dx, self.desired_dy
+  local dx, dy = self.desired_dx, self.desired_dy
   if game.winner then
-    x, y = 0, 0
+    dx, dy = 0, 0
   end
 
   local image
@@ -343,30 +346,30 @@ function Overlord:draw()
   elseif self.radial_menu > 0 then
     image = Overlord.IDLE
   else
-    if x < 0 then
+    if dx < 0 then
       image = Overlord.LEFT
-    elseif x > 0 then
+    elseif dx > 0 then
       image = Overlord.RIGHT
-    elseif y > 0 then
+    elseif dy > 0 then
       image = Overlord.DOWN
-    elseif y < 0 then
+    elseif dy < 0 then
       image = Overlord.UP
     else
       image = Overlord.IDLE
     end
   end
-  love.graphics.draw(image, self.x, self.y - self.h/2*self.z, 
+  love.graphics.draw(image, x, y - self.h/2*self.z, 
                              0, 1, 1, 42, 86)
   -- draw eyes
   love.graphics.setColor(255, 255, 255)
-  if (y >= 0)  then
+  if (dy >= 0)  then
 
     local scaley, offy = 1, 0
     if self.blink <= self.BLINK_LENGTH then
       scaley, offy = 0.3, 6
     end
-    love.graphics.draw(Overlord.EYES, self.x - Overlord.EYES:getWidth()/2 + 3 + x*8, 
-                                      self.y - (2.2 + 0.5*self.z)*self.h + offy, 0, 1, scaley)
+    love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3 + dx*8, 
+                                      y - (2.2 + 0.5*self.z)*self.h + offy, 0, 1, scaley)
   end
 
   -- draw egg being laid
@@ -375,7 +378,7 @@ function Overlord:draw()
 
     love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
     love.graphics.draw(Egg.IMAGES[self.player][1][2], 
-      self.x, self.y - (2.5 + 0.5*self.z)*self.h, 
+      x, y - (2.5 + 0.5*self.z)*self.h, 
       0, 0.1 + self.egg_ready*0.7, 0.1 + self.egg_ready*0.7, 32, 40)
   end
 
@@ -383,11 +386,14 @@ function Overlord:draw()
 	love.graphics.setColor(255, 255, 255)
 end
 
-function Overlord:draw_radial_menu()
+function Overlord:draw_radial_menu(x, y)
+
+  x, y = (x or self.x), (y or self.y)
+
   if self.radial_menu > 0 then
     love.graphics.setColor(255, 255, 255, self.radial_menu*255)
 
-    function drawRadial(x, y, i)
+    function drawRadial(dx, dy, i)
       if self.evolvee.EVOLUTION[i] then
         local scale, image
         if i == self.radial_menu_choice then
@@ -395,7 +401,7 @@ function Overlord:draw_radial_menu()
         else
           scale, image = 1*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][1]
         end
-        love.graphics.draw(image, self.x + x, self.y + y, 
+        love.graphics.draw(image, x + dx, y + dy, 
                             0, scale, scale, 18, 18)
       end
     end
@@ -406,7 +412,10 @@ function Overlord:draw_radial_menu()
   end
 end
 
-function Overlord:draw_percent_conversion()
+function Overlord:draw_percent_conversion(x, y)
+
+  x, y = (x or self.x), (y or self.y)
+
   local alpha, offset_y
   if not game.winner then
     alpha, offset_y = 255*self.percent_gui, 20*self.percent_gui
@@ -415,9 +424,9 @@ function Overlord:draw_percent_conversion()
   end
   local total_conversion = math.floor(player.total_conversion[self.player]*100)
     love.graphics.setColor(5, 15, 5, alpha)
-      love.graphics.printf(tostring(total_conversion) .. "%", self.x+3, self.y+23+offset_y, 0, 'center')
+      love.graphics.printf(tostring(total_conversion) .. "%", x+3, y+23+offset_y, 0, 'center')
     player.bindTeamColour[self.player](alpha)
-      love.graphics.printf(tostring(total_conversion) .. "%", self.x, self.y+20+offset_y, 0, 'center')
+      love.graphics.printf(tostring(total_conversion) .. "%", x, y+20+offset_y, 0, 'center')
   love.graphics.setColor(255, 255, 255)
 end
 

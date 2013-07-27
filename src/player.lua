@@ -22,6 +22,15 @@ player.bindTeamColour =
 	function (a) love.graphics.setColor(255, 255, 0, a or 255) end
 }
 
+player.startPosition = 
+{
+	{ x = 64*11 - 32,  	y = 64*6 - 32 	},
+  { x = 32, 					y = 64*6 - 32 	},
+  { x = 64*6 - 32, 		y = 32        	},
+  { x = 64*6 - 32, 		y = 64*11 - 32 	}
+}
+
 player.total_conversion = { 0, 0, 0, 0 }
+
 
 return player
