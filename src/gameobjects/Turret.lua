@@ -170,7 +170,7 @@ function Turret:update(dt)
     -- check for enemies
     self.enemies = {}
     for _, t in pairs(self.guardArea) do
-      if t.occupant and (t.occupant.player ~= self.player) and (t.occupant.player == 0) then
+      if t.occupant and (t.occupant.player ~= self.player) and (t.occupant.player ~= 0) then
         table.insert(self.enemies, t.occupant)
       end
     end
