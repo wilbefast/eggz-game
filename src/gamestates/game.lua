@@ -116,7 +116,7 @@ function state:draw()
       -- dark overlay
       local r, g, b = love.graphics.getBackgroundColor()
       love.graphics.setColor(r, g, b, 200)
-        love.graphics.rectangle("fill", 0, 0, self.grid.tilew*self.grid.w, self.grid.tileh*self.grid.h)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
       love.graphics.setColor(255, 255, 255)
 
       -- draw avatars

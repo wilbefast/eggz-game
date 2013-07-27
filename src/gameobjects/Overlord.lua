@@ -240,7 +240,7 @@ function Overlord:update(dt)
   end
 
 	-- Put down a plant  -------------------------------------------
-	if inp.lay_trigger == 1 and self:canPlant() then
+	if inp.confirm_trigger == 1 and self:canPlant() then
     -- put down passenger
     if self.passenger then
       self.previous_passenger = self.passenger
@@ -252,7 +252,7 @@ function Overlord:update(dt)
     end
   
   -- Pick up a plant  -------------------------------------------
-  elseif inp.lay_trigger == -1 and self:canUproot() then
+  elseif inp.confirm_trigger == -1 and self:canUproot() then
     -- pick up tile occupant
     if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
     and (not self.previous_passenger)
@@ -273,7 +273,7 @@ function Overlord:update(dt)
   self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
 
   -- Land on the ground --------------------------------------------------
-  if inp.lay then
+  if inp.confirm then
     self.z = math.max(0, self.z - dt*10)
     if (self.z == 0) 
     and self.tile.occupant 
@@ -287,7 +287,7 @@ function Overlord:update(dt)
       self.radial_menu = math.max(0, self.radial_menu - dt*8)
     end
 
-  else -- if not inp.lay
+  else -- if not inp.confirm
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
     and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) and (self.tile.occupant) then

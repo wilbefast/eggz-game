@@ -53,25 +53,10 @@ end
 
 local state = GameState.new()
 
-function state:init()
-end
-
 function state:enter()
   if audio.music:isStopped() then
     audio.music:play()
   end
-end
-
-
-function state:leave()
-end
-
-function cancel()
-	if current_button ~= LEAVE then 
-		current_button = LEAVE
-	else
-		love.event.push("quit")
-	end
 end
 
 function accept()
@@ -86,40 +71,45 @@ function accept()
 	end
 end
 
-function state:keypressed(key, uni)
-  
-  -- quit game
+function state:keypressed(key)
   if key=="escape" then
-		cancel()
-    
-  elseif key=="return" then
-		accept()
-
-  elseif key=="left" then
-    current_button = before(current_button)
-
-  elseif key=="right" then
-    current_button = after(current_button)
+    love.event.push("quit")
   end
-  
 end
 
+local button_changing = 0
 local button_rotation = 0
 
 function state:update(dt)
 
-  button_rotation = button_rotation + 2*dt
-  if button_rotation > math.pi*2 then
-    button_rotation = button_rotation - math.pi*2
+  -- launch button switch
+  if button_changing == 0 then
+    button_changing = button_changing + input[1].x*dt
   end
 
-	if USE_GAMEPADS then
-		if input[1].keylay() then
-			accept()
-		elseif input[1].keyEast() then
-			cancel()
-		end
-	end
+  -- confirm or cancel
+  if input[1].keyConfirm() or input[1].keyStart() then
+    accept()
+  end
+
+  -- switch buttons over time
+  if button_changing ~= 0 then
+    button_changing = button_changing + 3*dt*useful.sign(button_changing)/(1 + 2*math.abs(button_changing))
+    button_rotation = useful.lerp(button_rotation, math.pi/2, math.abs(button_changing))
+    if button_changing > 1 then
+      button_changing = input[1].x*dt
+      current_button = after(current_button)
+    elseif button_changing < -1 then
+      button_changing = input[1].x*dt
+      current_button = before(current_button)
+    end
+  else
+    -- button rotation animation
+    button_rotation = button_rotation + 2*dt
+    if button_rotation > math.pi*2 then
+      button_rotation = button_rotation - math.pi*2
+    end
+  end
 end
 
 
@@ -135,27 +125,48 @@ function state:draw()
   love.graphics.draw(TITLE_IMG, tx, ty)
 
   -- animation
-  local anim1, anim2 = math.cos(button_rotation), math.sin(button_rotation)
+  local cos, sin = math.cos(button_rotation), math.sin(button_rotation)
 
   -- buttons
-	local bw, bh = BUTTON_IMG[current_button]:getWidth(), BUTTON_IMG[current_button]:getHeight()
-  local bx, by = w/2, bgy + bgh*0.725
-  love.graphics.draw(BUTTON_IMG[current_button], bx, by, anim1/10, 1.1, 1.1, bw/2, bh/2)
-  love.graphics.setColor(255, 255, 255, 64)
-    love.graphics.draw(BUTTON_IMG[before(current_button)], bx - bw, by, 0, 0.9, 0.9, bw/2, bh/2)
-    love.graphics.draw(BUTTON_IMG[after(current_button)], bx + bw, by, 0, 0.9, 0.9, bw/2, bh/2)
-  love.graphics.setColor(love.graphics.getBackgroundColor())
-    love.graphics.rectangle("fill", 0, 0, bgx, h)
-    love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
-  love.graphics.setColor(255, 255, 255, 255)
 
-  -- arrows
-  love.graphics.setColor(255, 255, 255, 255 - (anim2+2)*64)
-    love.graphics.draw(ARROWS_IMG, bx, by, 0, 
-      1.15 + 0.05*anim2, 
-      1.15 + 0.05*anim2, 
-      ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
-  love.graphics.setColor(255, 255, 255, 255)
+  local bw, bh, by = BUTTON_IMG[current_button]:getWidth(), BUTTON_IMG[current_button]:getHeight(), bgy + bgh*0.725
+
+  if button_changing == 0 then
+
+    local bx = w/2
+    love.graphics.draw(BUTTON_IMG[current_button], bx, by, cos/10, 1.1, 1.1, bw/2, bh/2)
+    love.graphics.setColor(255, 255, 255, 64)
+      love.graphics.draw(BUTTON_IMG[before(current_button)], bx - bw, by, 0, 0.9, 0.9, bw/2, bh/2)
+      love.graphics.draw(BUTTON_IMG[after(current_button)], bx + bw, by, 0, 0.9, 0.9, bw/2, bh/2)
+    love.graphics.setColor(love.graphics.getBackgroundColor())
+      love.graphics.rectangle("fill", 0, 0, bgx, h)
+      love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
+    love.graphics.setColor(255, 255, 255, 255)
+
+    -- arrows
+    love.graphics.setColor(255, 255, 255, 255 - (sin+2)*64)
+      love.graphics.draw(ARROWS_IMG, bx, by, 0, 
+        1.15 + 0.05*sin, 
+        1.15 + 0.05*sin, 
+        ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
+    love.graphics.setColor(255, 255, 255, 255)
+
+  else
+
+    local bx = w/2 - bw*button_changing
+    love.graphics.setColor(255, 255, 255, 64)
+      love.graphics.draw(BUTTON_IMG[current_button], bx, by, cos/10, 1, 1, bw/2, bh/2)
+      love.graphics.draw(BUTTON_IMG[before(current_button)], bx - bw, by, 0, 1, 1, bw/2, bh/2)
+      love.graphics.draw(BUTTON_IMG[after(current_button)], bx + bw, by, 0, 1, 1, bw/2, bh/2)
+      love.graphics.draw(BUTTON_IMG[before(before(current_button))], bx - 2*bw, by, 0, 1, 1, bw/2, bh/2)
+      love.graphics.draw(BUTTON_IMG[after(after(current_button))], bx + 2*bw, by, 0, 1, 1, bw/2, bh/2)
+    love.graphics.setColor(love.graphics.getBackgroundColor())
+      love.graphics.rectangle("fill", 0, 0, bgx, h)
+      love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
+    love.graphics.setColor(255, 255, 255, 255)
+
+  end
+
 end
 
 

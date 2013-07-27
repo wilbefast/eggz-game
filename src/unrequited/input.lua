@@ -14,28 +14,32 @@ Lesser General Public License for more details.
 
 local input = {}
 for i = 1, MAX_PLAYERS do
-  input[i] = { x = 0, y = 0, lay = false, lay_prev = false, lay_trigger = 0}
+  input[i] = { x = 0, y = 0, confirm = false, confirm_prev = false, confirm_trigger = 0}
 end
 
 if USE_GAMEPADS then
 	for i = 1, MAX_PLAYERS do
-		input[i].keylay = function () return love.joystick.isDown(i, 1) end
-		input[i].keyEast = function () return love.joystick.isDown(i, 2) end
+		input[i].keyConfirm = function () return love.joystick.isDown(i, 1) end
+		input[i].keyCancel = function () return love.joystick.isDown(i, 2) end
 		input[i].keyWest = function () return love.joystick.isDown(i, 3) end
 		input[i].keyNorth = function () return love.joystick.isDown(i, 4) end
 	end
 else
-	input[1].keyleft = function () return love.keyboard.isDown("left") end
-	input[1].keyright = function () return love.keyboard.isDown("right") end
-	input[1].keyup = function () return love.keyboard.isDown("up") end
-	input[1].keydown = function () return love.keyboard.isDown("down") end
-	input[1].keylay = function () return love.keyboard.isDown("rctrl") end
+	input[1].keyLeft = function () return love.keyboard.isDown("left") end
+	input[1].keyRight = function () return love.keyboard.isDown("right") end
+	input[1].KeyUp = function () return love.keyboard.isDown("up") end
+	input[1].keyDown = function () return love.keyboard.isDown("down") end
+	input[1].keyStart = function () return love.keyboard.isDown("return") end
+	input[1].keyConfirm = function () return love.keyboard.isDown("rctrl") end
+	input[1].keyCancel = function () return love.keyboard.isDown("escape") end
 
-	input[2].keyleft = function () return love.keyboard.isDown("a", "q") end
-	input[2].keyright = function () return love.keyboard.isDown("d") end
-	input[2].keyup = function () return love.keyboard.isDown("w", "z") end
-	input[2].keydown = function () return love.keyboard.isDown("s") end
-	input[2].keylay = function () return love.keyboard.isDown("lctrl") end
+	input[2].keyLeft = function () return love.keyboard.isDown("a", "q") end
+	input[2].keyRight = function () return love.keyboard.isDown("d") end
+	input[2].KeyUp = function () return love.keyboard.isDown("w", "z") end
+	input[2].keyDown = function () return love.keyboard.isDown("s") end
+	input[1].keyStart = function () return love.keyboard.isDown("return") end
+	input[2].keyConfirm = function () return love.keyboard.isDown("lctrl") end
+	input[2].keyCancel = function () return love.keyboard.isDown("escape") end
 end
 
 function input:update(dt)
@@ -55,44 +59,44 @@ function input:update(dt)
 			p.x, p.y = 0, 0
 
 			--left
-			if p.keyleft and p.keyleft() then
+			if p.keyLeft and p.keyLeft() then
 				p.x = p.x - 1 
 			end
 			--right
-			if p.keyright and p.keyright() then
+			if p.keyRight and p.keyRight() then
 				p.x = p.x + 1 
 			end
 			-- up
-			if p.keyup and p.keyup() then
+			if p.KeyUp and p.KeyUp() then
 				p.y = p.y - 1 
 			end
 			-- down
-			if p.keydown and p.keydown() then 
+			if p.keyDown and p.keyDown() then 
 				p.y = p.y + 1 
 			end
 		end -- if USE_GAMEPADS
 		
-		-- lay
-		if p.keylay then
-			p.lay = p.keylay()
-			if p.lay then
-				if not p.lay_prev then
-					p.lay_trigger = 1
+		-- confirm
+		if p.keyConfirm then
+			p.confirm = p.keyConfirm()
+			if p.confirm then
+				if not p.confirm_prev then
+					p.confirm_trigger = 1
 				else
-					p.lay_trigger = 0
+					p.confirm_trigger = 0
 				end
-				p.lay_prev = true
+				p.confirm_prev = true
 			else
-				if p.lay_prev then
-					p.lay_trigger = -1
+				if p.confirm_prev then
+					p.confirm_trigger = -1
 				else
-					p.lay_trigger = 0
+					p.confirm_trigger = 0
 				end
-				p.lay_prev = false
+				p.confirm_prev = false
 			end
 		end
 		
-	end -- for each player
+	end -- for each pconfirmer
 
 end
 

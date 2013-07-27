@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 CHEATS = DEBUG
 MAX_PLAYERS = 4
 n_players = 2
@@ -134,7 +134,7 @@ function love.load(arg)
   audio:load_sound("intro", 1, 1)
 
   -- start music
-  audio:play_music("loop", 0)--0.06)
+  audio:play_music("loop", 0.06)
 
   -- go to the initial gamestate
   GameState.switch(title)
