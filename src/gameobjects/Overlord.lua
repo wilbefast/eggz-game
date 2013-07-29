@@ -336,9 +336,6 @@ function Overlord:draw(x, y)
 
   -- draw body
   local dx, dy = self.desired_dx, self.desired_dy
-  if game.winner then
-    dx, dy = 0, 0
-  end
 
   local image
   if self.passenger then
@@ -373,7 +370,7 @@ function Overlord:draw(x, y)
   end
 
   -- draw egg being laid
-  if self.egg_ready > 0 and not game.winner then
+  if self.egg_ready > 0 then
     local egg_size = 0.3*Egg.MAX_W*self.egg_ready
 
     love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
@@ -410,6 +407,16 @@ function Overlord:draw_radial_menu(x, y)
     drawRadial(0, -self.radial_menu*64, 2)
     drawRadial(-self.radial_menu*64, 0, 3)
   end
+end
+
+function Overlord:draw_icon(x, y)
+	x, y = (x or self.x), (y or self.y)
+
+	player.bindTeamColour[self.player]()
+		love.graphics.draw(Overlord.IDLE, x, y - self.h/2*self.z, 0, 1, 1, 42, 86)
+	love.graphics.setColor(255, 255, 255)
+		love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3, 
+																			y - (2.2 + 0.5*self.z)*self.h)
 end
 
 function Overlord:draw_percent_conversion(x, y)

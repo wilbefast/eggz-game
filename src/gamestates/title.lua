@@ -94,7 +94,7 @@ function state:update(dt)
 
   -- switch buttons over time
   if button_changing ~= 0 then
-    button_changing = button_changing + 3*dt*useful.sign(button_changing)/(1 + 2*math.abs(button_changing))
+    button_changing = button_changing + 7*dt*useful.sign(button_changing)/(1 + 2*math.abs(button_changing))
     button_rotation = useful.lerp(button_rotation, math.pi/2, math.abs(button_changing))
     if button_changing > 1 then
       button_changing = input[1].x*dt

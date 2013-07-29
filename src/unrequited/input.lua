@@ -23,6 +23,7 @@ if USE_GAMEPADS then
 		input[i].keyCancel = function () return love.joystick.isDown(i, 2) end
 		input[i].keyWest = function () return love.joystick.isDown(i, 3) end
 		input[i].keyNorth = function () return love.joystick.isDown(i, 4) end
+		input[i].keyStart = function () return love.joystick.isDown(i, 1) end -- FIXME
 	end
 else
 	input[1].keyLeft = function () return love.keyboard.isDown("left") end

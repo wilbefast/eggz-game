@@ -21,9 +21,8 @@ local CREDITS_IMG = love.graphics.newImage("assets/menu/Credits-" .. LANGUAGE ..
 
 local state = GameState.new()
 
-function state:keypressed(key, uni)
-  -- return to title
-  if key=="escape" then
+function state:update(dt)
+  if input[1].keyCancel() then
     GameState.switch(title)
   end
 end

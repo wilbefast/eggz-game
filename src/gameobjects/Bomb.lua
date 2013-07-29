@@ -31,7 +31,7 @@ local Bomb = Class
   MAX_W = 24,
   MAX_H = 24,
 
-  maturationTime = 20, -- seconds
+  maturationTime = 16, -- seconds
 
   init = function(self, tile)
     Plant.init(self, tile, 0)
@@ -63,18 +63,23 @@ function Bomb:uproot(transport)
   audio:play_sound("EGG-pick")
 end
 
+function applyStun(tile, t)
+	if tile.occupant then
+		tile.occupant:stun(t)
+	end
+end
+
 function Bomb:plant(tile)
   if self.transport then --and tile.occupant then
     self.purge = true
     self.transport.passenger = nil
     SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
     audio:play_sound("BOMB-dropped", 0.1)
-    local area_of_effect = game.grid:getNeighbours8(tile, true)
+    local area_of_effect = game.grid:getNeighbours4(tile, false)
     for _, affected in pairs(area_of_effect) do
-      if affected.occupant then
-        affected.occupant:stun(15)
-      end
+      applyStun(affected, 25)
     end
+		applyStun(tile, 30)
   else
     Plant.plant(self, tile)
     audio:play_sound("EGG-drop") --FIXME

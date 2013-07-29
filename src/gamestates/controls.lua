@@ -22,14 +22,10 @@ local CONTROLS_IMG = love.graphics.newImage("assets/menu/Controls-" ..
 
 local state = GameState.new()
 
-function state:keypressed(key, uni)
-  -- return to title
-  if key=="escape" or key=="return" then
+function state:update(dt)
+  if input[1].keyCancel() then
     GameState.switch(title)
   end
-end
-
-function state:update(dt)
 end
 
 
