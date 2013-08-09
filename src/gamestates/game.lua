@@ -143,11 +143,6 @@ function state:draw()
 
     if (not self.winner) and (not self.pause) then
 
-      -- gui overlay
-      for _, overlord in ipairs(self.overlords) do
-        overlord:draw_radial_menu()
-        overlord:draw_percent_conversion()
-      end
 
     else
       
@@ -180,6 +175,20 @@ function state:draw()
     -- bottom
     love.graphics.rectangle("fill", x, y+h, w, gh-y-h)
   love.graphics.setColor(255, 255, 255, 255)
+
+
+  -- play UI and radial menus
+  self.camera:attach()
+    if (not self.winner) and (not self.pause) then
+  		for i = 1, n_players do
+	      -- gui overlay
+	      for _, overlord in ipairs(self.overlords) do
+	        overlord:draw_radial_menu()
+	        overlord:draw_percent_conversion()
+	      end
+    	end
+		end
+  self.camera:detach()
 
 
 end
