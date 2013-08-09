@@ -24,7 +24,7 @@ local Convertor = Class
 {
   type = GameObject.TYPE.new("Convertor"),
 
-  ENERGY_DRAW_SPEED = 0.1,            -- per second
+  ENERGY_DRAW_SPEED = 0.003,            -- per second
   ENERGY_CONSUME_SPEED = 0,           -- per second
   ENERGY_DRAW_EFFICIENCY = 0.7,       -- percent
   ENERGY_START = 1,

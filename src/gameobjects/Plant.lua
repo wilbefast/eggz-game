@@ -150,27 +150,60 @@ function Plant:update(dt)
   	-- On enemy territory
 		if (self.tile.conversion > 0.5) and (self.tile.owner ~= self.player) then
 			self.energy = math.max(0, self.energy - 0.1*dt)
+
+			if self.energy == 0 then
+				self.player = self.tile.owner
+			end
+
 		else
 			-- Not stunned ?
 			if (not self.stunned) then
 			  -- Draw energy ------------------------------------------------------
+
+			  -- draw pool
+			  local draw_pool = game.grid:getNeighbours8(self.tile, true)
+
+			  local draw_pool_allied = { }
+			  for _, tile in pairs(draw_pool) do 
+			  	if (tile.conversion < 0.5) or (tile.owner == self.player) then
+			  		table.insert(draw_pool_allied, tile)
+			  	end
+			  end
+
+
+			  local draw_pool_energy = 0
+			  for _, tile in pairs(draw_pool_allied) do 
+			  	draw_pool_energy = draw_pool_energy + tile.energy 
+			  end
+
+			  -- max draw from pool
 			  local drawn_energy = math.min(self.tile.energy, 
-			  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)
+			  															self.ENERGY_DRAW_SPEED*draw_pool_energy*draw_pool_energy*dt)
 
 			  -- Regenerate ------------------------------------------------------
 			  local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
 			  											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)
 			  drawn_energy = drawn_energy - regen
-			  self.tile.energy = self.tile.energy - regen
 			  self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
+			  
+			  -- health regen draws from whole pool
+			  local regen_per_tile = regen / #draw_pool_allied
+			  for _, tile in pairs(draw_pool_allied) do
+			  	tile.energy = tile.energy - regen_per_tile
+			  end
 
 			  -- Store energy not consume by regeneration ------------------------
 			  if drawn_energy + self.energy > 1 then
 			  	drawn_energy = 1 - self.energy
 			  end
-			  self.tile.energy = self.tile.energy - drawn_energy
 			  self.energy = math.min(1, self.energy 
 			  						+ drawn_energy*self.ENERGY_DRAW_EFFICIENCY)
+
+			  -- mana regen draws from whole pool
+			  local drawn_energy_per_tile = drawn_energy / #draw_pool_allied
+			  for _, tile in pairs(draw_pool_allied) do
+			  	tile.energy = tile.energy - drawn_energy_per_tile
+			  end
 
 			  -- Consume energy ------------------------------------------------------
 			  self.energy = math.max(0, self.energy - self.ENERGY_CONSUME_SPEED*dt)

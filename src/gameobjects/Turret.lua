@@ -24,7 +24,7 @@ local Turret = Class
 {
   type = GameObject.TYPE.new("Turret"),
 
-  ENERGY_DRAW_SPEED = 0.3,              -- per second
+  ENERGY_DRAW_SPEED = 0.01,              -- per second
   ENERGY_CONSUME_SPEED = 0,           -- per second
   ENERGY_DRAW_EFFICIENCY = 15,       -- percent
   ENERGY_START = 1,
@@ -187,7 +187,7 @@ function Turret:draw()
 
   -- draw sprite
   if self.energy < self.ATTACK_ENERGY_COST then
-    love.graphics.setColor(96, 96, 96)
+    love.graphics.setColor(128, 128, 128)
   end
   love.graphics.draw(Turret.IMAGES[self.player][self.subimage], self.x, self.y,
     0, 1, 1, 32, 40)
