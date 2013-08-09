@@ -113,11 +113,33 @@ end
 
 function state:draw()
 
+	local gw, gh = love.graphics.getWidth(), love.graphics.getHeight()
+	local w, h = self.grid.w*self.grid.tilew, self.grid.h*self.grid.tileh
+	local x, y = (gw - w)/2, (gh - h)/2
+
 	self.camera:attach()
 
     -- game objects
 		self.grid:draw()
   	GameObject.drawAll()
+
+  	-- draw extra overlords for map torus lapping
+  	for i = 1, n_players do
+  		local o = self.overlords[i]
+
+  		if o.x < o.w then
+  			o:draw(o.x + w, o.y)
+			elseif o.x > w-o.w then
+  			o:draw(o.x - w, o.y)
+  		end
+
+  		if o.y < o.h*3 then
+  			o:draw(o.x, o.y + h)
+			elseif o.y > h-o.y then
+  			o:draw(o.x, o.y - h)
+  		end
+
+  	end
 
     if (not self.winner) and (not self.pause) then
 
@@ -132,7 +154,7 @@ function state:draw()
       -- dark overlay
       local r, g, b = love.graphics.getBackgroundColor()
       love.graphics.setColor(r, g, b, 200)
-        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+        love.graphics.rectangle("fill", 0, 0, gw/2, gh)
       love.graphics.setColor(255, 255, 255)
 
       -- draw avatars & score
@@ -146,6 +168,18 @@ function state:draw()
 
 
 	self.camera:detach()
+
+	-- borders 
+  love.graphics.setColor(love.graphics.getBackgroundColor())
+  	-- left
+    love.graphics.rectangle("fill", 0, 0, x, gh)
+    -- right
+    love.graphics.rectangle("fill", x+w, 0, gw-x-w, gh)
+    -- top
+    love.graphics.rectangle("fill", x, 0, w, y)
+    -- bottom
+    love.graphics.rectangle("fill", x, y+h, w, gh-y-h)
+  love.graphics.setColor(255, 255, 255, 255)
 
 
 end

@@ -48,6 +48,9 @@ local Overlord = Class
     self.radial_menu_x = 0
     self.radial_menu_y = 0
 
+    self.desired_dx = 0
+    self.desired_dy = 0
+
     self.percent_gui = 0
 
     self.blink = math.random()*self.BLINK_PERIOD
@@ -146,11 +149,28 @@ Game loop
 
 function Overlord:update(dt)
   
+  -- Standard update (physics)
   GameObject.update(self, dt)
+
+  -- Lap around world
+  local world_w, world_h = game.grid.tilew * game.grid.w, game.grid.tileh * game.grid.h
+  -- ... horizontal
+  if self.x > world_w then
+    self.x = self.x - world_w
+  elseif self.x < 0 then
+    self.x = self.x + world_w
+  end
+  -- ... vertical
+  if self.y > world_h then
+    self.y = self.y - world_h
+  elseif self.y < 0 then
+    self.y = self.y + world_h
+  end
   
+  -- Get input
   local inp = input[self.player]
 
-  -- Blink periodically
+  -- Animation: blink eyes periodically
   self.blink = self.blink - dt 
   if self.blink < 0 then
     self.blink = self.BLINK_PERIOD + self.BLINK_PERIOD_VAR*math.random()
