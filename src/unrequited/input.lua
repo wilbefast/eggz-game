@@ -12,42 +12,60 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 --]]
 
+
+local n_pads = love.joystick.getNumJoysticks()
+
 local input = {}
 for i = 1, MAX_PLAYERS do
-  input[i] = { x = 0, y = 0, confirm = false, confirm_prev = false, confirm_trigger = 0}
+  input[i] = 
+  { 
+  	x = 0, 
+  	y = 0, 
+
+  	confirm = false, 
+  	confirm_prev = false, 
+  	confirm_trigger = 0, 
+
+  	gamepad = (n_pads >= i)
+  }
 end
 
-if USE_GAMEPADS then
-	for i = 1, MAX_PLAYERS do
-		input[i].keyConfirm = function () return love.joystick.isDown(i, 1) end
-		input[i].keyCancel = function () return love.joystick.isDown(i, 2) end
-		input[i].keyWest = function () return love.joystick.isDown(i, 3) end
-		input[i].keyNorth = function () return love.joystick.isDown(i, 4) end
-		input[i].keyStart = function () return love.joystick.isDown(i, 1) end -- FIXME
+for i = 1, n_pads do
+	input[i].keyConfirm = function () return love.joystick.isDown(i, 1) end
+	input[i].keyCancel = function () return love.joystick.isDown(i, 2) end
+	input[i].keyWest = function () return love.joystick.isDown(i, 3) end
+	input[i].keyNorth = function () return love.joystick.isDown(i, 4) end
+	input[i].keyStart = function () return love.joystick.isDown(i, 1) end -- FIXME
+end
+
+if n_pads < MAX_PLAYERS then
+	input[n_pads + 1].keyLeft = function () return love.keyboard.isDown("left") end
+	input[n_pads + 1].keyRight = function () return love.keyboard.isDown("right") end
+	input[n_pads + 1].KeyUp = function () return love.keyboard.isDown("up") end
+	input[n_pads + 1].keyDown = function () return love.keyboard.isDown("down") end
+	input[n_pads + 1].keyStart = function () return love.keyboard.isDown("return") end
+	input[n_pads + 1].keyConfirm = function () return love.keyboard.isDown("rctrl") end
+	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("escape") end
+
+	if n_pads < MAX_PLAYERS - 1 then
+		input[n_pads + 2].keyLeft = function () return love.keyboard.isDown("a", "q") end
+		input[n_pads + 2].keyRight = function () return love.keyboard.isDown("d") end
+		input[n_pads + 2].KeyUp = function () return love.keyboard.isDown("w", "z") end
+		input[n_pads + 2].keyDown = function () return love.keyboard.isDown("s") end
+		input[n_pads + 2].keyStart = function () return love.keyboard.isDown("return") end
+		input[n_pads + 2].keyConfirm = function () return love.keyboard.isDown("lctrl") end
+		input[n_pads + 2].keyCancel = function () return love.keyboard.isDown("escape") end
 	end
-else
-	input[1].keyLeft = function () return love.keyboard.isDown("left") end
-	input[1].keyRight = function () return love.keyboard.isDown("right") end
-	input[1].KeyUp = function () return love.keyboard.isDown("up") end
-	input[1].keyDown = function () return love.keyboard.isDown("down") end
-	input[1].keyStart = function () return love.keyboard.isDown("return") end
-	input[1].keyConfirm = function () return love.keyboard.isDown("rctrl") end
-	input[1].keyCancel = function () return love.keyboard.isDown("escape") end
-
-	input[2].keyLeft = function () return love.keyboard.isDown("a", "q") end
-	input[2].keyRight = function () return love.keyboard.isDown("d") end
-	input[2].KeyUp = function () return love.keyboard.isDown("w", "z") end
-	input[2].keyDown = function () return love.keyboard.isDown("s") end
-	input[1].keyStart = function () return love.keyboard.isDown("return") end
-	input[2].keyConfirm = function () return love.keyboard.isDown("lctrl") end
-	input[2].keyCancel = function () return love.keyboard.isDown("escape") end
 end
+
+
+
 
 function input:update(dt)
 	for i = 1, MAX_PLAYERS do
 		local p = self[i]
 		
-		if USE_GAMEPADS then
+		if p.gamepad then
 			p.x = love.joystick.getAxis(i, 1)
 			if math.abs(p.x) < 0.5 then
 				p.x = 0
@@ -75,7 +93,7 @@ function input:update(dt)
 			if p.keyDown and p.keyDown() then 
 				p.y = p.y + 1 
 			end
-		end -- if USE_GAMEPADS
+		end -- if p.gamepad
 		
 		-- confirm
 		if p.keyConfirm then

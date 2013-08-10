@@ -18,7 +18,7 @@ CONTROLS GAMESTATE
 --]]------------------------------------------------------------
 
 local CONTROLS_IMG = love.graphics.newImage("assets/menu/Controls-" .. 
-	useful.tri(USE_GAMEPADS, "Gamepad-", "") .. LANGUAGE .. ".png")
+	useful.tri(input[1].gamepad, "Gamepad-", "") .. LANGUAGE .. ".png")
 
 local state = GameState.new()
 
