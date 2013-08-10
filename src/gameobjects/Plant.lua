@@ -150,6 +150,9 @@ function Plant:update(dt)
   	-- On enemy territory
 		if (self.tile.conversion > 0.5) and (self.tile.owner ~= self.player) then
 			self.energy = math.max(0, self.energy - 0.1*dt)
+			if self.energy == 0 then
+				self.player = self.tile.owner
+			end
 		else
 			-- Not stunned ?
 			if (not self.stunned) then
