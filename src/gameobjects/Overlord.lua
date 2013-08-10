@@ -222,6 +222,7 @@ function Overlord:update(dt)
     	self.FRICTION_Y = useful.tri(self.z < 1, 2000, 0)
     end 
     self.dy = self.dy + inp.y*dt*acceleration
+
   -- Radial menu ---------------------------------------------------------
   else
     self.dx, self.dx = 0, 0
@@ -312,9 +313,16 @@ function Overlord:update(dt)
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
     and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) and (self.tile.occupant) then
         self.tile.occupant.purge = true
-        local cocoon = Cocoon(self.tile, self.player, self.tile.occupant.EVOLUTION[self.radial_menu_choice])
-        cocoon.hitpoints = self.tile.occupant.hitpoints
-        cocoon.child_energy = 1--self.tile.occupant.child_energy
+
+        local evolution
+        if self.tile.occupant:isType("Cocoon") then
+          evolution = Egg(self.tile, self.player)
+          evolution.energy = 1
+        else
+          evolution = Cocoon(self.tile, self.player, self.tile.occupant.EVOLUTION[self.radial_menu_choice])
+          evolution.child_energy = 1--self.tile.occupant.child_energy
+        end
+        evolution.hitpoints = self.tile.occupant.hitpoints
         self.radial_menu_x, self.radial_menu_y = 0, 0
     end
 

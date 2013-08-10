@@ -58,6 +58,17 @@ Cocoon.IMAGES =
   love.graphics.newImage("assets/WHITE-egg.png")
 }
 
+-- default: recycle only
+Cocoon.EVOLUTION_ICONS =
+{
+  nil,
+  { 
+    love.graphics.newImage("assets/radial_cancel_Y.png"), 
+    love.graphics.newImage("assets/radial_cancel_hl_Y.png")
+  },
+  nil,
+}
+
 --[[------------------------------------------------------------
 Game loop
 --]]--
