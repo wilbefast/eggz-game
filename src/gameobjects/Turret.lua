@@ -24,7 +24,7 @@ local Turret = Class
 {
   type = GameObject.TYPE.new("Turret"),
 
-  ENERGY_DRAW_SPEED = 0.01,              -- per second
+  ENERGY_DRAW_SPEED = 0.3,              -- per second
   ENERGY_CONSUME_SPEED = 0,           -- per second
   ENERGY_DRAW_EFFICIENCY = 15,       -- percent
   ENERGY_START = 1,
