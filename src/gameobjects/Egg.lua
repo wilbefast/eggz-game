@@ -98,36 +98,34 @@ Egg.IMAGES =
 			love.graphics.newImage("assets/BLUE-egg-carry-C.png")
 		}
 	},
-	-- VIOLET
-	-- todo
+	-- YELLOW
 	{
 		{ 
-			love.graphics.newImage("assets/BLUE-egg-A.png"), 
-			love.graphics.newImage("assets/BLUE-egg-carry-A.png")
+			love.graphics.newImage("assets/YELLOW-egg-A.png"), 
+			love.graphics.newImage("assets/YELLOW-egg-carry-A.png")
 		},
 		{ 
-			love.graphics.newImage("assets/BLUE-egg-B.png"),
-			love.graphics.newImage("assets/BLUE-egg-carry-B.png")
+			love.graphics.newImage("assets/YELLOW-egg-B.png"),
+			love.graphics.newImage("assets/YELLOW-egg-carry-B.png")
 		},
 		{ 
-			love.graphics.newImage("assets/BLUE-egg-C.png"),
-			love.graphics.newImage("assets/BLUE-egg-carry-C.png")
+			love.graphics.newImage("assets/YELLOW-egg-C.png"),
+			love.graphics.newImage("assets/YELLOW-egg-carry-C.png")
 		}
 	},
-	-- YELLOW
-	-- todo
+	-- VIOLET
 	{
 		{ 
-			love.graphics.newImage("assets/RED-egg-A.png"), 
-			love.graphics.newImage("assets/RED-egg-carry-A.png")
+			love.graphics.newImage("assets/VIOLET-egg-A.png"), 
+			love.graphics.newImage("assets/VIOLET-egg-carry-A.png")
 		},
 		{ 
-			love.graphics.newImage("assets/RED-egg-B.png"),
-			love.graphics.newImage("assets/RED-egg-carry-B.png")
+			love.graphics.newImage("assets/VIOLET-egg-B.png"),
+			love.graphics.newImage("assets/VIOLET-egg-carry-B.png")
 		},
 		{ 
-			love.graphics.newImage("assets/RED-egg-C.png"),
-			love.graphics.newImage("assets/RED-egg-carry-C.png")
+			love.graphics.newImage("assets/VIOLET-egg-C.png"),
+			love.graphics.newImage("assets/VIOLET-egg-carry-C.png")
 		}
 	},
 }

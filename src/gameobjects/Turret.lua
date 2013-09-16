@@ -83,6 +83,14 @@ Turret.IMAGES =
   {
     love.graphics.newImage("assets/BLUE-knight-01.png"),
     love.graphics.newImage("assets/BLUE-knight-02.png")
+  },
+  {
+    love.graphics.newImage("assets/YELLOW-knight-01.png"),
+    love.graphics.newImage("assets/YELLOW-knight-02.png")
+  },
+  {
+    love.graphics.newImage("assets/VIOLET-knight-01.png"),
+    love.graphics.newImage("assets/VIOLET-knight-02.png")
   }
 }
 

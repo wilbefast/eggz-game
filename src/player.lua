@@ -58,7 +58,7 @@ PLAYER 3 - YELLOW
 player[3] = 
 {
 	-- yellow
-	bindTeamColour = function (a) love.graphics.setColor(255, 0, 255, a or 255) end,
+	bindTeamColour = function (a) love.graphics.setColor(255, 255, 0, a or 255) end,
 	-- top middle
 	startPosition = 
   { 
@@ -76,7 +76,7 @@ PLAYER 4 - VIOLET
 player[4] = 
 {
 	-- violet
-	bindTeamColour = function (a) love.graphics.setColor(255, 255, 0, a or 255) end,
+	bindTeamColour = function (a) love.graphics.setColor(255, 0, 255, a or 255) end,
 	-- bottom middle
 	startPosition =
   { 

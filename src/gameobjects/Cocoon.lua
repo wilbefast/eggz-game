@@ -53,7 +53,9 @@ Cocoon.IMAGES =
 {
   {
     love.graphics.newImage("assets/RED-egg-D.png"),
-    love.graphics.newImage("assets/BLUE-egg-D.png")
+    love.graphics.newImage("assets/BLUE-egg-D.png"),
+    love.graphics.newImage("assets/YELLOW-egg-D.png"),
+    love.graphics.newImage("assets/VIOLET-egg-D.png")
   },
   love.graphics.newImage("assets/WHITE-egg.png")
 }
