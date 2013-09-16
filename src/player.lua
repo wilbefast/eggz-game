@@ -13,10 +13,6 @@ Lesser General Public License for more details.
 --]]
 
 local player = {}
-player[1] = {}
-player[2] = {}
-player[3] = {}
-
 
 
 --[[---------------------------------------------------------------------------
@@ -30,7 +26,7 @@ player[1] =
 	-- right middle
 	startPosition = 
 	{ 
-		x = 64*11 - 32,  	
+		x = 64*9 - 32,  	
 		y = 64*6 - 32 	
 	},
 	total_conversion = 0
@@ -48,7 +44,7 @@ player[2] =
 	-- left middle
 	startPosition = 
   { 
-  	x = 32, 					
+  	x = 64*2 + 32, 					
   	y = 64*6 - 32
 	},
 	total_conversion = 0
@@ -67,7 +63,7 @@ player[3] =
 	startPosition = 
   { 
   	x = 64*6 - 32, 		
-  	y = 32        	
+  	y = 64*2 + 32        	
 	},
 	total_conversion = 0
 }
@@ -85,7 +81,7 @@ player[4] =
 	startPosition =
   { 
   	x = 64*6 - 32, 		
-  	y = 64*11 - 32 	
+  	y = 64*9 - 32 	
 	},
 	total_conversion = 0
 }

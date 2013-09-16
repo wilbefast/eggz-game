@@ -19,9 +19,9 @@ GLOBAL SETTINGS
 DEBUG = true
 CHEATS = DEBUG
 MAX_PLAYERS = 4
-n_players = 2
+n_players = 4 -- TODO - set in menu
 
-LANGUAGE = "EN"
+LANGUAGE = "EN" -- TODO - set in menu
 
 MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")
 
@@ -154,7 +154,7 @@ function love.keypressed(key, uni)
   -- toggle music
   if key == "backspace" then -- music
     audio:toggle_music()
-  elseif key == "f" and CHEATS then -- fast
+  elseif key == "c" and CHEATS then -- fast
     Egg.ENERGY_DRAW_EFFICIENCY = 100
     Cocoon.MATURATION_SPEED = 100
     Overlord.EGG_PRODUCTION_SPEED = 100

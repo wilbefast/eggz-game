@@ -84,15 +84,21 @@ function state:update(dt)
 			
 			-- check for victory
 			for i = 1, n_players do
-        --if player[i].total_conversion > 0 then
-        if player[i].total_conversion > 1/n_players then
-					-- we have a winner !
-					self.winner = i
-					audio.music:stop()
-					audio:play_sound("intro")
-					break
+        --if player[i].total_conversion > 1/n_players then
+        if player[i].total_conversion > 0 then
+          -- check if countdown to win has expired
+          if player[i].winning > 1 then
+            -- we have a winner !
+            self.winner = i
+            audio.music:stop()
+            audio:play_sound("intro")
+            break
+          else
+            -- count down to win
+            player[i].winning = player[i].winning + dt
+					end
         else
-          --print("TODO")
+          player[i].winning = 0 
 				end
 			end
 
