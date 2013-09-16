@@ -21,7 +21,7 @@ CHEATS = DEBUG
 MAX_PLAYERS = 4
 n_players = 4 -- TODO - set in menu
 
-DELAY_BEFORE_WIN = 5 -- seconds
+DELAY_BEFORE_WIN = 10 -- seconds
 
 LANGUAGE = "EN" -- TODO - set in menu
 

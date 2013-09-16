@@ -89,8 +89,20 @@ end
 
 function Tile:drawContours()
 	if (self.owner ~= 0) and (self.conversion > 0.1) then
+
+		local alpha = (self.conversion*0.2)*255
+		if player[self.owner].winning > 0 then
+			local spike = 
+				(player[self.owner].winning - math.floor(player[self.owner].winning))
+
+			if spike < 0.5 and (math.sin(spike*2*math.pi) <= 1) then
+				alpha = alpha + math.sin(spike*2*math.pi)*0.6*255
+			end
+		end
+
+
 		love.graphics.setLineWidth(LINE_WIDTH)
-		player[self.owner].bindTeamColour((self.conversion*0.2)*255)
+		player[self.owner].bindTeamColour(alpha)
 			love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 		player[self.owner].bindTeamColour()
 

@@ -87,9 +87,8 @@ function state:update(dt)
 
         local p = player[i]
 
-        --if p.total_conversion > 1/n_players then
-        if p.total_conversion > 0 then
-          -- check if countdown to win has expired
+        if p.total_conversion > 1/n_players then
+        -- check if countdown to win has expired
           if p.winning > DELAY_BEFORE_WIN then
             -- we have a winner !
             self.winner = i
@@ -104,7 +103,6 @@ function state:update(dt)
             and (p.winning < DELAY_BEFORE_WIN) then
               p.win_warnings = p.win_warnings + 1
               --audio:play_sound("ticktock")
-              print("WARNING", p.win_warnings)
             end 
 					end
         else

@@ -28,8 +28,7 @@ player[1] =
 	{ 
 		x = 64*9 - 32,  	
 		y = 64*6 - 32 	
-	},
-	total_conversion = 0
+	}
 }
 
 
@@ -46,8 +45,7 @@ player[2] =
   { 
   	x = 64*2 + 32, 					
   	y = 64*6 - 32
-	},
-	total_conversion = 0
+	}
 }
 
 
@@ -64,8 +62,7 @@ player[3] =
   { 
   	x = 64*6 - 32, 		
   	y = 64*2 + 32        	
-	},
-	total_conversion = 0
+	}
 }
 
 
@@ -82,9 +79,18 @@ player[4] =
   { 
   	x = 64*6 - 32, 		
   	y = 64*9 - 32 	
-	},
-	total_conversion = 0
+	}
 }
+
+
+--[[---------------------------------------------------------------------------
+VOLATILE ATTRIBUTES
+--]]
+
+for _, p in ipairs(player) do
+	p.total_conversion = 0
+	p.winning = 0
+end
 
 --[[---------------------------------------------------------------------------
 EXPORT
