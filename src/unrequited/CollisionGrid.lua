@@ -107,7 +107,7 @@ function CollisionGrid:update(dt)
 
   -- reset total conversion counter
   for i = 1, MAX_PLAYERS do 
-    player.total_conversion[i] = 0
+    player[i].total_conversion = 0
   end
 
   -- update tiles
@@ -155,7 +155,7 @@ function CollisionGrid:update(dt)
 
       -- award the "point" to the owner if control is over 0.5
       if t.conversion > 0.5 then
-        player.total_conversion[t.owner] = player.total_conversion[t.owner] + 1
+        player[t.owner].total_conversion = player[t.owner].total_conversion + 1
       end
     end
   end
@@ -163,7 +163,7 @@ function CollisionGrid:update(dt)
   -- normalise total conversion
   local total_tiles = self.w*self.h
   for i = 1, MAX_PLAYERS do 
-    player.total_conversion[i] = player.total_conversion[i] / total_tiles
+    player[i].total_conversion = player[i].total_conversion / total_tiles
   end
 
   -- reset total energy

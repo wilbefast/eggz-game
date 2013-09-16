@@ -27,8 +27,10 @@ function state:enter()
   GameObject.NEW_INSTANCES = { }
 
   self.overlords = {}
+  local i = 1
   for i = 1, n_players do
-    self.overlords[i] = Overlord(player.startPosition[i].x, player.startPosition[i].y, i)
+    self.overlords[i] = Overlord(player[i].startPosition.x, player[i].startPosition.y, i)
+    i = i + 1
   end
 
   -- create grid
@@ -82,12 +84,15 @@ function state:update(dt)
 			
 			-- check for victory
 			for i = 1, n_players do
-				if player.total_conversion[i] > 1/n_players then
+        --if player[i].total_conversion > 0 then
+        if player[i].total_conversion > 1/n_players then
 					-- we have a winner !
 					self.winner = i
 					audio.music:stop()
 					audio:play_sound("intro")
 					break
+        else
+          --print("TODO")
 				end
 			end
 
@@ -103,8 +108,8 @@ function state:update(dt)
   -- winner previously announced
   else
     for i, score in ipairs(self.scoreboard) do
-      score.x, score.y = useful.lerp(score.x, player.startPosition[i].x, 3*dt), 
-                                useful.lerp(score.y, player.startPosition[i].y, 3*dt)
+      score.x, score.y = useful.lerp(score.x, player[i].startPosition.x, 3*dt), 
+                                useful.lerp(score.y, player[i].startPosition.y, 3*dt)
     end
   end
 
@@ -142,14 +147,12 @@ function state:draw()
   	end
 
     if (not self.winner) and (not self.pause) then
-
-
-    else
-      
+      -- business as usual
+    else 
       -- dark overlay
       local r, g, b = love.graphics.getBackgroundColor()
       love.graphics.setColor(r, g, b, 200)
-        love.graphics.rectangle("fill", 0, 0, gw/2, gh)
+        love.graphics.rectangle("fill", 0, 0, gw, gh)
       love.graphics.setColor(255, 255, 255)
 
       -- draw avatars & score
@@ -177,7 +180,7 @@ function state:draw()
   love.graphics.setColor(255, 255, 255, 255)
 
 
-  -- play UI and radial menus
+  -- player UI and radial menus
   self.camera:attach()
     if (not self.winner) and (not self.pause) then
   		for i = 1, n_players do

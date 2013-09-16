@@ -90,9 +90,9 @@ end
 function Tile:drawContours()
 	if (self.owner ~= 0) and (self.conversion > 0.1) then
 		love.graphics.setLineWidth(LINE_WIDTH)
-		player.bindTeamColour[self.owner]((self.conversion*0.2)*255)
+		player[self.owner].bindTeamColour((self.conversion*0.2)*255)
 			love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
-		player.bindTeamColour[self.owner]()
+		player[self.owner].bindTeamColour()
 
 			-- calculate offsets
 			local left, right = self.x, self.x+self.w

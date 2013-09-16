@@ -13,24 +13,85 @@ Lesser General Public License for more details.
 --]]
 
 local player = {}
+player[1] = {}
+player[2] = {}
+player[3] = {}
 
-player.bindTeamColour = 
+
+
+--[[---------------------------------------------------------------------------
+PLAYER 1 - RED
+--]]
+
+player[1] = 
 {
-	function (a) love.graphics.setColor(255, 0, 0, a or 255) end,
-	function (a) love.graphics.setColor(0, 0, 255, a or 255) end,
-	function (a) love.graphics.setColor(255, 0, 255, a or 255) end,
-	function (a) love.graphics.setColor(255, 255, 0, a or 255) end
+	-- red
+	bindTeamColour = function (a) love.graphics.setColor(255, 0, 0, a or 255) end,
+	-- right middle
+	startPosition = 
+	{ 
+		x = 64*11 - 32,  	
+		y = 64*6 - 32 	
+	},
+	total_conversion = 0
 }
 
-player.startPosition = 
+
+--[[---------------------------------------------------------------------------
+PLAYER 2 - BLUE
+--]]
+
+player[2] = 
 {
-	{ x = 64*11 - 32,  	y = 64*6 - 32 	},
-  { x = 32, 					y = 64*6 - 32 	},
-  { x = 64*6 - 32, 		y = 32        	},
-  { x = 64*6 - 32, 		y = 64*11 - 32 	}
+	-- blue
+	bindTeamColour = function (a) love.graphics.setColor(0, 0, 255, a or 255) end,
+	-- left middle
+	startPosition = 
+  { 
+  	x = 32, 					
+  	y = 64*6 - 32
+	},
+	total_conversion = 0
 }
 
-player.total_conversion = { 0, 0, 0, 0 }
 
+--[[---------------------------------------------------------------------------
+PLAYER 3 - YELLOW
+--]]
+
+player[3] = 
+{
+	-- yellow
+	bindTeamColour = function (a) love.graphics.setColor(255, 0, 255, a or 255) end,
+	-- top middle
+	startPosition = 
+  { 
+  	x = 64*6 - 32, 		
+  	y = 32        	
+	},
+	total_conversion = 0
+}
+
+
+--[[---------------------------------------------------------------------------
+PLAYER 4 - VIOLET
+--]]
+
+player[4] = 
+{
+	-- violet
+	bindTeamColour = function (a) love.graphics.setColor(255, 255, 0, a or 255) end,
+	-- bottom middle
+	startPosition =
+  { 
+  	x = 64*6 - 32, 		
+  	y = 64*11 - 32 	
+	},
+	total_conversion = 0
+}
+
+--[[---------------------------------------------------------------------------
+EXPORT
+--]]
 
 return player

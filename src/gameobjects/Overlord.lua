@@ -342,7 +342,7 @@ function Overlord:draw(x, y)
     y - Overlord.SHADOW:getHeight()/2)
 
   -- set team colour
-  player.bindTeamColour[self.player]()
+  player[self.player].bindTeamColour()
 
   -- draw selected tile
   -- if not game.winner then
@@ -359,7 +359,7 @@ function Overlord:draw(x, y)
                                0, 1, 1, 42, 86)
     love.graphics.setColor(255, 255, 255)
       self.passenger:drawTransported()
-    player.bindTeamColour[self.player]()
+    player[self.player].bindTeamColour()
   end
 
   -- draw body
@@ -440,7 +440,7 @@ end
 function Overlord:draw_icon(x, y)
 	x, y = (x or self.x), (y or self.y)
 
-	player.bindTeamColour[self.player]()
+	player[self.player].bindTeamColour()
 		love.graphics.draw(Overlord.IDLE, x, y - self.h/2*self.z, 0, 1, 1, 42, 86)
 	love.graphics.setColor(255, 255, 255)
 		love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3, 
@@ -457,10 +457,10 @@ function Overlord:draw_percent_conversion(x, y)
   else
     alpha, offset_y = 255, -24
   end
-  local total_conversion = math.floor(player.total_conversion[self.player]*100)
+  local total_conversion = math.floor(player[self.player].total_conversion*100)
     love.graphics.setColor(5, 15, 5, alpha)
       love.graphics.printf(tostring(total_conversion) .. "%", x+3, y+23+offset_y, 0, 'center')
-    player.bindTeamColour[self.player](alpha)
+    player[self.player].bindTeamColour(alpha)
       love.graphics.printf(tostring(total_conversion) .. "%", x, y+20+offset_y, 0, 'center')
   love.graphics.setColor(255, 255, 255)
 end
