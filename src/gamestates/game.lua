@@ -84,10 +84,13 @@ function state:update(dt)
 			
 			-- check for victory
 			for i = 1, n_players do
-        --if player[i].total_conversion > 1/n_players then
-        if player[i].total_conversion > 0 then
+
+        local p = player[i]
+
+        --if p.total_conversion > 1/n_players then
+        if p.total_conversion > 0 then
           -- check if countdown to win has expired
-          if player[i].winning > 1 then
+          if p.winning > DELAY_BEFORE_WIN then
             -- we have a winner !
             self.winner = i
             audio.music:stop()
@@ -95,10 +98,18 @@ function state:update(dt)
             break
           else
             -- count down to win
-            player[i].winning = player[i].winning + dt
+            p.winning = p.winning + dt
+            -- warn other players with a "tick tock"!
+            if (math.floor(p.winning) > p.win_warnings)
+            and (p.winning < DELAY_BEFORE_WIN) then
+              p.win_warnings = p.win_warnings + 1
+              --audio:play_sound("ticktock")
+              print("WARNING", p.win_warnings)
+            end 
 					end
         else
-          player[i].winning = 0 
+          p.winning = 0
+          p.win_warnings = 0 
 				end
 			end
 

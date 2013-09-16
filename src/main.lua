@@ -21,6 +21,8 @@ CHEATS = DEBUG
 MAX_PLAYERS = 4
 n_players = 4 -- TODO - set in menu
 
+DELAY_BEFORE_WIN = 5 -- seconds
+
 LANGUAGE = "EN" -- TODO - set in menu
 
 MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")
