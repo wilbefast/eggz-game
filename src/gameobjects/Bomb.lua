@@ -73,7 +73,10 @@ function Bomb:plant(tile)
   if self.transport then --and tile.occupant then
     self.purge = true
     self.transport.passenger = nil
+    -- visual queue
     SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
+    BombBlast(self.x, self.y)
+    -- audio queue
     audio:play_sound("BOMB-dropped", 0.1)
     local area_of_effect = game.grid:getNeighbours4(tile, false)
     for _, affected in pairs(area_of_effect) do

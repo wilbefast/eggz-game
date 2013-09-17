@@ -41,7 +41,7 @@ local Convertor = Class
     love.graphics.newImage("assets/RED-fountain-anim.png"),
     love.graphics.newImage("assets/BLUE-fountain-anim.png"),
     love.graphics.newImage("assets/YELLOW-fountain-anim.png"),
-    love.graphics.newImage("assets/VIOLET-fountain-anim.png")
+    love.graphics.newImage("assets/PURPLE-fountain-anim.png")
   },
 
   init = function(self, tile, player)

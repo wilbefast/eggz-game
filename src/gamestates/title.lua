@@ -61,7 +61,7 @@ end
 
 function accept()
 	if current_button == PLAY then 
-		GameState.switch(game)
+	  GameState.switch(game)
 	elseif current_button == CREDITS then 
 		GameState.switch(credits)
 	elseif current_button == CONTROLS then 
