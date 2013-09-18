@@ -39,7 +39,7 @@ PLAYER 2 - BLUE
 player[2] = 
 {
 	-- blue
-	bindTeamColour = function (a) love.graphics.setColor(0, 0, 255, a or 255) end,
+	bindTeamColour = function (a) love.graphics.setColor(0, 120, 255, a or 255) end,
 	-- left middle
 	startPosition = 
   { 
@@ -73,7 +73,7 @@ PLAYER 4 - VIOLET
 player[4] = 
 {
 	-- violet
-	bindTeamColour = function (a) love.graphics.setColor(255, 0, 255, a or 255) end,
+	bindTeamColour = function (a) love.graphics.setColor(120, 0, 255, a or 255) end,
 	-- bottom middle
 	startPosition =
   { 
@@ -90,6 +90,7 @@ VOLATILE ATTRIBUTES
 for _, p in ipairs(player) do
 	p.total_conversion = 0
 	p.winning = 0
+	p.win_warnings = 0
 end
 
 --[[---------------------------------------------------------------------------
