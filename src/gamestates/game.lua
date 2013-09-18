@@ -81,34 +81,41 @@ function state:update(dt)
 
 			-- update grid tiles
 			self.grid:update(dt)
+
+      -- find player with highest conversion
+      local highest_conversion = -1
+      local highest_conversion_i = 0
+      for i = 1, n_players do
+        local conversion = player[i].total_conversion
+        if conversion > highest_conversion then
+          highest_conversion = conversion
+          highest_conversion_i = i
+        end
+      end
 			
 			-- check for victory
-			for i = 1, n_players do
+      local p = player[highest_conversion_i]
 
-        local p = player[i]
-
-        if p.total_conversion > 1/n_players then
-        -- check if countdown to win has expired
-          if p.winning > DELAY_BEFORE_WIN then
-            -- we have a winner !
-            self.winner = i
-            audio.music:stop()
-            audio:play_sound("intro")
-            break
-          else
-            -- count down to win
-            p.winning = p.winning + dt
-            -- warn other players with a "tick tock"!
-            if (math.floor(p.winning) > p.win_warnings)
-            and (p.winning < DELAY_BEFORE_WIN) then
-              p.win_warnings = p.win_warnings + 1
-              --audio:play_sound("ticktock")
-            end 
-					end
+      if p.total_conversion > 1/n_players then
+      -- check if countdown to win has expired
+        if p.winning > DELAY_BEFORE_WIN then
+          -- we have a winner !
+          self.winner = highest_conversion_i
+          audio.music:stop()
+          audio:play_sound("intro")
         else
-          p.winning = 0
-          p.win_warnings = 0 
+          -- count down to win
+          p.winning = p.winning + dt
+          -- warn other players with a "tick tock"!
+          if (math.floor(p.winning) > p.win_warnings)
+          and (p.winning < DELAY_BEFORE_WIN) then
+            p.win_warnings = p.win_warnings + 1
+            --audio:play_sound("ticktock")
+          end 
 				end
+      else
+        p.winning = 0
+        p.win_warnings = 0 
 			end
 
 			-- as soon as winner is announced
