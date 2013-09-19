@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 CHEATS = DEBUG
 MAX_PLAYERS = 4
 n_players = 4 -- TODO - set in menu
@@ -73,7 +73,7 @@ player_select = require("gamestates/player_select")
 SINGLETON SETTINGS
 --]]------------------------------------------------------------
 
-audio.mute = true
+audio.mute = DEBUG
 
 --[[------------------------------------------------------------
 LOVE CALLBACKS
@@ -119,7 +119,8 @@ function love.load(arg)
   love.graphics.setBackgroundColor(3, 9, 3)
 
   -- load music/sound
-  audio:load_music("loop")
+  audio:load_music("loop_menu")
+  audio:load_music("loop_game")
 
   audio:load_sound("EGG-pick", 0.5, 2)
   audio:load_sound("EGG-drop", 0.5, 2)
@@ -136,9 +137,6 @@ function love.load(arg)
   audio:load_sound("BOMB-dropped", 2, 2)
 
   audio:load_sound("intro", 1, 1)
-
-  -- start music
-  audio:play_music("loop", 0.06)
 
   -- go to the initial gamestate
   GameState.switch(title)

@@ -55,9 +55,7 @@ local state = GameState.new()
 state.controlling_player = 1
 
 function state:enter()
-  if audio.music:isStopped() then
-    audio:play_music("loop", 0.06)
-  end
+  audio:play_music("loop_menu", 0.06)
 end
 
 function accept()

@@ -160,7 +160,7 @@ function input:update(dt)
 			end
 		end
 
-	end -- for each pconfirmer
+	end -- for each p
 
 end
 
