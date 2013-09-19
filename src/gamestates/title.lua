@@ -52,6 +52,7 @@ local after = function(i)
 end
 
 local state = GameState.new()
+state.controlling_player = 1
 
 function state:enter()
   if audio.music:isStopped() then
@@ -82,14 +83,16 @@ local button_rotation = 0
 
 function state:update(dt)
 
-  -- launch button switch
-  if button_changing == 0 then
-    button_changing = button_changing + input[1].x*dt
-  end
-
-  -- confirm or cancel
-  if input[1].keyConfirm() or input[1].keyStart() then
-    accept()
+  for i = 1, MAX_PLAYERS do
+    -- launch button switch
+    if button_changing == 0 then
+      button_changing = button_changing + input[i].x*dt
+      self.controlling_player = i
+    end
+    -- confirm or cancel
+    if input[i].keyConfirm() or input[i].keyStart() then
+      accept()
+    end
   end
 
   -- switch buttons over time
@@ -97,11 +100,11 @@ function state:update(dt)
     button_changing = button_changing + 7*dt*useful.sign(button_changing)/(1 + 2*math.abs(button_changing))
     button_rotation = useful.lerp(button_rotation, math.pi/2, math.abs(button_changing))
     if button_changing > 1 then
-      button_changing = input[1].x*dt
       current_button = after(current_button)
+      button_changing = input[self.controlling_player].x*dt
     elseif button_changing < -1 then
-      button_changing = input[1].x*dt
       current_button = before(current_button)
+      button_changing = input[self.controlling_player].x*dt
     end
   else
     -- button rotation animation
