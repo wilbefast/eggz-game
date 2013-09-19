@@ -66,6 +66,7 @@ title = require("gamestates/title")
 game = require("gamestates/game")
 credits = require("gamestates/credits")
 controls = require("gamestates/controls")
+player_select = require("gamestates/player_select")
 
 
 --[[------------------------------------------------------------

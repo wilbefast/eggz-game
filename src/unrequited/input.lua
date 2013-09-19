@@ -26,6 +26,10 @@ for i = 1, MAX_PLAYERS do
   	confirm_prev = false, 
   	confirm_trigger = 0, 
 
+  	start = false,
+  	start_prev = false,
+  	start_trigger = 0,
+
   	gamepad = (n_pads >= i)
   }
 end
@@ -136,6 +140,26 @@ function input:update(dt)
 			end
 		end
 		
+		-- start
+		if p.keyStart then
+			p.start = p.keyStart()
+			if p.start then
+				if not p.start_prev then
+					p.start_trigger = 1
+				else
+					p.start_trigger = 0
+				end
+				p.start_prev = true
+			else
+				if p.start_prev then
+					p.start_trigger = -1
+				else
+					p.start_trigger = 0
+				end
+				p.start_prev = false
+			end
+		end
+
 	end -- for each pconfirmer
 
 end
