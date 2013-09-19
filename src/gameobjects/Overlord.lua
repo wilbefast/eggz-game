@@ -311,7 +311,7 @@ function Overlord:update(dt)
   else -- if not inp.confirm
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
-    and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) and (self.tile.occupant) then
+    and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
         self.tile.occupant.purge = true
 
         local evolution
