@@ -23,8 +23,10 @@ local CONTROLS_IMG = love.graphics.newImage("assets/menu/Controls-" ..
 local state = GameState.new()
 
 function state:update(dt)
-  if input[1].keyCancel() then
-    GameState.switch(title)
+  for i = 1, MAX_PLAYERS do
+    if input[i].keyCancel() then
+      GameState.switch(title)
+    end
   end
 end
 
