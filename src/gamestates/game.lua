@@ -89,28 +89,30 @@ function state:update(dt)
         local conversion = player[i].total_conversion
         -- new best ?
         if conversion > highest_conversion then
-          -- YES - the new leader in the race is ...
+          -- YES - the new runner up is the old leader ...
+          second_highest_conversion = highest_conversion
+          second_highest_conversion_i = highest_conversion_i
+          -- ... and the new leader in the race is ...
           highest_conversion = conversion
           highest_conversion_i = i
         else
           -- NOPE - and there are no prizes for second best :'(
-          --player[i].winning = 0
-          --player[i].win_warnings = 0 
+          player[i].winning = 0
+          player[i].win_warnings = 0 
 
           -- new second best ?
           if conversion > second_highest_conversion then
             -- YEP - the runner-up is overtaken 
-            second_highest_conversion = highest_conversion
-            second_highest_conversion_i = highest_conversion_i 
+            second_highest_conversion_i = i 
+            second_highest_conversion = conversion
           end   
         end
       end
 			
 			-- check for victory
       local p = player[highest_conversion_i]
-
-      if (p.total_conversion > 1/n_players) then
-      --and (highest_conversion > second_highest_conversion + 0.05) then
+      if (p.total_conversion > 1/n_players)
+      and (highest_conversion > second_highest_conversion + 0.05) then
       -- check if countdown to win has expired
         if p.winning > DELAY_BEFORE_WIN then
           -- we have a winner !
