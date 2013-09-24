@@ -18,6 +18,8 @@ GAME GAMESTATE
 
 local state = GameState.new() 
 
+state.gradient = love.graphics.newImage("assets/gradient_h.png")
+
 function state:init()  
 end
 
@@ -214,12 +216,17 @@ function state:draw()
   love.graphics.setColor(getBackgroundColorWithAlpha(255))
   	-- left
     love.graphics.rectangle("fill", 0, 0, x-self.grid.tilew, gh)
+    love.graphics.draw(self.gradient, x-self.grid.tilew, 0, 0, self.grid.tilew, gh)
     -- right
     love.graphics.rectangle("fill", x+w+self.grid.tilew, 0, gw-x-w-self.grid.tilew, gh)
+    love.graphics.draw(self.gradient, x+w+self.grid.tilew, 0, 0, -self.grid.tilew, gh)
     -- top
-    love.graphics.rectangle("fill", x, 0, w, y-self.grid.tileh)
+    love.graphics.rectangle("fill", 0, 0, w, y-self.grid.tileh)
+    love.graphics.draw(self.gradient, gw, 0, math.pi/2, self.grid.tilew, gw)
     -- bottom
     love.graphics.rectangle("fill", x, y+h+self.grid.tileh, w, gh-y-h-self.grid.tileh)
+    love.graphics.draw(self.gradient, 0, gh, -math.pi/2, self.grid.tilew, gw)
+    
   love.graphics.setColor(255, 255, 255, 255)
 
 
