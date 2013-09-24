@@ -192,6 +192,12 @@ function CollisionGrid:draw(view)
     for y = start_y, end_y do
       self.tiles[x][y]:draw()
     end
+    self.tiles[x][end_y]:draw(_, (start_y-2)*self.tileh)
+    self.tiles[x][start_y]:draw(_, (end_y)*self.tileh)
+  end
+  for y = start_y, end_y do
+      self.tiles[end_x][y]:draw((start_x-2)*self.tilew, _)
+      self.tiles[start_x][y]:draw((end_x)*self.tilew, _)
   end
 
   -- draw team-colour contours
@@ -199,6 +205,12 @@ function CollisionGrid:draw(view)
     for y = start_y, end_y do
       self.tiles[x][y]:drawContours()
     end
+    self.tiles[x][end_y]:drawContours(_, (start_y-2)*self.tileh)
+    self.tiles[x][start_y]:drawContours(_, (end_y)*self.tileh)
+  end
+  for y = start_y, end_y do
+      self.tiles[end_x][y]:drawContours((start_x-2)*self.tilew, _)
+      self.tiles[start_x][y]:drawContours((end_x)*self.tilew, _)
   end
 
 end

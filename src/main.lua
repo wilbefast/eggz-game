@@ -16,10 +16,10 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 CHEATS = DEBUG
 MAX_PLAYERS = 4
-n_players = 4 -- TODO - set in menu
+n_players = 2
 
 DELAY_BEFORE_WIN = 10 -- seconds
 
@@ -27,9 +27,13 @@ LANGUAGE = "EN" -- TODO - set in menu
 
 MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")
 
+getBackgroundColorWithAlpha = 
+  function (a)
+    local r, g, b = love.graphics.getBackgroundColor()
+    return r, g, b, a
+  end
 
 -- font
---FONT_SMALL = love.graphics.newImageFont("assets/GUI/GUI-digits.png", "0123456789%")
 FONT_SMALL = love.graphics.newFont("assets/font/casual.ttf", 24)
 FONT_BIG = love.graphics.newFont("assets/font/casual.ttf", 48)
 FONT_HUGE = love.graphics.newFont("assets/font/casual.ttf", 64)

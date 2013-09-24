@@ -211,7 +211,7 @@ function state:draw()
 	self.camera:detach()
 
 	-- borders 
-  love.graphics.setColor(love.graphics.getBackgroundColor())
+  love.graphics.setColor(getBackgroundColorWithAlpha(205))
   	-- left
     love.graphics.rectangle("fill", 0, 0, x, gh)
     -- right
