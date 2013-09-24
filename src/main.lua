@@ -17,7 +17,7 @@ GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
 DEBUG = false
-CHEATS = true--DEBUG
+CHEATS = DEBUG
 MAX_PLAYERS = 4
 n_players = 2
 
