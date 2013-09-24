@@ -151,7 +151,8 @@ function Plant:update(dt)
 		if (self.tile.conversion > 0.5) and (self.tile.owner ~= self.player) then
 			self.energy = math.max(0, self.energy - 0.1*dt)
 			if self.energy == 0 then
-				self.player = self.tile.owner
+				-- stopped conversion
+				--self.player = self.tile.owner
 			end
 		else
 			-- Not stunned ?
