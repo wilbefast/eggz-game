@@ -24,7 +24,8 @@ local state = GameState.new()
 
 function state:update(dt)
   for i = 1, MAX_PLAYERS do
-    if input[i].keyCancel() then
+    if (input[i].cancel.trigger == 1) or (input[i].start.trigger == 1) or
+    (input[i].confirm.trigger == 1) then
       GameState.switch(title)
     end
   end

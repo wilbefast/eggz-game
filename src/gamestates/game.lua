@@ -193,7 +193,13 @@ function state:draw()
         love.graphics.rectangle("fill", 0, 0, gw, gh)
       love.graphics.setColor(255, 255, 255)
 
-      -- draw avatars & score
+      -- PAUSED - draw 'paused' text
+      if self.pause then
+        love.graphics.setFont(FONT_BIG)
+        love.graphics.printf("Paused", w/2, h/2, 0, "center")
+      end
+
+      -- WINNING - draw avatars & score
 			if self.winner then
 				for i, score in ipairs(self.scoreboard) do
 					self.overlords[i]:draw_icon(score.x, score.y)

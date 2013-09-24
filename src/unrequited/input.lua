@@ -22,13 +22,9 @@ for i = 1, MAX_PLAYERS do
   	x = 0, 
   	y = 0, 
 
-  	confirm = false, 
-  	confirm_prev = false, 
-  	confirm_trigger = 0, 
-
-  	start = false,
-  	start_prev = false,
-  	start_trigger = 0,
+  	confirm = { pressed = false, previous = false, trigger = 0 },
+  	start = { pressed = false, previous = false, trigger = 0 },
+  	cancel = { pressed = false, previous = false, trigger = 0 },
 
   	gamepad = (n_pads >= i)
   }
@@ -49,7 +45,7 @@ if n_pads < MAX_PLAYERS then
 	input[n_pads + 1].keyDown = function () return love.keyboard.isDown("down") end
 	input[n_pads + 1].keyStart = function () return love.keyboard.isDown("return") end
 	input[n_pads + 1].keyConfirm = function () return love.keyboard.isDown("rctrl") end
-	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("escape") end
+	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("backspace") end
 
 	if n_pads < MAX_PLAYERS - 1 then
 		input[n_pads + 2].keyLeft = function () return love.keyboard.isDown("a", "q") end
@@ -58,7 +54,7 @@ if n_pads < MAX_PLAYERS then
 		input[n_pads + 2].keyDown = function () return love.keyboard.isDown("s") end
 		input[n_pads + 2].keyStart = function () return love.keyboard.isDown("return") end
 		input[n_pads + 2].keyConfirm = function () return love.keyboard.isDown("lctrl") end
-		input[n_pads + 2].keyCancel = function () return love.keyboard.isDown("escape") end
+		input[n_pads + 2].keyCancel = function () return love.keyboard.isDown("backspace") end
 	end
 
 	if n_pads < MAX_PLAYERS - 2 then
@@ -68,7 +64,7 @@ if n_pads < MAX_PLAYERS then
 		input[n_pads + 3].keyDown = function () return love.keyboard.isDown("g") end
 		input[n_pads + 3].keyStart = function () return love.keyboard.isDown("return") end
 		input[n_pads + 3].keyConfirm = function () return love.keyboard.isDown("y") end
-		input[n_pads + 3].keyCancel = function () return love.keyboard.isDown("escape") end
+		input[n_pads + 3].keyCancel = function () return love.keyboard.isDown("backspace") end
 	end
 
 	if n_pads < MAX_PLAYERS - 3 then
@@ -78,13 +74,22 @@ if n_pads < MAX_PLAYERS then
 		input[n_pads + 4].keyDown = function () return love.keyboard.isDown("k") end
 		input[n_pads + 4].keyStart = function () return love.keyboard.isDown("return") end
 		input[n_pads + 4].keyConfirm = function () return love.keyboard.isDown("o") end
-		input[n_pads + 4].keyCancel = function () return love.keyboard.isDown("escape") end
+		input[n_pads + 4].keyCancel = function () return love.keyboard.isDown("backspace") end
 	end
 
 end
 
 
-
+function generateTrigger(key, key_accessor)
+	key.pressed = key_accessor()
+	if key.pressed == key.previous then
+		key.trigger = 0
+	elseif key.pressed then
+		key.trigger = 1
+	else		
+		key.trigger = 0
+	end
+end
 
 function input:update(dt)
 	for i = 1, MAX_PLAYERS do
@@ -121,44 +126,13 @@ function input:update(dt)
 		end -- if p.gamepad
 		
 		-- confirm
-		if p.keyConfirm then
-			p.confirm = p.keyConfirm()
-			if p.confirm then
-				if not p.confirm_prev then
-					p.confirm_trigger = 1
-				else
-					p.confirm_trigger = 0
-				end
-				p.confirm_prev = true
-			else
-				if p.confirm_prev then
-					p.confirm_trigger = -1
-				else
-					p.confirm_trigger = 0
-				end
-				p.confirm_prev = false
-			end
-		end
+		generateTrigger(p.confirm, p.keyConfirm)
 		
 		-- start
-		if p.keyStart then
-			p.start = p.keyStart()
-			if p.start then
-				if not p.start_prev then
-					p.start_trigger = 1
-				else
-					p.start_trigger = 0
-				end
-				p.start_prev = true
-			else
-				if p.start_prev then
-					p.start_trigger = -1
-				else
-					p.start_trigger = 0
-				end
-				p.start_prev = false
-			end
-		end
+		generateTrigger(p.start, p.keyStart)
+
+		-- cancel
+		generateTrigger(p.cancel, p.keyCancel)
 
 	end -- for each p
 

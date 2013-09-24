@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false
+DEBUG = true
 CHEATS = DEBUG
 MAX_PLAYERS = 4
 n_players = 2 -- TODO - set in menu
@@ -155,9 +155,9 @@ function love.keypressed(key, uni)
   GameState.keypressed(key, uni)
 
   -- toggle music
-  if key == "backspace" then -- music
+  if key == "m" then -- music
     audio:toggle_music()
-  elseif key == "c" and CHEATS then -- fast
+  elseif key == "c" and CHEATS then -- cheat
     Egg.ENERGY_DRAW_EFFICIENCY = 100
     Cocoon.MATURATION_SPEED = 100
     Overlord.EGG_PRODUCTION_SPEED = 100
