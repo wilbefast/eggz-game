@@ -438,6 +438,14 @@ function Overlord:draw_icon(x, y)
 																			y - (2.2 + 0.5*self.z)*self.h)
 end
 
+function Overlord.draw_icon(x, y, team)
+  player[team].bindTeamColour()
+    love.graphics.draw(Overlord.IDLE, x, y, 0, 1, 1, 47, 47)
+  love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3, 
+                                      y - 31)
+end
+
 function Overlord:draw_percent_conversion(x, y)
 
   x, y = (x or self.x), (y or self.y)

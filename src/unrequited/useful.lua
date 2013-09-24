@@ -76,7 +76,7 @@ function useful.round(x, n)
   else
     -- round to nearest integer
     local floor = math.floor(x)
-    if (x - floor) > 0.5 then
+    if (x - floor) < 0.5 then
       return floor
     else
       return math.ceil(x)

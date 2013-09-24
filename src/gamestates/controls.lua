@@ -31,6 +31,11 @@ function state:update(dt)
   end
 end
 
+function state:keypressed(key, uni)
+  if (key=="escape") then
+    GameState.switch(title)
+  end
+end
 
 function state:draw()
   -- background

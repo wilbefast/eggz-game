@@ -19,7 +19,7 @@ GLOBAL SETTINGS
 DEBUG = true
 CHEATS = DEBUG
 MAX_PLAYERS = 4
-n_players = 1 -- TODO - set in menu
+n_players = 4 -- TODO - set in menu
 
 DELAY_BEFORE_WIN = 10 -- seconds
 
@@ -32,6 +32,7 @@ MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")
 --FONT_SMALL = love.graphics.newImageFont("assets/GUI/GUI-digits.png", "0123456789%")
 FONT_SMALL = love.graphics.newFont("assets/font/casual.ttf", 24)
 FONT_BIG = love.graphics.newFont("assets/font/casual.ttf", 48)
+FONT_HUGE = love.graphics.newFont("assets/font/casual.ttf", 64)
 
 
 --[[------------------------------------------------------------
