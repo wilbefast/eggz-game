@@ -261,7 +261,7 @@ function Overlord:update(dt)
   end
 
 	-- Put down a plant  -------------------------------------------
-	if inp.confirm_trigger == 1 and self:canPlant() then
+	if inp.confirm.trigger == 1 and self:canPlant() then
     -- put down passenger
     if self.passenger then
       self.previous_passenger = self.passenger
@@ -294,7 +294,7 @@ function Overlord:update(dt)
   self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
 
   -- Land on the ground --------------------------------------------------
-  if inp.confirm then
+  if inp.confirm.pressed then
     self.z = math.max(0, self.z - dt*10)
     if (self.z == 0) 
     and self.tile.occupant 
@@ -308,7 +308,7 @@ function Overlord:update(dt)
       self.radial_menu = math.max(0, self.radial_menu - dt*8)
     end
 
-  else -- if not inp.confirm
+  else -- if not inp.confirm.pressed
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
     and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
@@ -334,24 +334,17 @@ end
 
 function Overlord:draw(x, y)
 
+  -- cache workspace variables
   x, y = (x or self.x), (y or self.y)
-
+  local dx, dy = self.desired_dx, self.desired_dy
+  
   -- draw shadow
   love.graphics.draw(Overlord.SHADOW, 
-    x - Overlord.SHADOW:getWidth()/2, 
-    y - Overlord.SHADOW:getHeight()/2)
+    x - Overlord.SHADOW:getWidth()/2 - dx*6, 
+    y - Overlord.SHADOW:getHeight()/2 - dy*6)
 
   -- set team colour
   player[self.player].bindTeamColour()
-
-  -- draw selected tile
-  -- if not game.winner then
-  --   love.graphics.setLineWidth(3)
-  --     love.graphics.line(self.tile.x + 16, self.tile.y + 16, self.tile.x + 48, self.tile.y + 48)
-  --     love.graphics.line(self.tile.x + 48, self.tile.y + 16, self.tile.x + 16, self.tile.y + 48)
-  --     love.graphics.rectangle("line", self.tile.x, self.tile.y, 64, 64)
-  --   love.graphics.setLineWidth(1)
-  -- end
 
   -- draw transported object
   if self.passenger then
@@ -363,8 +356,6 @@ function Overlord:draw(x, y)
   end
 
   -- draw body
-  local dx, dy = self.desired_dx, self.desired_dy
-
   local image
   if self.passenger then
     image = Overlord.CARRY_FRONT
