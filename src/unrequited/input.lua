@@ -81,17 +81,21 @@ end
 
 
 function generateTrigger(key, key_accessor)
+	key.previous = key.pressed
 	key.pressed = key_accessor()
 	if key.pressed == key.previous then
 		key.trigger = 0
 	elseif key.pressed then
 		key.trigger = 1
 	else		
-		key.trigger = 0
+		key.trigger = -1
 	end
 end
 
-function input:update(dt)
+function input:update(dt, bink)
+
+	if not bink then print(a.b) end
+
 	for i = 1, MAX_PLAYERS do
 		local p = self[i]
 		

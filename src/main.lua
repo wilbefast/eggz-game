@@ -19,7 +19,7 @@ GLOBAL SETTINGS
 DEBUG = true
 CHEATS = DEBUG
 MAX_PLAYERS = 4
-n_players = 2 -- TODO - set in menu
+n_players = 1 -- TODO - set in menu
 
 DELAY_BEFORE_WIN = 10 -- seconds
 
@@ -175,7 +175,7 @@ MAX_DT = 1/30
 function love.update(dt)
   dt = math.max(MIN_DT, math.min(MAX_DT, dt))
 	
-  input:update(dt)
+  input:update(dt, true)
   GameState.update(dt)
 end
 

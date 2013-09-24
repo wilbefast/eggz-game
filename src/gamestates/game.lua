@@ -61,16 +61,15 @@ function state:keypressed(key, uni)
 end
 
 function state:update(dt)
-
 	-- input
 	for i = 1, n_players do
 		-- check for pause key
-		if input[i]:keyCancel() then
-			self.pause = true
+		if input[i].cancel.trigger == 1 then
+			self.pause = (not self.pause)
 		end
 		
 		-- check for unpause key
-		if input[i]:keyConfirm() then
+		if (input[i].confirm.trigger == 1) or (input[i].start.trigger == 1) then
 			self.pause = false
 		end
 	end
