@@ -91,7 +91,7 @@ function Cocoon:update(dt)
     end
 end
 
-function Cocoon:draw()
+function Cocoon:draw(x, y)
 
   x, y = x or self.x, y or self.y
 

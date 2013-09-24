@@ -102,7 +102,7 @@ function Convertor:draw(x, y)
   if self.energy < 0.1 then
     love.graphics.setColor(96, 96, 96)
   end
-  self.view:draw(self)
+  self.view:draw(self, x, y)
   love.graphics.setColor(255, 255, 255)
 
   if self.stunned then
