@@ -208,10 +208,11 @@ function Egg:draw(x, y)
 
 end
 
-function Egg:drawTransported()
+function Egg:drawTransported(x, y)
+	x, y = x or self.x, y or self.y
 		love.graphics.draw(Egg.IMAGES[self.player][self:getEvolution()][2],
-			self.x, 
-			self.y,
+			x, 
+			y,
 			0,
 			1, 1, 26, 55)
 end

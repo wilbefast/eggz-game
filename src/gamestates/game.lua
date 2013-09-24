@@ -164,8 +164,8 @@ function state:draw()
     -- game objects
 		self.grid:draw()
   	GameObject.drawAll()
-
-  	-- draw extra overlords for map torus lapping
+    
+    -- draw extra overlords for map torus lapping
   	for i = 1, n_players do
   		local o = self.overlords[i]
 

@@ -103,8 +103,9 @@ function Bomb:draw(x, y)
     0, 1, 1, 32, 40)
 end
 
-function Bomb:drawTransported()
-  love.graphics.draw(Bomb.IMAGES[2], self.x, self.y,
+function Bomb:drawTransported(x, y)
+  x, y = x or self.x, y or self.y
+  love.graphics.draw(Bomb.IMAGES[2], x, y,
     0, 1, 1, 24, 64)
 end
 

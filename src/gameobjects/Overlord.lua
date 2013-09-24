@@ -351,7 +351,7 @@ function Overlord:draw(x, y)
     love.graphics.draw(Overlord.CARRY_BACK, x, y - self.h/2*self.z, 
                                0, 1, 1, 42, 86)
     love.graphics.setColor(255, 255, 255)
-      self.passenger:drawTransported()
+      self.passenger:drawTransported(x, y)
     player[self.player].bindTeamColour()
   end
 
