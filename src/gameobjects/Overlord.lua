@@ -261,7 +261,7 @@ function Overlord:update(dt)
   end
 
 	-- Put down a plant  -------------------------------------------
-	if inp.confirm.trigger == 1 and self:canPlant() then
+	if inp.confirm.pressed and self:canPlant() then
     -- put down passenger
     if self.passenger then
       self.previous_passenger = self.passenger
@@ -273,7 +273,7 @@ function Overlord:update(dt)
     end
   
   -- Pick up a plant  -------------------------------------------
-  elseif inp.confirm_trigger == -1 and self:canUproot() then
+  elseif inp.confirm.trigger == -1 and self:canUproot() then
     -- pick up tile occupant
     if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
     and (not self.previous_passenger)
