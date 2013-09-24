@@ -93,11 +93,13 @@ end
 
 function Cocoon:draw()
 
-  love.graphics.draw(Cocoon.IMAGES[1][self.player], self.x, self.y,
+  x, y = x or self.x, y or self.y
+
+  love.graphics.draw(Cocoon.IMAGES[1][self.player], x, y,
     0, 1, 1, 32, 40)
 
   if self.stunned then
-    love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 1.2, -1.2, 32, 20)
+    love.graphics.draw(Plant.IMG_STUN, x, y, 0, 1.2, -1.2, 32, 20)
   else
     local finishedness = (self.maturity - 0.66*self.maturationTime) / (0.34*self.maturationTime)
     if finishedness > 0 then -- over 66%
@@ -109,7 +111,7 @@ function Cocoon:draw()
 
       -- Pokemon evolution effect (tm)
       love.graphics.setColor(255, 255, 255, finishedness*255)
-        love.graphics.draw(Cocoon.IMAGES[2], self.x, self.y,
+        love.graphics.draw(Cocoon.IMAGES[2], x, y,
         0, 1, 1, 32, 40)
       love.graphics.setColor(255, 255, 255, 255)
     end

@@ -187,22 +187,25 @@ function Egg:update(dt)
 	self.ARMOUR = (self:getEvolution() - 1)
 end
 
-function Egg:draw()
+function Egg:draw(x, y)
+		x, y = x or self.x, y or self.y
+
 		if self.transport then
 			return
 		end
 
 		local ev = self:getEvolution()
 		love.graphics.draw(Egg.IMAGES[self.player][ev][1],
-			self.x, 
-			self.y,
+			x, 
+			y,
 			0,
 			1, 1, 32, 40)
 
 	  if self.stunned then
 	  	local size = 0.8 + (ev-1)*0.2
-    	love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, size, -size, 32, 30 - (ev-1)*5)
+    	love.graphics.draw(Plant.IMG_STUN, x, y, 0, size, -size, 32, 30 - (ev-1)*5)
     end
+
 end
 
 function Egg:drawTransported()

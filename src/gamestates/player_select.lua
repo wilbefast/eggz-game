@@ -98,7 +98,7 @@ function state:draw()
   -- 1. number of human players
   love.graphics.print("Humans", w*0.25, h*0.3)
   for i = 1, useful.round(self.current_n_players) do
-    Overlord.draw_icon(w*0.45 + i*w/18, h*0.3 + 16, i)
+    Overlord.draw_static(w*0.45 + i*w/18, h*0.3 + 16, i)
   end
 
   -- 2. number of robot players

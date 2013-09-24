@@ -83,11 +83,18 @@ Game loop
 local LINE_WIDTH = 3
 
 function Tile:draw(x, y)
-	
+
 	x, y = x or self.x, y or self.y
 
 	local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
 	love.graphics.draw(Tile.IMAGES[subimage], x, y)
+end
+
+function Tile:drawOccupant(x, y)
+	if self.occupant then
+		x, y = x or self.x, y or self.y
+		self.occupant:draw(x + self.w/2, y + self.h/2)
+	end
 end
 
 function Tile:drawContours(x, y)

@@ -119,34 +119,22 @@ function CollisionGrid:update(dt)
         return ((t1.owner == t2.owner) and (t1.conversion > 0.1) and (t2.conversion > 0.1))
       end
 
+      -- wrap around
+      local left = useful.tri(x > 1, x-1, self.w)
+      local right = useful.tri(x < self.w, x+1, 1)
+      local above = useful.tri(y > 1, y-1, self.h)
+      local below = useful.tri(y < self.h, y+1, 1)
+
       -- check tile neighbours for territory contour drawing
-      if x > 1 then
-        t.leftContiguous = allied(self.tiles[x-1][y], t)
-        if y > 1 then
-          t.nwContiguous = allied(self.tiles[x-1][y-1], t)
-        end
-        if y < self.h then
-          t.swContiguous = allied(self.tiles[x-1][y+1], t)
-        end
-      end
-
-      if x < self.w then
-        t.rightContiguous = allied(self.tiles[x+1][y], t)
-        if y > 1 then
-          t.neContiguous = allied(self.tiles[x+1][y-1], t)
-        end
-        if y < self.h then
-          t.seContiguous = allied(self.tiles[x+1][y+1], t)
-        end
-      end
-
-      if y > 1 then
-        t.aboveContiguous = allied(self.tiles[x][y-1], t)
-      end
-      if y < self.h then
-        t.belowContiguous = allied(self.tiles[x][y+1], t)
-      end
-
+      t.leftContiguous = allied(self.tiles[left][y], t)
+      t.nwContiguous = allied(self.tiles[left][above], t)
+      t.swContiguous = allied(self.tiles[left][below], t)
+      t.rightContiguous = allied(self.tiles[right][y], t)
+      t.neContiguous = allied(self.tiles[right][above], t)
+      t.seContiguous = allied(self.tiles[right][below], t)
+      t.aboveContiguous = allied(self.tiles[x][above], t)
+      t.belowContiguous = allied(self.tiles[x][below], t)
+    
       -- update the tile
       t:update(dt, self.total_energy)
 
@@ -196,8 +184,10 @@ function CollisionGrid:draw(view)
     self.tiles[x][start_y]:draw(_, (end_y)*self.tileh)
   end
   for y = start_y, end_y do
-      self.tiles[end_x][y]:draw((start_x-2)*self.tilew, _)
-      self.tiles[start_x][y]:draw((end_x)*self.tilew, _)
+    self.tiles[end_x][y]:draw((start_x-2)*self.tilew, _)
+    self.tiles[end_x][y]:drawOccupant((start_x-2)*self.tilew, _)
+    self.tiles[start_x][y]:draw((end_x)*self.tilew, _)
+    self.tiles[start_x][y]:drawOccupant((end_x)*self.tilew, _)
   end
 
   -- draw team-colour contours

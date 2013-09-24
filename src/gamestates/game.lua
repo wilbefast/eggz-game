@@ -169,13 +169,13 @@ function state:draw()
   	for i = 1, n_players do
   		local o = self.overlords[i]
 
-  		if o.x < o.w then
+  		if o.x < o.w*3 then
   			o:draw(o.x + w, o.y)
-			elseif o.x > w-o.w then
+			elseif o.x > w-o.w*3 then
   			o:draw(o.x - w, o.y)
   		end
 
-  		if o.y < o.h*3 then
+  		if o.y < o.h*5 then
   			o:draw(o.x, o.y + h)
 			elseif o.y > h-o.y then
   			o:draw(o.x, o.y - h)
@@ -211,15 +211,15 @@ function state:draw()
 	self.camera:detach()
 
 	-- borders 
-  love.graphics.setColor(getBackgroundColorWithAlpha(205))
+  love.graphics.setColor(getBackgroundColorWithAlpha(255))
   	-- left
-    love.graphics.rectangle("fill", 0, 0, x, gh)
+    love.graphics.rectangle("fill", 0, 0, x-self.grid.tilew, gh)
     -- right
-    love.graphics.rectangle("fill", x+w, 0, gw-x-w, gh)
+    love.graphics.rectangle("fill", x+w+self.grid.tilew, 0, gw-x-w-self.grid.tilew, gh)
     -- top
-    love.graphics.rectangle("fill", x, 0, w, y)
+    love.graphics.rectangle("fill", x, 0, w, y-self.grid.tileh)
     -- bottom
-    love.graphics.rectangle("fill", x, y+h, w, gh-y-h)
+    love.graphics.rectangle("fill", x, y+h+self.grid.tileh, w, gh-y-h-self.grid.tileh)
   love.graphics.setColor(255, 255, 255, 255)
 
 

@@ -191,19 +191,21 @@ function Turret:update(dt)
   end
 end
 
-function Turret:draw()
+function Turret:draw(x, y)
+
+  x, y = x or self.x, y or self.y
 
   -- draw sprite
   if self.energy < self.ATTACK_ENERGY_COST then
     love.graphics.setColor(128, 128, 128)
   end
-  love.graphics.draw(Turret.IMAGES[self.player][self.subimage], self.x, self.y,
+  love.graphics.draw(Turret.IMAGES[self.player][self.subimage], x, y,
     0, 1, 1, 32, 40)
   love.graphics.setColor(255, 255, 255)
 
   -- draw overlay
   if self.stunned then
-    love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 1, 1, 32, 32)
+    love.graphics.draw(Plant.IMG_STUN, x, y, 0, 1, 1, 32, 32)
   end
 end
 

@@ -31,7 +31,9 @@ local AnimationView = Class
   init = function(self, anim, speed, frame, offx, offy)
     self.anim = anim
     self.speed = (speed or 0.0)
-    self.frame = (frame or math.random(self.anim.n_frames))
+    
+    self.frame = useful.clamp(frame or math.random(self.anim.n_frames), 
+                              1, self.anim.n_frames)
     self.offx = (offx or 0)
     self.offy = (offy or 0)
   end,

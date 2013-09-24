@@ -438,7 +438,7 @@ function Overlord:draw_icon(x, y)
 																			y - (2.2 + 0.5*self.z)*self.h)
 end
 
-function Overlord.draw_icon(x, y, team)
+function Overlord.draw_static(x, y, team)
   player[team].bindTeamColour()
     love.graphics.draw(Overlord.IDLE, x, y, 0, 1, 1, 47, 47)
   love.graphics.setColor(255, 255, 255)

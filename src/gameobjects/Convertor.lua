@@ -47,7 +47,7 @@ local Convertor = Class
   init = function(self, tile, player)
     Plant.init(self, tile, player)
 
-    self.view = AnimationView(Convertor.ANIMS[self.player], 7, 0, 32, 32)
+    self.view = AnimationView(Convertor.ANIMS[self.player], 7, 1, 32, 32)
 
     -- set guard area
     self.convertArea = GameObject.COLLISIONGRID:getNeighbours4(tile) -- center
@@ -95,7 +95,9 @@ function Convertor:update(dt)
   end
 end
 
-function Convertor:draw()
+function Convertor:draw(x, y)
+
+  x, y = x or self.x, y or self.y
 
   if self.energy < 0.1 then
     love.graphics.setColor(96, 96, 96)
@@ -104,7 +106,7 @@ function Convertor:draw()
   love.graphics.setColor(255, 255, 255)
 
   if self.stunned then
-    love.graphics.draw(Plant.IMG_STUN, self.x, self.y, 0, 0.8, 0.8, 32, 18)
+    love.graphics.draw(Plant.IMG_STUN, x, y, 0, 0.8, 0.8, 32, 18)
   end
 end
 

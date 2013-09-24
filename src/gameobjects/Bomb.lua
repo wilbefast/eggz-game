@@ -93,11 +93,13 @@ end
 Game loop
 --]]--
 
-function Bomb:draw()
+function Bomb:draw(x, y)
+  x, y = x or self.x, y or self.y
+
   if self.transport then
     return
   end
-  love.graphics.draw(Bomb.IMAGES[1], self.x, self.y,
+  love.graphics.draw(Bomb.IMAGES[1], x, y,
     0, 1, 1, 32, 40)
 end
 
