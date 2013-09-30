@@ -168,6 +168,10 @@ function state:draw()
 
   end
 
+  
+  -- borders
+  drawBorders()
+
 end
 
 

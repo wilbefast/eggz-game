@@ -25,19 +25,58 @@ DELAY_BEFORE_WIN = 10 -- seconds
 
 LANGUAGE = "EN" -- TODO - set in menu
 
-MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")
+N_TILES_ACROSS = 11
+N_TILES_DOWN = 11
+TILE_W = 64
+TILE_H = 64
 
-getBackgroundColorWithAlpha = 
-  function (a)
-    local r, g, b = love.graphics.getBackgroundColor()
-    return r, g, b, a
-  end
+BORDER_SIZE = 16
+
+
+--[[------------------------------------------------------------
+GLOBAL RESOURCES
+--]]------------------------------------------------------------
+
+-- images
+MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")
 
 -- font
 FONT_SMALL = love.graphics.newFont("assets/font/casual.ttf", 24)
 FONT_BIG = love.graphics.newFont("assets/font/casual.ttf", 48)
 FONT_HUGE = love.graphics.newFont("assets/font/casual.ttf", 64)
 
+--[[------------------------------------------------------------
+GLOBAL FUNCTIONS
+--]]------------------------------------------------------------
+
+-- background
+getBackgroundColorWithAlpha = 
+  function (a)
+    local r, g, b = love.graphics.getBackgroundColor()
+    return r, g, b, a
+  end
+
+-- borders 
+IMG_GRADIENT = love.graphics.newImage("assets/gradient_h.png")
+
+function drawBorders()
+
+  local gw, gh = love.graphics.getWidth(), love.graphics.getHeight()
+  local w, h = MENU_BG:getWidth(), MENU_BG:getHeight()
+  local x, y = (gw - w)/2, (gh - h)/2
+
+  love.graphics.setColor(getBackgroundColorWithAlpha(255))
+    -- left
+    love.graphics.draw(IMG_GRADIENT, x, y, 0, BORDER_SIZE, h)
+    -- right
+    love.graphics.draw(IMG_GRADIENT, x+w, y, 0, -BORDER_SIZE, h)
+    -- top
+    love.graphics.draw(IMG_GRADIENT, x, y, math.pi/2, BORDER_SIZE, -w)
+    -- bottom
+    love.graphics.draw(IMG_GRADIENT, x, y+h, -math.pi/2, BORDER_SIZE, w)
+    
+  love.graphics.setColor(255, 255, 255, 255)
+end
 
 --[[------------------------------------------------------------
 IMPORTS

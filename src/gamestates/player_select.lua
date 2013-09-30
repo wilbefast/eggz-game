@@ -106,6 +106,9 @@ function state:draw()
   love.graphics.setFont(FONT_SMALL)
   love.graphics.print("Coming soon ...", w*0.5, h*0.5 + 16)
 
+  -- borders
+  drawBorders()
+
 end
 
 

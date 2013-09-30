@@ -18,8 +18,6 @@ GAME GAMESTATE
 
 local state = GameState.new() 
 
-state.gradient = love.graphics.newImage("assets/gradient_h.png")
-
 function state:init()  
 end
 
@@ -36,7 +34,7 @@ function state:enter()
   end
 
   -- create grid
-  self.grid = CollisionGrid(64, 64, 11, 11)
+  self.grid = CollisionGrid(TILE_W, TILE_H, N_TILES_ACROSS, N_TILES_DOWN)
   GameObject.COLLISIONGRID = self.grid
 
   -- point camera at centre of collision-grid
@@ -210,28 +208,35 @@ function state:draw()
     end
 
 
+  --- !!!
 	self.camera:detach()
+  --- !!!
 
-	-- borders 
+
+  -- borders 
   love.graphics.setColor(getBackgroundColorWithAlpha(255))
-  	-- left
+    -- left
     love.graphics.rectangle("fill", 0, 0, x-self.grid.tilew, gh)
-    love.graphics.draw(self.gradient, x-self.grid.tilew, 0, 0, self.grid.tilew, gh)
+    love.graphics.draw(IMG_GRADIENT, x-self.grid.tilew, 0, 0, self.grid.tilew, gh)
     -- right
     love.graphics.rectangle("fill", x+w+self.grid.tilew, 0, gw-x-w-self.grid.tilew, gh)
-    love.graphics.draw(self.gradient, x+w+self.grid.tilew, 0, 0, -self.grid.tilew, gh)
+    love.graphics.draw(IMG_GRADIENT, x+w+self.grid.tilew, 0, 0, -self.grid.tilew, gh)
     -- top
     love.graphics.rectangle("fill", 0, 0, w, y-self.grid.tileh)
-    love.graphics.draw(self.gradient, gw, 0, math.pi/2, self.grid.tilew, gw)
+    love.graphics.draw(IMG_GRADIENT, gw, 0, math.pi/2, self.grid.tilew, gw)
     -- bottom
     love.graphics.rectangle("fill", x, y+h+self.grid.tileh, w, gh-y-h-self.grid.tileh)
-    love.graphics.draw(self.gradient, 0, gh, -math.pi/2, self.grid.tilew, gw)
+    love.graphics.draw(IMG_GRADIENT, 0, gh, -math.pi/2, self.grid.tilew, gw)
     
   love.graphics.setColor(255, 255, 255, 255)
 
 
-  -- player UI and radial menus
+  --- !!!
   self.camera:attach()
+  --- !!!
+
+
+  -- player UI and radial menus
     if (not self.winner) and (not self.pause) then
   		for i = 1, n_players do
 	      -- gui overlay

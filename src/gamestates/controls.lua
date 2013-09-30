@@ -46,6 +46,9 @@ function state:draw()
   -- controls elements
   local x, y = (w - CONTROLS_IMG:getWidth())/2, (h - CONTROLS_IMG:getHeight())/2
   love.graphics.draw(CONTROLS_IMG, x, y)
+
+  -- borders
+  drawBorders()
 end
 
 

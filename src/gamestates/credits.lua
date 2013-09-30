@@ -45,6 +45,9 @@ function state:draw()
   -- credits
   local x, y = (w - CREDITS_IMG:getWidth())/2, (h - CREDITS_IMG:getHeight())/2
   love.graphics.draw(CREDITS_IMG, x, y)
+
+  -- borders
+  drawBorders()
 end
 
 
