@@ -176,19 +176,28 @@ function CollisionGrid:draw(view)
 
 
   -- draw tile backgrond images
+  -- ... for each column ...
   for x = start_x, end_x do
+    -- ... for each row ...
     for y = start_y, end_y do
+      -- draw the 'normal' versions of the tiles (ie. not 'lapping')
       self.tiles[x][y]:draw()
     end
-    self.tiles[x][end_y]:draw(_, (start_y-2)*self.tileh)
-    self.tiles[x][start_y]:draw(_, (end_y)*self.tileh)
+    -- ... copy the bottom tile at the top and vice-versa
+    self.tiles[x][end_y]:draw(_, (start_y-2)*self.tileh, true)
+    self.tiles[x][start_y]:draw(_, (end_y)*self.tileh, true)
   end
+  -- ... for each row ...
   for y = start_y, end_y do
-    self.tiles[end_x][y]:draw((start_x-2)*self.tilew, _)
-    self.tiles[end_x][y]:drawOccupant((start_x-2)*self.tilew, _)
-    self.tiles[start_x][y]:draw((end_x)*self.tilew, _)
-    self.tiles[start_x][y]:drawOccupant((end_x)*self.tilew, _)
+    -- ... copy the left tile at the right and vice-versa
+    self.tiles[end_x][y]:draw((start_x-2)*self.tilew, _, true)
+    self.tiles[start_x][y]:draw((end_x)*self.tilew, _, true)
   end
+  -- ... draw the 4 corner tiles
+  self.tiles[start_x][start_y]:draw((start_x-2)*self.tilew, (start_y-2)*self.tileh, true)
+  self.tiles[start_x][end_y]:draw((start_x-2)*self.tilew, (end_y)*self.tileh, true)
+  self.tiles[end_x][start_y]:draw((end_x)*self.tilew, (start_y-2)*self.tileh, true)
+  self.tiles[end_x][end_y]:draw((end_x)*self.tilew, (end_y)*self.tileh, true)
 
   -- draw team-colour contours
   for x = start_x, end_x do
