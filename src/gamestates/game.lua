@@ -214,19 +214,20 @@ function state:draw()
 
 
   -- borders 
+  local tw, th = self.grid.tilew, self.grid.tileh
   love.graphics.setColor(getBackgroundColorWithAlpha(255))
     -- left
-    love.graphics.rectangle("fill", 0, 0, x-self.grid.tilew, gh)
-    love.graphics.draw(IMG_GRADIENT, x-self.grid.tilew, 0, 0, self.grid.tilew, gh)
+    love.graphics.rectangle("fill", 0, 0, x-tw, gh)
+    love.graphics.draw(IMG_GRADIENT, x-tw, y-th, 0, tw, h+2*th)
     -- right
-    love.graphics.rectangle("fill", x+w+self.grid.tilew, 0, gw-x-w-self.grid.tilew, gh)
-    love.graphics.draw(IMG_GRADIENT, x+w+self.grid.tilew, 0, 0, -self.grid.tilew, gh)
+    love.graphics.rectangle("fill", x+w+tw, 0, gw-x-w-tw, gh)
+    love.graphics.draw(IMG_GRADIENT, x+w+tw, y-th, 0, -tw, h+2*th)
     -- top
-    love.graphics.rectangle("fill", 0, 0, w, y-self.grid.tileh)
-    love.graphics.draw(IMG_GRADIENT, gw, 0, math.pi/2, self.grid.tilew, gw)
+    love.graphics.rectangle("fill", 0, 0, w, y-th)
+    love.graphics.draw(IMG_GRADIENT, x-tw, y-th, math.pi/2, tw, -w-2*tw)
     -- bottom
-    love.graphics.rectangle("fill", x, y+h+self.grid.tileh, w, gh-y-h-self.grid.tileh)
-    love.graphics.draw(IMG_GRADIENT, 0, gh, -math.pi/2, self.grid.tilew, gw)
+    love.graphics.rectangle("fill", x, y+h+th, w, gh-y-h-th)
+    love.graphics.draw(IMG_GRADIENT, x-tw, y+h+th,  -math.pi/2, tw, w+2*tw)
     
   love.graphics.setColor(255, 255, 255, 255)
 
