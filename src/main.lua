@@ -90,6 +90,7 @@ Vector = require("hump/vector-light")
 player = require("player")
 
 useful = require("unrequited/useful")
+log = require("unrequited/log")
 audio = require("unrequited/audio")
 scaling = require("unrequited/scaling")
 input = require("unrequited/input")
@@ -225,4 +226,8 @@ end
 
 function love.draw()
   GameState.draw()
+
+  if DEBUG then
+    log:draw()
+  end
 end

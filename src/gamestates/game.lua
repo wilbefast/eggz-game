@@ -63,9 +63,11 @@ end
 function state:update(dt)
 	-- input
 	for i = 1, n_players do
+
 		-- check for pause key
 		if input[i].cancel.trigger == 1 then
 			self.pause = (not self.pause)
+      break -- multiple player have the same cancel key 
 		end
 		
 		-- check for unpause key
@@ -189,7 +191,7 @@ function state:draw()
       -- dark overlay
       local r, g, b = love.graphics.getBackgroundColor()
       love.graphics.setColor(r, g, b, 200)
-        love.graphics.rectangle("fill", 0, 0, gw, gh)
+        love.graphics.rectangle("fill", -self.grid.tilew, -self.grid.tileh, gw, gh)
       love.graphics.setColor(255, 255, 255)
 
       -- PAUSED - draw 'paused' text
