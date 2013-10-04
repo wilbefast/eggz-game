@@ -200,13 +200,14 @@ function Turret:draw(x, y)
     love.graphics.setColor(128, 128, 128)
   end
   love.graphics.draw(Turret.IMAGES[self.player][self.subimage], x, y,
-    0, 1, 1, 32, 40)
+    0, 1, 1, 32, 50)
   love.graphics.setColor(255, 255, 255)
 
   -- draw overlay
   if self.stunned then
     love.graphics.draw(Plant.IMG_STUN, x, y, 0, 1, 1, 32, 32)
   end
+
 end
 
 --[[------------------------------------------------------------

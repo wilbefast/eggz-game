@@ -96,7 +96,7 @@ function Cocoon:draw(x, y)
   x, y = x or self.x, y or self.y
 
   love.graphics.draw(Cocoon.IMAGES[1][self.player], x, y,
-    0, 1, 1, 32, 40)
+    0, 1, 1, 32, 50)
 
   if self.stunned then
     love.graphics.draw(Plant.IMG_STUN, x, y, 0, 1.2, -1.2, 32, 20)

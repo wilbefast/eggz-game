@@ -40,6 +40,9 @@ local Egg = Class
 
   ARMOUR = 0,
 
+  wobble = 0,
+  wobble_time = 0,
+
   init = function(self, tile, player)
     Plant.init(self, tile, player)
   end,
@@ -184,7 +187,17 @@ Game loop
 function Egg:update(dt)
 	Plant.update(self, dt)
 
-	self.ARMOUR = (self:getEvolution() - 1)
+	local evo = self:getEvolution()
+
+	self.ARMOUR = (evo - 1)
+
+  if evo == 3 then
+	  self.wobble_time = self.wobble_time + 15*dt
+	  if self.wobble_time > 2*math.pi then
+	  	self.wobble_time = self.wobble_time - 2*math.pi
+	  end
+		self.wobble = 0.2*math.cos(self.wobble_time)
+	end
 end
 
 function Egg:draw(x, y)
@@ -198,14 +211,14 @@ function Egg:draw(x, y)
 		love.graphics.draw(Egg.IMAGES[self.player][ev][1],
 			x, 
 			y,
-			0,
-			1, 1, 32, 40)
+			self.wobble,
+			1, 1, 32, 50)
 
+		-- stun overlay
 	  if self.stunned then
 	  	local size = 0.8 + (ev-1)*0.2
     	love.graphics.draw(Plant.IMG_STUN, x, y, 0, size, -size, 32, 30 - (ev-1)*5)
     end
-
 end
 
 function Egg:drawTransported(x, y)

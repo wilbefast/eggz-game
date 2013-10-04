@@ -462,7 +462,7 @@ function Overlord:draw_percent_conversion(x, y)
     alpha, offset_y = 255, -24
   end
 
-  love.graphics.setFont(FONT_SMALL)
+  love.graphics.setFont(FONT_BIG)
   
   local total_conversion = math.floor(player[self.player].total_conversion*100)
     love.graphics.setColor(5, 15, 5, alpha)
