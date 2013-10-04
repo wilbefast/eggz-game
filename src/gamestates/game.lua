@@ -55,8 +55,9 @@ end
 function state:keypressed(key, uni)
   
   -- quit game
-  if (key=="escape") then
-    GameState.switch(player_select)
+  if key=="l" or key=="escape" then
+    GameState.switch(title)
+    --GameState.switch(player_select)
   end
 
 end
