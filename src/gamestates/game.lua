@@ -265,28 +265,31 @@ function state:draw()
     overlord:print_percent_conversion()
   end
 
-
-  -- graph players' progression
   if self.winner then
+
+    -- graph players' progression
     love.graphics.setLineWidth(3)
 
-    previous =  { x = 0, y = h }
+    previous =  { x = 0, y = h*0.9 }
     current = { }
     for i = 1, n_players do  
-      player[i].bindTeamColour()
+      player[i].bindTeamColour(220)
       
       for _, entry in ipairs(self.log) do
 
-        current.x, current.y = (0.1 + (entry.time_stamp/self.log.total_time)*0.9) * w - 2*i, 
+        current.x, current.y = (entry.time_stamp/self.log.total_time) * w - 2*i, 
                                 (0.1 + (1 - entry[i]/self.log.highest)*0.8) * h - 2*i
-                                print(self.log.highest, current.y)
         love.graphics.line(previous.x, previous.y, current.x, current.y)
         previous.x, previous.y = current.x, current.y
       end 
-      previous.x, previous.y = 0, h
+      previous.x, previous.y = 0, h*0.9
   
     end
 
+    -- display 'winner is X' text
+    player[self.winner].bindTeamColour()
+      love.graphics.setFont(FONT_HUGE)
+      love.graphics.printf(player[self.winner].name .. " wins!", w*0.5, 0, 0, 'center')
     love.graphics.setColor(255, 255, 255)
 end
 
