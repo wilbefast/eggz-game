@@ -199,14 +199,6 @@ function state:draw()
         love.graphics.setFont(FONT_BIG)
         love.graphics.printf("Paused", w/2, h/2, 0, "center")
       end
-
-      -- WINNING - draw avatars & score
-			if self.winner then
-				for i, score in ipairs(self.scoreboard) do
-					self.overlords[i]:draw_icon(score.x, score.y)
-					self.overlords[i]:draw_percent_conversion(score.x, score.y)
-				end
-			end
     end
 
 
@@ -238,19 +230,14 @@ function state:draw()
   self.camera:attach()
   --- !!!
 
+  for _, overlord in ipairs(self.overlords) do
+    overlord:draw_radial_menu()
+    overlord:print_percent_conversion()
+  end
 
-  -- player UI and radial menus
-    if (not self.winner) and (not self.pause) then
-  		for i = 1, n_players do
-	      -- gui overlay
-	      for _, overlord in ipairs(self.overlords) do
-	        overlord:draw_radial_menu()
-	        overlord:draw_percent_conversion()
-	      end
-    	end
-		end
+  --- !!!
   self.camera:detach()
-
+  --- !!!
 
 end
 

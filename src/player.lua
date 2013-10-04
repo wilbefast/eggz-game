@@ -28,6 +28,12 @@ player[1] =
 	{ 
 		x = 64*9 - 32,  	
 		y = 64*6 - 32 	
+	},
+	-- top right
+	ui =
+	{
+		x = -3*64, 
+		y = 32
 	}
 }
 
@@ -45,6 +51,12 @@ player[2] =
   { 
   	x = 64*2 + 32, 					
   	y = 64*6 - 32
+	},
+	-- top right
+	ui =
+	{
+		x = 64*14, 
+		y = 32
 	}
 }
 
@@ -62,6 +74,12 @@ player[3] =
   { 
   	x = 64*6 - 32, 		
   	y = 64*2 + 32        	
+	},
+	-- bottom left
+	ui =
+	{
+		x = -3*64,
+		y = 64*10 - 32
 	}
 }
 
@@ -73,12 +91,18 @@ PLAYER 4 - VIOLET
 player[4] = 
 {
 	-- violet
-	bindTeamColour = function (a) love.graphics.setColor(120, 0, 255, a or 255) end,
+	bindTeamColour = function (a) love.graphics.setColor(160, 0, 255, a or 255) end,
 	-- bottom middle
 	startPosition =
   { 
   	x = 64*6 - 32, 		
   	y = 64*9 - 32 	
+	},
+	-- bottom right
+	ui =
+	{
+		x = 64*14, 
+		y = 64*10 - 32
 	}
 }
 

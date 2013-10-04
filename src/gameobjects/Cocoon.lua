@@ -112,7 +112,7 @@ function Cocoon:draw(x, y)
       -- Pokemon evolution effect (tm)
       love.graphics.setColor(255, 255, 255, finishedness*255)
         love.graphics.draw(Cocoon.IMAGES[2], x, y,
-        0, 1, 1, 32, 40)
+        0, 1, 1, 32, 50)
       love.graphics.setColor(255, 255, 255, 255)
     end
   end
