@@ -43,7 +43,7 @@ function state:enter()
   self.winner = false
 	
   -- log percents
-  self.log = { highest = 0, total_time = 0, time_till_next = 3, period = 3 }
+  self.log = { highest = 0, total_time = 0, time_till_next = 3, period = 3, animation = 0 }
 
 	-- not pause (yet)
 	self.pause = false
@@ -86,6 +86,9 @@ function state:update(dt)
       log:write(log_entry[1])
       self.log[#(self.log) + 1] = log_entry
     end
+  -- log animation
+  else
+    self.log.animation = math.min(self.log.animation + dt)
   end
 
 
@@ -261,7 +264,9 @@ function state:draw()
   --- !!!
 
   for _, overlord in ipairs(self.overlords) do
-    overlord:draw_radial_menu()
+    if not self.winner then
+      overlord:draw_radial_menu()
+    end
     overlord:print_percent_conversion()
   end
 
@@ -270,12 +275,19 @@ function state:draw()
     -- graph players' progression
     love.graphics.setLineWidth(3)
 
+    local max_log_i = self.log.animation*(#(self.log))
+
     previous =  { x = 0, y = h*0.9 }
     current = { }
     for i = 1, n_players do  
       player[i].bindTeamColour(220)
       
-      for _, entry in ipairs(self.log) do
+      for log_i, entry in ipairs(self.log) do
+
+        if log_i > max_log_i then
+          break
+        end
+
 
         current.x, current.y = (entry.time_stamp/self.log.total_time) * w - 2*i, 
                                 (0.1 + (1 - entry[i]/self.log.highest)*0.8) * h - 2*i
