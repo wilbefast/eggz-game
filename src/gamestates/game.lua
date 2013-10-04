@@ -48,7 +48,7 @@ function state:enter()
 	self.pause = false
 
   -- player game music
-  audio:play_music("loop_game", 0.1)
+  audio:play_music("loop_game", 0.2)
 end
 
 function state:keypressed(key, uni)

@@ -75,6 +75,8 @@ Overlord.CARRY_BACK = love.graphics.newImage("assets/ALIEN-BODY-carry-back.png")
 Overlord.EYES = love.graphics.newImage("assets/ALIEN-EYES.png")
 Overlord.SHADOW = love.graphics.newImage("assets/ALIEN-SHADOW.png")
 
+Overlord.RADIAL_HL = love.graphics.newImage("assets/radial_hl.png")
+
 --[[------------------------------------------------------------
 Collisions
 --]]--
@@ -226,8 +228,10 @@ function Overlord:update(dt)
   -- Radial menu ---------------------------------------------------------
   else
     self.dx, self.dx = 0, 0
-    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, 7*dt)
-    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, 7*dt)
+
+    local any_input = ((inp.x ~= 0) or (inp.y ~= 0))
+    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, useful.tri(any_input, 7, 1)*dt)
+    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, useful.tri(any_input, 7, 1)*dt)
 
     if (math.abs(self.radial_menu_x) < 0.1) and (math.abs(self.radial_menu_y) < 0.1) then
       self.radial_menu_choice = 0
@@ -414,6 +418,7 @@ function Overlord:draw_radial_menu(x, y)
         local scale, image
         if i == self.radial_menu_choice then
           scale, image = 1.3*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][2]
+          love.graphics.draw(self.RADIAL_HL, x + dx, y + dy, 0, scale, scale, 32, 32)
         else
           scale, image = 1*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][1]
         end

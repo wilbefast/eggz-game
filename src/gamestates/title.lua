@@ -24,15 +24,17 @@ local ARROWS_IMG = love.graphics.newImage("assets/menu/MENU-arrows.png")
 local BUTTON_IMG =
 {
   love.graphics.newImage("assets/menu/MENU-play-" .. LANGUAGE ..  ".png"),
-  love.graphics.newImage("assets/menu/MENU-controls-" .. LANGUAGE ..  ".png"),
+  --love.graphics.newImage("assets/menu/MENU-controls-" .. LANGUAGE ..  ".png"),
   love.graphics.newImage("assets/menu/MENU-credits-" .. LANGUAGE ..  ".png"),
   love.graphics.newImage("assets/menu/MENU-leave-" .. LANGUAGE ..  ".png")
 }
 
 local PLAY = 1
-local CONTROLS = 2
-local CREDITS = 3
-local LEAVE = 4
+-- local CONTROLS = 2
+-- local CREDITS = 3
+-- local LEAVE = 4
+local CREDITS = 2
+local LEAVE = 3
 local current_button = PLAY
 
 local before = function(i)
