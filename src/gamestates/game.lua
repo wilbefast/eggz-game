@@ -18,7 +18,7 @@ GAME GAMESTATE
 
 local state = GameState.new() 
 
-function state:init()  
+function state:init() 
 end
 
 function state:enter()
@@ -27,10 +27,8 @@ function state:enter()
   GameObject.NEW_INSTANCES = { }
 
   self.overlords = {}
-  local i = 1
   for i = 1, n_players do
     self.overlords[i] = Overlord(player[i].startPosition.x, player[i].startPosition.y, i)
-    i = i + 1
   end
 
   -- create grid
@@ -44,6 +42,9 @@ function state:enter()
   -- not victory (yet)
   self.winner = false
 	
+  -- log percents
+  self.log = { highest = 0, total_time = 0, time_till_next = 3, period = 3 }
+
 	-- not pause (yet)
 	self.pause = false
 
@@ -61,6 +62,34 @@ function state:keypressed(key, uni)
 end
 
 function state:update(dt)
+
+
+  -- log conversion amount
+  if not self.winner then
+    self.log.time_till_next = self.log.time_till_next - dt
+    self.log.total_time = self.log.total_time + dt
+    if self.log.time_till_next < 0 then
+      self.log.time_till_next = self.log.period
+
+      -- create log entry with timestamp
+      local log_entry = { time_stamp = self.log.total_time }
+      -- at each player's conversion to log entry
+      for i = 1, n_players do
+        local log_value = player[i].total_conversion
+        log_entry[i] = log_value
+        
+        if log_value > self.log.highest then
+          self.log.highest = log_value
+        end
+      end
+
+      log:write(log_entry[1])
+      self.log[#(self.log) + 1] = log_entry
+    end
+  end
+
+
+
 	-- input
 	for i = 1, n_players do
 
@@ -115,8 +144,9 @@ function state:update(dt)
 			
 			-- check for victory
       local p = player[highest_conversion_i]
+      --if (p.total_conversion > 0.05)
       if (p.total_conversion > 1/n_players)
-      and (highest_conversion > second_highest_conversion + 0.05) then
+      and (highest_conversion > second_highest_conversion + 0.01) then
       -- check if countdown to win has expired
         if p.winning > DELAY_BEFORE_WIN then
           -- we have a winner !
@@ -235,9 +265,35 @@ function state:draw()
     overlord:print_percent_conversion()
   end
 
+
+  -- graph players' progression
+  if self.winner then
+    love.graphics.setLineWidth(3)
+
+    previous =  { x = 0, y = h }
+    current = { }
+    for i = 1, n_players do  
+      player[i].bindTeamColour()
+      
+      for _, entry in ipairs(self.log) do
+
+        current.x, current.y = (0.1 + (entry.time_stamp/self.log.total_time)*0.9) * w - 2*i, 
+                                (0.1 + (1 - entry[i]/self.log.highest)*0.8) * h - 2*i
+                                print(self.log.highest, current.y)
+        love.graphics.line(previous.x, previous.y, current.x, current.y)
+        previous.x, previous.y = current.x, current.y
+      end 
+      previous.x, previous.y = 0, h
+  
+    end
+
+    love.graphics.setColor(255, 255, 255)
+end
+
   --- !!!
   self.camera:detach()
   --- !!!
+
 
 end
 

@@ -333,6 +333,7 @@ function Overlord:update(dt)
     -- Close radial menu
     self.z = math.min(1, self.z + dt*10)
     self.radial_menu = math.max(0, self.radial_menu - dt*8)
+    self.radial_menu_x, self.radial_menu_y = 0, 0
   end
 end
 
