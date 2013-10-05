@@ -251,7 +251,7 @@ function state:draw()
     love.graphics.rectangle("fill", x+w+tw, 0, gw-x-w-tw, gh)
     love.graphics.draw(IMG_GRADIENT, x+w+tw, y-th, 0, -tw, h+2*th)
     -- top
-    love.graphics.rectangle("fill", 0, 0, w, y-th)
+    love.graphics.rectangle("fill", x-tw, 0, w+2*tw, y-th)
     love.graphics.draw(IMG_GRADIENT, x-tw, y-th, math.pi/2, tw, -w-2*tw)
     -- bottom
     love.graphics.rectangle("fill", x, y+h+th, w, gh-y-h-th)
@@ -270,6 +270,8 @@ function state:draw()
     end
     overlord:print_percent_conversion()
   end
+
+
 
   if self.winner then
 
