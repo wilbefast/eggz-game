@@ -69,7 +69,7 @@ local Turret = Class
 		self.target = nil
 	
 	-- lightning
-	self.lightning = AnimationView(Turret.LIGHTNING_ANIM, 10.0, 30, 54)
+	self.lightning = AnimationView(Turret.LIGHTNING_ANIM, 10.0, 0, 30, 54)
 	self.lightning.offx, self.lightning.offy = 24, 50
 	
     
@@ -268,7 +268,7 @@ function Turret:draw(x, y)
   x, y = x or self.x, y or self.y
 	
 	if self.target and (self.target.y < y) and self.lightning.visible then
-		self.lightning:draw(nil, self.x, self.y)
+		self.lightning:draw(self)
 	end
 
   -- draw sprite
@@ -279,7 +279,7 @@ function Turret:draw(x, y)
     0, 1, 1, 32, 50)
 	
 	if self.target and (self.target.y >= y) and self.lightning.visible then
-		self.lightning:draw(nil, self.x, self.y)
+		self.lightning:draw(self)
 	end
 	
   love.graphics.setColor(255, 255, 255)
