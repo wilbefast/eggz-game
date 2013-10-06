@@ -158,9 +158,10 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 		self.lightning.frame = 1
 		self.lightning.visible = true
 		
+		log:write("self.target.x - self.x = " .. tostring(self.target.x - self.x))
 		if self.target.x == self.x then
 			-- in line vertically
-			if self.target.y < self.y then
+			if (self.target.y < self.y) and not (self.target.x < self.y - 196) then -- KLUDGE
 				-- above => 90 degrees
 				self.lightning.angle = -math.pi*0.5
 			else
@@ -171,7 +172,7 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 			-- not in line vertically
 			if self.target.y == self.y then
 				-- in line horizontally
-				if self.target.x < self.x then
+				if (self.target.x < self.x) and not (self.target.x < self.x - 196) then
 					-- left => 180 degrees
 					self.lightning.angle = math.pi
 				else
@@ -181,9 +182,9 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 			else
 			
 				-- not in line horizontally
-				if self.target.x < self.x then
+				if (self.target.x < self.x) and not (self.target.x < self.x - 196) then
 					-- West
-					if self.target.y < self.y then
+					if (self.target.y < self.y) and not (self.target.y < self.y - 196) then
 						-- North-west => 135 degree
 						self.lightning.angle = math.pi*1.25
 					else
@@ -192,7 +193,7 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 					end
 				else
 					-- East
-					if self.target.y < self.y then
+					if (self.target.y < self.y) and not (self.target.y < self.y - 196) then
 						-- North-east => 45 degree
 						self.lightning.angle = -math.pi*0.25
 					else
