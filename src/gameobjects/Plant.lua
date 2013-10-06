@@ -78,8 +78,6 @@ function Plant:die()
 end
 
 function Plant:takeDamage(amount, attacker)
-	SpecialEffect(self.x, self.y+1, Turret.ATTACK_ANIM, 7, 0, 12)
-	audio:play_sound("KNIGHT-attack-hit", 0.1)
 	self.hitpoints = self.hitpoints - amount/(1 + self.ARMOUR)
 	if self.hitpoints < 0 then
 		self.purge = true

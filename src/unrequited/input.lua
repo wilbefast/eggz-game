@@ -50,13 +50,13 @@ if n_pads < MAX_PLAYERS then
 	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("a", "z") end
 
 	if n_pads < MAX_PLAYERS - 1 then
-		input[n_pads + 2].keyLeft = function () return false end
-		input[n_pads + 2].keyRight = function () return false end
-		input[n_pads + 2].KeyUp = function () return false end
-		input[n_pads + 2].keyDown = function () return false end
-		input[n_pads + 2].keyStart = function () return false end
-		input[n_pads + 2].keyConfirm = function () return false end
-		input[n_pads + 2].keyCancel = function () return false end
+		input[n_pads + 2].keyLeft = function () return love.keyboard.isDown("f") end
+		input[n_pads + 2].keyRight = function () return love.keyboard.isDown("h") end
+		input[n_pads + 2].KeyUp = function () return love.keyboard.isDown("t") end
+		input[n_pads + 2].keyDown = function () return love.keyboard.isDown("g") end
+		input[n_pads + 2].keyStart = function () return love.keyboard.isDown("y") end
+		input[n_pads + 2].keyConfirm = function () return love.keyboard.isDown("y") end
+		input[n_pads + 2].keyCancel = function () return love.keyboard.isDown("r") end
 	end
 
 	-- if n_pads < MAX_PLAYERS - 2 then
