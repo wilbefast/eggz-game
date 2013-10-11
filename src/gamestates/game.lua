@@ -66,7 +66,7 @@ function state:update(dt)
 
 
   -- log conversion amount
-  if not self.winner then
+  if (not self.winner) and (not self.pause) then
     self.log.time_till_next = self.log.time_till_next - dt
     self.log.total_time = self.log.total_time + dt
     if self.log.time_till_next < 0 then
@@ -88,7 +88,7 @@ function state:update(dt)
       self.log[#(self.log) + 1] = log_entry
     end
   -- log animation
-  else
+  elseif self.winner then
     self.log.animation = math.min(self.log.animation + dt)
   end
 
@@ -251,7 +251,7 @@ function state:draw()
     love.graphics.rectangle("fill", x+w+tw, 0, gw-x-w-tw, gh)
     love.graphics.draw(IMG_GRADIENT, x+w+tw, y-th, 0, -tw, h+2*th)
     -- top
-    love.graphics.rectangle("fill", 0, 0, w, y-th)
+    love.graphics.rectangle("fill", x-tw, 0, w+2*tw, y-th)
     love.graphics.draw(IMG_GRADIENT, x-tw, y-th, math.pi/2, tw, -w-2*tw)
     -- bottom
     love.graphics.rectangle("fill", x, y+h+th, w, gh-y-h-th)
@@ -271,6 +271,8 @@ function state:draw()
     overlord:print_percent_conversion()
   end
 
+
+
   if self.winner then
 
     -- graph players' progression
@@ -288,7 +290,6 @@ function state:draw()
         if log_i > max_log_i then
           break
         end
-
 
         current.x, current.y = (entry.time_stamp/self.log.total_time) * w - 2*i, 
                                 (0.1 + (1 - entry[i]/self.log.highest)*0.8) * h - 2*i

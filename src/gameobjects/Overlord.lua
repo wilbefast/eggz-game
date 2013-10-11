@@ -395,12 +395,10 @@ function Overlord:draw(x, y)
 
   -- draw egg being laid
   if self.egg_ready > 0 then
-    local egg_size = 0.3*Egg.MAX_W*self.egg_ready
-
     love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
     love.graphics.draw(Egg.IMAGES[self.player][1][2], 
       x, y - (2.5 + 0.5*self.z)*self.h, 
-      0, 0.1 + self.egg_ready*0.7, 0.1 + self.egg_ready*0.7, 32, 40)
+      0, 0.2 + self.egg_ready*0.8, 0.2 + self.egg_ready*0.8, 32, 40)
   end
 
   -- reset colours

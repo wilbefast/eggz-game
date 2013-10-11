@@ -46,9 +46,9 @@ local AnimationView = Class
 Game loop
 --]]
     
-function AnimationView:draw(object, x, y)
+function AnimationView:draw(object, x, y, angle)
   self.anim:draw(x or object.x, y or object.y, self.frame, 
-                  self.flip_x, self.flip_y, self.offx, self.offy)
+                  self.flip_x, self.flip_y, self.offx, self.offy, angle or self.angle)
 end
 
 function AnimationView:update(dt)

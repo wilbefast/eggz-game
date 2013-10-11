@@ -38,6 +38,9 @@ local Plant = Class
     self.energy = self.ENERGY_START
     self.hitpoints = (self.HITPOINTS_START or 1)
     self.stunned = false
+		
+		self.eat = AnimationView(Plant.ANIM_EAT, 16.0, 0, 32, 40)
+		self.eat.amount = 1
 
     self.player = player
   end,
@@ -49,6 +52,8 @@ Resources
 --]]--
 
 Plant.IMG_STUN = love.graphics.newImage("assets/FX-chains.png")
+Plant.IMG_EAT = love.graphics.newImage("assets/FX-eat.png")
+Plant.ANIM_EAT = Animation(Plant.IMG_EAT, 64, 64, 5, 0, 0)
 
 -- default: recycle only
 Plant.EVOLUTION_ICONS =
@@ -78,8 +83,6 @@ function Plant:die()
 end
 
 function Plant:takeDamage(amount, attacker)
-	SpecialEffect(self.x, self.y+1, Turret.ATTACK_ANIM, 7, 0, 12)
-	audio:play_sound("KNIGHT-attack-hit", 0.1)
 	self.hitpoints = self.hitpoints - amount/(1 + self.ARMOUR)
 	if self.hitpoints < 0 then
 		self.purge = true
@@ -160,7 +163,10 @@ function Plant:update(dt)
 			  -- Draw energy ------------------------------------------------------
 			  local drawn_energy = math.min(self.tile.energy, 
 			  															self.ENERGY_DRAW_SPEED*self.tile.energy*self.tile.energy*dt)
-
+																		
+				self.eat.amount = (drawn_energy/(self.ENERGY_DRAW_SPEED*dt))
+				self.eat:update(dt * (0.2 + 0.8 * self.eat.amount))
+ 
 			  -- Regenerate ------------------------------------------------------
 			  local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
 			  											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)

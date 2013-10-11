@@ -19,7 +19,7 @@ GLOBAL SETTINGS
 DEBUG = false
 
 CHEATS = DEBUG
-MAX_PLAYERS = 2
+MAX_PLAYERS = 4
 n_players = 2
 
 DELAY_BEFORE_WIN = 10 -- seconds

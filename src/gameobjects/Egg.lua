@@ -219,6 +219,12 @@ function Egg:draw(x, y)
 	  	local size = 0.8 + (ev-1)*0.2
     	love.graphics.draw(Plant.IMG_STUN, x, y, 0, size, -size, 32, 30 - (ev-1)*5)
     end
+		
+		-- eat overlay
+		--love.graphics.draw(Plant.IMG_EAT, self.x, self.y)
+		love.graphics.setColor(155, 255, 200, self.eat.amount*255)
+			self.eat:draw(self)
+		love.graphics.setColor(255, 255, 255)
 end
 
 function Egg:drawTransported(x, y)
