@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 
 CHEATS = DEBUG
 MAX_PLAYERS = 2
@@ -134,7 +134,7 @@ LOVE CALLBACKS
 function love.load(arg)
     
   -- set up the screen resolution
-  local modes = love.graphics.getModes()
+  --[[local modes = love.graphics.getModes()
   local success = false
   table.sort(modes, function(a, b) 
     return (a.width*a.height > b.width*b.height) end)
@@ -149,6 +149,8 @@ function love.load(arg)
     print("Failed to set video mode")
     love.event.push("quit")
   end
+--]]
+  love.graphics.setMode(1024, 1280, (not DEBUG))
 
   -- initialise random
   math.randomseed(os.time())
