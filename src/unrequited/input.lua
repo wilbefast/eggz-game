@@ -45,39 +45,39 @@ if n_pads < MAX_PLAYERS then
 	input[n_pads + 1].keyRight = function () return love.keyboard.isDown("right") end
 	input[n_pads + 1].KeyUp = function () return love.keyboard.isDown("up") end
 	input[n_pads + 1].keyDown = function () return love.keyboard.isDown("down") end
-	input[n_pads + 1].keyStart = function () return love.keyboard.isDown("q", "s", "j") end
-	input[n_pads + 1].keyConfirm = function () return love.keyboard.isDown("q", "s", "j") end
-	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("a", "z") end
+	input[n_pads + 1].keyStart = function () return love.keyboard.isDown("return") end
+	input[n_pads + 1].keyConfirm = function () return love.keyboard.isDown("rctrl") end
+	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("backspace") end
 
 	if n_pads < MAX_PLAYERS - 1 then
-		input[n_pads + 2].keyLeft = function () return false end
-		input[n_pads + 2].keyRight = function () return false end
-		input[n_pads + 2].KeyUp = function () return false end
-		input[n_pads + 2].keyDown = function () return false end
-		input[n_pads + 2].keyStart = function () return false end
-		input[n_pads + 2].keyConfirm = function () return false end
-		input[n_pads + 2].keyCancel = function () return false end
+		input[n_pads + 2].keyLeft = function () return love.keyboard.isDown("a", "q") end
+		input[n_pads + 2].keyRight = function () return love.keyboard.isDown("d") end
+		input[n_pads + 2].KeyUp = function () return love.keyboard.isDown("w", "z") end
+		input[n_pads + 2].keyDown = function () return love.keyboard.isDown("s") end
+		input[n_pads + 2].keyStart = function () return love.keyboard.isDown("return") end
+		input[n_pads + 2].keyConfirm = function () return love.keyboard.isDown("lctrl") end
+		input[n_pads + 2].keyCancel = function () return love.keyboard.isDown("backspace") end
 	end
 
-	-- if n_pads < MAX_PLAYERS - 2 then
-	-- 	input[n_pads + 3].keyLeft = function () return love.keyboard.isDown("f") end
-	-- 	input[n_pads + 3].keyRight = function () return love.keyboard.isDown("h") end
-	-- 	input[n_pads + 3].KeyUp = function () return love.keyboard.isDown("t") end
-	-- 	input[n_pads + 3].keyDown = function () return love.keyboard.isDown("g") end
-	-- 	input[n_pads + 3].keyStart = function () return love.keyboard.isDown("return") end
-	-- 	input[n_pads + 3].keyConfirm = function () return love.keyboard.isDown("y") end
-	-- 	input[n_pads + 3].keyCancel = function () return love.keyboard.isDown("backspace") end
-	-- end
+	if n_pads < MAX_PLAYERS - 2 then
+		input[n_pads + 3].keyLeft = function () return love.keyboard.isDown("f") end
+		input[n_pads + 3].keyRight = function () return love.keyboard.isDown("h") end
+		input[n_pads + 3].KeyUp = function () return love.keyboard.isDown("t") end
+		input[n_pads + 3].keyDown = function () return love.keyboard.isDown("g") end
+		input[n_pads + 3].keyStart = function () return love.keyboard.isDown("return") end
+		input[n_pads + 3].keyConfirm = function () return love.keyboard.isDown("y") end
+		input[n_pads + 3].keyCancel = function () return love.keyboard.isDown("backspace") end
+	end
 
-	-- if n_pads < MAX_PLAYERS - 3 then
-	-- 	input[n_pads + 4].keyLeft = function () return love.keyboard.isDown("j") end
-	-- 	input[n_pads + 4].keyRight = function () return love.keyboard.isDown("l") end
-	-- 	input[n_pads + 4].KeyUp = function () return love.keyboard.isDown("i") end
-	-- 	input[n_pads + 4].keyDown = function () return love.keyboard.isDown("k") end
-	-- 	input[n_pads + 4].keyStart = function () return love.keyboard.isDown("return") end
-	-- 	input[n_pads + 4].keyConfirm = function () return love.keyboard.isDown("o") end
-	-- 	input[n_pads + 4].keyCancel = function () return love.keyboard.isDown("backspace") end
-	-- end
+	if n_pads < MAX_PLAYERS - 3 then
+		input[n_pads + 4].keyLeft = function () return love.keyboard.isDown("j") end
+		input[n_pads + 4].keyRight = function () return love.keyboard.isDown("l") end
+		input[n_pads + 4].KeyUp = function () return love.keyboard.isDown("i") end
+		input[n_pads + 4].keyDown = function () return love.keyboard.isDown("k") end
+		input[n_pads + 4].keyStart = function () return love.keyboard.isDown("return") end
+		input[n_pads + 4].keyConfirm = function () return love.keyboard.isDown("o") end
+		input[n_pads + 4].keyCancel = function () return love.keyboard.isDown("backspace") end
+	end
 
 end
 
