@@ -158,7 +158,6 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 		self.lightning.frame = 1
 		self.lightning.visible = true
 		
-		log:write("self.target.x - self.x = " .. tostring(self.target.x - self.x))
 		if self.target.x == self.x then
 			-- in line vertically
 			if ((self.target.y < self.y) and not (self.target.y < self.y - 196)) or self.target.y > self.y + 196 then -- KLUDGE
