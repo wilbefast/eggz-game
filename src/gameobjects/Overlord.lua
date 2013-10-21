@@ -352,14 +352,6 @@ function Overlord:draw(x, y)
     x - Overlord.SHADOW:getWidth()/2 - dx*6, 
     y - Overlord.SHADOW:getHeight()/2 - dy*6)
 
-  -- draw currently selected tile
-  if drawReticule then
-    love.graphics.setLineWidth(3)
-    player[self.player].bindTeamColour(200)
-      local speed2 = useful.sqr(self.dx+self.dy)
-      love.graphics.circle("line", self.tile.x+32, self.tile.y+32, math.min(24, 1000000/speed2))
-  end
-
   -- set team colour
   player[self.player].bindTeamColour()
 

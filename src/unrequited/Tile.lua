@@ -88,9 +88,21 @@ function Tile:draw(x, y, forceDrawOccupant)
 
 	x, y = x or self.x, y or self.y
 
+	-- draw grass on tiles
 	local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
 	love.graphics.draw(Tile.IMAGES[subimage], x, y)
 
+  -- draw overlord tile selection
+  if self.overlord then
+    local speed2 = useful.sqr(self.overlord.dx+self.overlord.dy)
+    love.graphics.setLineWidth(math.min(3, 200000/speed2))
+    player[self.overlord.player].bindTeamColour(200)
+      love.graphics.circle("line", self.x+32, self.y+32, math.min(24, 1000000/speed2))
+
+    love.graphics.setColor(255, 255, 255)
+  end
+
+  -- force draw occupants if needed
 	if forceDrawOccupant and self.occupant then
 		self.occupant:draw(x + self.w/2, y + self.h/2)
 	end
