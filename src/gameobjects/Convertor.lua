@@ -38,16 +38,16 @@ local Convertor = Class
 
   IMAGES = 
   {
-    love.graphics.newImage("assets/RED-fountain-anim.png"),
-    love.graphics.newImage("assets/BLUE-fountain-anim.png"),
-    love.graphics.newImage("assets/YELLOW-fountain-anim.png"),
-    love.graphics.newImage("assets/PURPLE-fountain-anim.png")
+    love.graphics.newImage("assets/red_expand.png"),
+    love.graphics.newImage("assets/blue_expand.png"),
+    love.graphics.newImage("assets/yellow_expand.png"),
+    love.graphics.newImage("assets/purple_expand.png")
   },
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
 
-    self.view = AnimationView(Convertor.ANIMS[self.player], 7, 1, 32, 32)
+    self.view = AnimationView(Convertor.ANIMS[self.player], 5, 1, 32, 32)
 
     -- set guard area
     self.convertArea = GameObject.COLLISIONGRID:getNeighbours4(tile) -- center

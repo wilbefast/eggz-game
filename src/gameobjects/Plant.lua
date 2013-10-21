@@ -60,8 +60,8 @@ Plant.EVOLUTION_ICONS =
 {
   nil,
   { 
-    love.graphics.newImage("assets/radial_recycle_Y.png"), 
-    love.graphics.newImage("assets/radial_recycle_hl_Y.png")
+    love.graphics.newImage("assets/menu_recycle.png"), 
+    love.graphics.newImage("assets/menu_recycle_hover.png")
   },
   nil,
 }

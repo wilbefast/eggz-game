@@ -85,20 +85,20 @@ Resources
 Turret.IMAGES = 
 {
   {
-    love.graphics.newImage("assets/RED-knight-01.png"),
-    love.graphics.newImage("assets/RED-knight-02.png")
+    love.graphics.newImage("assets/red_tower_1.png"),
+    love.graphics.newImage("assets/red_tower_2.png")
   },
   {
-    love.graphics.newImage("assets/BLUE-knight-01.png"),
-    love.graphics.newImage("assets/BLUE-knight-02.png")
+    love.graphics.newImage("assets/blue_tower_1.png"),
+    love.graphics.newImage("assets/blue_tower_2.png")
   },
   {
-    love.graphics.newImage("assets/YELLOW-knight-01.png"),
-    love.graphics.newImage("assets/YELLOW-knight-02.png")
+    love.graphics.newImage("assets/yellow_tower_1.png"),
+    love.graphics.newImage("assets/yellow_tower_2.png")
   },
   {
-    love.graphics.newImage("assets/PURPLE-knight-01.png"),
-    love.graphics.newImage("assets/PURPLE-knight-02.png")
+    love.graphics.newImage("assets/purple_tower_1.png"),
+    love.graphics.newImage("assets/purple_tower_1.png")
   }
 }
 

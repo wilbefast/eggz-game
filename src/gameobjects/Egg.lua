@@ -45,6 +45,8 @@ local Egg = Class
 
   init = function(self, tile, player)
     Plant.init(self, tile, player)
+
+    self.view = AnimationView(Egg.ANIMS[self.player][1], 4, 1, 32, 50)
   end,
 }
 Egg:include(Plant)
@@ -56,16 +58,16 @@ Resources
 Egg.EVOLUTION_ICONS =
 {
   { 
-    love.graphics.newImage("assets/radial_bomb_B.png"), 
-    love.graphics.newImage("assets/radial_bomb_hl_B.png")
+    love.graphics.newImage("assets/menu_bomb.png"), 
+    love.graphics.newImage("assets/menu_bomb_hover.png")
   },
   {
-    love.graphics.newImage("assets/radial_turret_Y.png"),
-    love.graphics.newImage("assets/radial_turret_hl_Y.png")
+    love.graphics.newImage("assets/menu_tower.png"),
+    love.graphics.newImage("assets/menu_tower_hover.png")
   },
   {
-    love.graphics.newImage("assets/radial_fountain_X.png"),
-    love.graphics.newImage("assets/radial_fountain_hl_X.png")
+    love.graphics.newImage("assets/menu_convert.png"),
+    love.graphics.newImage("assets/menu_convert_hover.png")
   }
 }
 
@@ -74,64 +76,75 @@ Egg.IMAGES =
 	-- RED
 	{
 		{ 
-			love.graphics.newImage("assets/RED-egg-A.png"), 
-			love.graphics.newImage("assets/RED-egg-carry-A.png")
+			love.graphics.newImage("assets/red_egg_a.png"), 
+			love.graphics.newImage("assets/red_egg_pick_a.png")
 		},
 		{ 
-			love.graphics.newImage("assets/RED-egg-B.png"),
-			love.graphics.newImage("assets/RED-egg-carry-B.png")
+			love.graphics.newImage("assets/red_egg_b.png"),
+			love.graphics.newImage("assets/red_egg_pick_b.png")
 		},
 		{ 
-			love.graphics.newImage("assets/RED-egg-C.png"),
-			love.graphics.newImage("assets/RED-egg-carry-C.png")
+			love.graphics.newImage("assets/red_egg_c.png"),
+			love.graphics.newImage("assets/red_egg_pick_c.png")
 		}
 	},
 	-- BLUE
 	{
 		{ 
-			love.graphics.newImage("assets/BLUE-egg-A.png"), 
-			love.graphics.newImage("assets/BLUE-egg-carry-A.png")
+			love.graphics.newImage("assets/blue_egg_a.png"), 
+			love.graphics.newImage("assets/blue_egg_pick_a.png")
 		},
 		{ 
-			love.graphics.newImage("assets/BLUE-egg-B.png"),
-			love.graphics.newImage("assets/BLUE-egg-carry-B.png")
+			love.graphics.newImage("assets/blue_egg_b.png"),
+			love.graphics.newImage("assets/blue_egg_pick_b.png")
 		},
 		{ 
-			love.graphics.newImage("assets/BLUE-egg-C.png"),
-			love.graphics.newImage("assets/BLUE-egg-carry-C.png")
+			love.graphics.newImage("assets/blue_egg_c.png"),
+			love.graphics.newImage("assets/blue_egg_pick_c.png")
 		}
 	},
 	-- YELLOW
 	{
 		{ 
-			love.graphics.newImage("assets/YELLOW-egg-A.png"), 
-			love.graphics.newImage("assets/YELLOW-egg-carry-A.png")
+			love.graphics.newImage("assets/yellow_egg_a.png"), 
+			love.graphics.newImage("assets/yellow_egg_pick_a.png")
 		},
 		{ 
-			love.graphics.newImage("assets/YELLOW-egg-B.png"),
-			love.graphics.newImage("assets/YELLOW-egg-carry-B.png")
+			love.graphics.newImage("assets/yellow_egg_b.png"),
+			love.graphics.newImage("assets/yellow_egg_pick_b.png")
 		},
 		{ 
-			love.graphics.newImage("assets/YELLOW-egg-C.png"),
-			love.graphics.newImage("assets/YELLOW-egg-carry-C.png")
+			love.graphics.newImage("assets/yellow_egg_c.png"),
+			love.graphics.newImage("assets/yellow_egg_pick_c.png")
 		}
 	},
 	-- PURPLE
 	{
 		{ 
-			love.graphics.newImage("assets/PURPLE-egg-A.png"), 
-			love.graphics.newImage("assets/PURPLE-egg-carry-A.png")
+			love.graphics.newImage("assets/purple_egg_a.png"), 
+			love.graphics.newImage("assets/purple_egg_pick_a.png")
 		},
 		{ 
-			love.graphics.newImage("assets/PURPLE-egg-B.png"),
-			love.graphics.newImage("assets/PURPLE-egg-carry-B.png")
+			love.graphics.newImage("assets/purple_egg_b.png"),
+			love.graphics.newImage("assets/purple_egg_pick_b.png")
 		},
 		{ 
-			love.graphics.newImage("assets/PURPLE-egg-C.png"),
-			love.graphics.newImage("assets/PURPLE-egg-carry-C.png")
+			love.graphics.newImage("assets/purple_egg_c.png"),
+			love.graphics.newImage("assets/purple_egg_pick_c.png")
 		}
 	},
 }
+
+Egg.ANIMS = {}
+-- for each player
+for i = 1, #Egg.IMAGES do
+	Egg.ANIMS[i] = {}
+	local evolution_images = Egg.IMAGES[i]
+	-- for each evolution level
+	for j = 1, #evolution_images do
+  	Egg.ANIMS[i][j] = Animation(Egg.IMAGES[i][j][1], 64, 64, 6)
+	end
+end
 
 --[[------------------------------------------------------------
 Evolve
@@ -187,7 +200,11 @@ Game loop
 function Egg:update(dt)
 	Plant.update(self, dt)
 
+	self.view.speed = 5 + 5*self.eat.amount
+	self.view:update(dt)
+
 	local evo = self:getEvolution()
+	self.view.anim = Egg.ANIMS[self.player][evo]
 
 	self.ARMOUR = (evo - 1)
 
@@ -208,11 +225,12 @@ function Egg:draw(x, y)
 		end
 
 		local ev = self:getEvolution()
-		love.graphics.draw(Egg.IMAGES[self.player][ev][1],
-			x, 
-			y,
-			self.wobble,
-			1, 1, 32, 50)
+		-- love.graphics.draw(Egg.IMAGES[self.player][ev][1],
+		-- 	x, 
+		-- 	y,
+		-- 	self.wobble,
+		-- 	1, 1, 32, 50)
+		self.view:draw(self, x, y, self.wobble)
 
 		-- stun overlay
 	  if self.stunned then

@@ -41,6 +41,8 @@ local Cocoon = Class
     self.evolvesTo = evolvesTo
     self.maturationTime = evolvesTo.maturationTime
     self.soundIsStarted = false
+
+    self.view = AnimationView(Cocoon.ANIMS[self.player], 6, 1, 32, 50)
   end,
 }
 Cocoon:include(Plant)
@@ -52,21 +54,26 @@ Resources
 Cocoon.IMAGES =
 {
   {
-    love.graphics.newImage("assets/RED-egg-D.png"),
-    love.graphics.newImage("assets/BLUE-egg-D.png"),
-    love.graphics.newImage("assets/YELLOW-egg-D.png"),
-    love.graphics.newImage("assets/PURPLE-egg-D.png")
+    love.graphics.newImage("assets/red_egg_d.png"),
+    love.graphics.newImage("assets/blue_egg_d.png"),
+    love.graphics.newImage("assets/yellow_egg_d.png"),
+    love.graphics.newImage("assets/purple_egg_d.png")
   },
   love.graphics.newImage("assets/WHITE-egg.png")
 }
+
+Cocoon.ANIMS = {}
+for i = 1, #Cocoon.IMAGES do
+  Cocoon.ANIMS[i] = Animation(Cocoon.IMAGES[1][i], 64, 64, 6)
+end
 
 -- default: recycle only
 Cocoon.EVOLUTION_ICONS =
 {
   nil,
   { 
-    love.graphics.newImage("assets/radial_cancel_Y.png"), 
-    love.graphics.newImage("assets/radial_cancel_hl_Y.png")
+    love.graphics.newImage("assets/menu_cancel.png"), 
+    love.graphics.newImage("assets/menu_cancel_hover.png")
   },
   nil,
 }
@@ -77,6 +84,8 @@ Game loop
 
 function Cocoon:update(dt)
   Plant.update(self, dt)
+
+  self.view:update(dt)
 
   if not self.stunned then
     self.maturity = self.maturity + dt*self.MATURATION_SPEED
@@ -95,8 +104,9 @@ function Cocoon:draw(x, y)
 
   x, y = x or self.x, y or self.y
 
-  love.graphics.draw(Cocoon.IMAGES[1][self.player], x, y,
-    0, 1, 1, 32, 50)
+  -- love.graphics.draw(Cocoon.IMAGES[1][self.player], x, y,
+  --   0, 1, 1, 32, 50)
+  self.view:draw(self)
 
   if self.stunned then
     love.graphics.draw(Plant.IMG_STUN, x, y, 0, 1.2, -1.2, 32, 20)
