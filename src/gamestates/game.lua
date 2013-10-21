@@ -276,7 +276,7 @@ function state:draw()
       if overlord.egg_ready == 1 then
         local flux = math.cos(overlord.wave)
 
-        love.graphics.draw(Egg.IMAGES[overlord.player][3][2], x, y+128, flux*math.pi*0.2, 1.1+flux*0.1, 1.1+flux*0.1, 32, 40)
+        love.graphics.draw(Egg.IMAGES[overlord.player][3][2], x, y+128, 0, 1.1+flux*0.1, 1.1+flux*0.1, 32, 40)
       else
         player[overlord.player].bindTeamColour()
         love.graphics.setFont(FONT_SMALL)
