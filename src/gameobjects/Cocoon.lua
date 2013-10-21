@@ -64,7 +64,6 @@ Cocoon.IMAGES =
 
 Cocoon.ANIMS = {}
 for i = 1, #(Cocoon.IMAGES[1]) do
-  print(Cocoon.IMAGES[1][i])
   Cocoon.ANIMS[i] = Animation(Cocoon.IMAGES[1][i], 64, 64, 6)
 end
 

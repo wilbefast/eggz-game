@@ -24,11 +24,11 @@ player[1] =
 	-- red
 	name = "Red",
 	bindTeamColour = function (a) love.graphics.setColor(255, 0, 0, a or 255) end,
-	-- right middle
+	-- top right
 	startPosition = 
 	{ 
 		x = 64*9 - 32,  	
-		y = 64*6 - 32 	
+		y = 64*4 - 32 	
 	},
 	-- top right
 	ui =
@@ -49,11 +49,11 @@ player[2] =
 	-- blue
 	name = "Blue",
 	bindTeamColour = function (a) love.graphics.setColor(0, 120, 255, a or 255) end,
-	-- left middle
+	-- top left
 	startPosition = 
   { 
-  	x = 64*2 + 32, 					
-  	y = 64*6 - 32
+  	x = 64*3 - 32, 					
+  	y = 64*4 - 32
 	},
 
 	-- top left
@@ -74,11 +74,11 @@ player[3] =
 	-- yellow
 	name = "Yellow",
 	bindTeamColour = function (a) love.graphics.setColor(255, 255, 0, a or 255) end,
-	-- top middle
+	-- bottom left
 	startPosition = 
   { 
-  	x = 64*6 - 32, 		
-  	y = 64*2 + 32        	
+  	x = 64*3 - 32, 		
+  	y = 64*9 - 32        	
 	},
 	-- bottom left
 	ui =
@@ -98,10 +98,10 @@ player[4] =
 	-- purple
 	name = "Purple",
 	bindTeamColour = function (a) love.graphics.setColor(160, 0, 255, a or 255) end,
-	-- bottom middle
+	-- bottom right
 	startPosition =
   { 
-  	x = 64*6 - 32, 		
+  	x = 64*9 - 32, 		
   	y = 64*9 - 32 	
 	},
 	-- bottom right
