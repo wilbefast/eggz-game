@@ -53,6 +53,8 @@ local Overlord = Class
 
     self.percent_gui = 0
 
+    self.wave = 0
+
     self.blink = math.random()*self.BLINK_PERIOD
   end,
 }
@@ -176,6 +178,13 @@ function Overlord:update(dt)
   -- Get input
   local inp = input[self.player]
 
+  -- Inform player that an action is impossible ------------------------
+  self.cantDoIt = (inp.confirm.pressed and (not self:canLand()))
+  self.wave = self.wave + dt*math.pi*4
+  if self.wave > math.pi*2 then
+    self.wave = self.wave - math.pi*2
+  end
+
   -- Animation: blink eyes periodically
   self.blink = self.blink - dt 
   if self.blink < 0 then
@@ -230,8 +239,17 @@ function Overlord:update(dt)
     self.dy = self.dy + inp.y*dt*acceleration
 
   -- Radial menu ---------------------------------------------------------
-  else
+  else -- self.z == self.z > 0
     self.dx, self.dx = 0, 0
+
+    self.desired_dx, self.desired_dy = 0, 0
+
+    -- shake head if hovered unit cannot evolve
+    -- if (not self.tile.occupant) 
+    -- or (self.tile.occupant.player ~= self.player)
+    -- or (not self.tile.occupant:canEvolve()) then
+    --   self.cantDoIt = true
+    -- end
 
     local any_input = ((inp.x ~= 0) or (inp.y ~= 0))
     self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, useful.tri(any_input, 7, 1)*dt)
@@ -391,12 +409,21 @@ function Overlord:draw(x, y)
   love.graphics.setColor(255, 255, 255)
   if (dy >= 0)  then
 
+    -- eyes height
     local scaley, offy = 1, 0
     if self.blink <= self.BLINK_LENGTH then
-      scaley, offy = 0.3, 6
+      scaley, offy = 0.2, 6
     end
-    love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3 + dx*8, 
-                                      y - (2.2 + 0.5*self.z)*self.h + offy, 0, 1, scaley)
+
+    -- eyes position
+    local eyes_x = x -  Overlord.EYES:getWidth()/2 + 3 + dx*8
+    local eyes_y = y - (2.2 + 0.5*self.z)*self.h + offy
+    if self.cantDoIt then
+      eyes_x = eyes_x + math.cos(self.wave)*8
+    end
+
+    -- draw!
+    love.graphics.draw(Overlord.EYES, eyes_x, eyes_y, 0, 1, scaley)
   end
 
   -- reset colours
