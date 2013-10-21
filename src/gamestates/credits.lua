@@ -31,7 +31,7 @@ function state:update(dt)
 end
 
 function state:keypressed(key, uni)
-  if key=="l" or key=="escape" then
+  if key=="escape" then
     GameState.switch(title)
   end
 end

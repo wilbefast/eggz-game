@@ -56,7 +56,11 @@ function SpecialEffect:update(dt, level, view)
 end
 
 function SpecialEffect:draw(view)
+  if self.colourise then
+    self.colourise()
+  end
   self.view:draw(self)
+  love.graphics.setColor(255, 255, 255)
 end
 
 

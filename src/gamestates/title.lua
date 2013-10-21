@@ -62,8 +62,7 @@ end
 
 function accept()
 	if current_button == PLAY then 
-	  GameState.switch(game)
-    --GameState.switch(player_select)
+    GameState.switch(player_select)
 	elseif current_button == CREDITS then 
 		GameState.switch(credits)
 	elseif current_button == CONTROLS then 
@@ -74,7 +73,7 @@ function accept()
 end
 
 function state:keypressed(key)
-  if key=="l" or key=="escape" then --if key=="escape" then
+  if key=="escape" then
     love.event.push("quit")
   end
 end

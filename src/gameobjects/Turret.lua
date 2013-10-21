@@ -98,7 +98,7 @@ Turret.IMAGES =
   },
   {
     love.graphics.newImage("assets/purple_tower_1.png"),
-    love.graphics.newImage("assets/purple_tower_1.png")
+    love.graphics.newImage("assets/purple_tower_2.png")
   }
 }
 
@@ -257,6 +257,7 @@ function Turret:update(dt)
 					self.target:takeDamage(self.ATTACK_DAMAGE, self)
 					--SpecialEffect(self.target.x, self.target.y+1, Turret.ATTACK_ANIM, 7, 0, 12)
 					SpecialEffect(self.target.x, self.target.y+1, Turret.LAUNCH_ANIM, 7, 0, 20)
+            .colourise = function() player[self.player].bindTeamColour() end
 					audio:play_sound("KNIGHT-attack-hit", 0.1)
 				end
 			end
@@ -264,12 +265,18 @@ function Turret:update(dt)
   end
 end
 
+function Turret:draw_lightning()
+  player[self.player].bindTeamColour()
+    self.lightning:draw(self)
+  love.graphics.setColor(255, 255, 255)
+end
+
 function Turret:draw(x, y)
 
   x, y = x or self.x, y or self.y
 	
 	if (not self.stunned) and self.target and (self.target.y < y) and self.lightning.visible then
-		self.lightning:draw(self)
+		self:draw_lightning()
 	end
 
   -- draw sprite
@@ -280,10 +287,8 @@ function Turret:draw(x, y)
     0, 1, 1, 32, 50)
 	
 	if (not self.stunned) and self.target and (self.target.y >= y) and self.lightning.visible then
-		self.lightning:draw(self)
+    self:draw_lightning()
 	end
-	
-  love.graphics.setColor(255, 255, 255)
 
   -- draw overlay
   if self.stunned then
