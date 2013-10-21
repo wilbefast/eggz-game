@@ -141,6 +141,10 @@ function Overlord:canPlant()
   end
 end
 
+function Overlord:canLand()
+  return (self:canUproot() or self:canPlant())
+end
+
 
 
 
@@ -299,7 +303,7 @@ function Overlord:update(dt)
   self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
 
   -- Land on the ground --------------------------------------------------
-  if inp.confirm.pressed and (not self:enemyTerritory()) then
+  if inp.confirm.pressed and self:canLand() then
     self.z = math.max(0, self.z - dt*10)
     if (self.z == 0) 
     and self.tile.occupant 
@@ -345,7 +349,7 @@ function Overlord:draw(x, y)
   local dx, dy = self.desired_dx, self.desired_dy
 
   -- draw shadow
-  love.graphics.setColor(255, 255, 255, 128)
+  love.graphics.setColor(255, 255, 255, 64)
   love.graphics.draw(Overlord.SHADOW, 
     x - Overlord.SHADOW:getWidth()/2 - dx*6, 
     y - Overlord.SHADOW:getHeight()/2 - dy*6)
@@ -393,14 +397,6 @@ function Overlord:draw(x, y)
     end
     love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3 + dx*8, 
                                       y - (2.2 + 0.5*self.z)*self.h + offy, 0, 1, scaley)
-  end
-
-  -- draw egg being laid
-  if self.egg_ready > 0 then
-    love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, 128, 255))
-    love.graphics.draw(Egg.IMAGES[self.player][1][2], 
-      x, y - (2.5 + 0.5*self.z)*self.h, 
-      0, 0.2 + self.egg_ready*0.8, 0.2 + self.egg_ready*0.8, 32, 40)
   end
 
   -- reset colours
