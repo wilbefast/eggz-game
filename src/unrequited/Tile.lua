@@ -94,10 +94,19 @@ function Tile:draw(x, y, forceDrawOccupant)
 
   -- draw overlord tile selection
   if self.overlord then
+
+  	-- draw circle
     local speed2 = useful.sqr(self.overlord.dx+self.overlord.dy)
-    love.graphics.setLineWidth(math.min(3, 200000/speed2))
-    player[self.overlord.player].bindTeamColour(200)
-      love.graphics.circle("line", self.x+32, self.y+32, math.min(24, 1000000/speed2))
+    local lineWidth, radius = math.min(4, 200000/speed2), math.min(24, 1000000/speed2)
+    love.graphics.setLineWidth(lineWidth)
+    player[self.overlord.player].bindTeamColour()
+      love.graphics.circle("line", self.x+32, self.y+32, radius)
+
+    -- draw cross if invalid
+    if self.overlord:enemyTerritory() then
+	    love.graphics.line(self.x + 32 + math.cos(1.25*math.pi)*radius, self.y + 32 + math.sin(1.25*math.pi)*radius,
+	    									self.x + 32 + math.cos(0.25*math.pi)*radius, self.y+32+math.sin(0.25*math.pi)*radius)
+    end
 
     love.graphics.setColor(255, 255, 255)
   end

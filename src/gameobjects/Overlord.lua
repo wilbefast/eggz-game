@@ -266,6 +266,7 @@ function Overlord:update(dt)
 
 	-- Put down a plant  -------------------------------------------
 	if inp.confirm.pressed and self:canPlant() then
+
     -- put down passenger
     if self.passenger then
       self.previous_passenger = self.passenger
@@ -298,7 +299,7 @@ function Overlord:update(dt)
   self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
 
   -- Land on the ground --------------------------------------------------
-  if inp.confirm.pressed then
+  if inp.confirm.pressed and (not self:enemyTerritory()) then
     self.z = math.max(0, self.z - dt*10)
     if (self.z == 0) 
     and self.tile.occupant 
@@ -312,7 +313,7 @@ function Overlord:update(dt)
       self.radial_menu = math.max(0, self.radial_menu - dt*8)
     end
 
-  else -- if not inp.confirm.pressed
+  elseif not inp.confirm.pressed then
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
     and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
@@ -340,14 +341,11 @@ end
 function Overlord:draw(x, y)
 
   -- cache workspace variables
-  local drawReticule = false
-  if (not x) or (not y) then
-    x, y = self.x, self.y
-    drawReticule = true
-  end
+  x, y = (x or self.x), (y or self.y)
   local dx, dy = self.desired_dx, self.desired_dy
 
   -- draw shadow
+  love.graphics.setColor(255, 255, 255, 128)
   love.graphics.draw(Overlord.SHADOW, 
     x - Overlord.SHADOW:getWidth()/2 - dx*6, 
     y - Overlord.SHADOW:getHeight()/2 - dy*6)
