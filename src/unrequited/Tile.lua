@@ -106,18 +106,11 @@ function Tile:draw(x, y, forceDrawOccupant)
     if (not self.overlord:canLand()) then
 	    love.graphics.line(self.x + 32 + math.cos(1.25*math.pi)*radius, self.y + 32 + math.sin(1.25*math.pi)*radius,
 	    									self.x + 32 + math.cos(0.25*math.pi)*radius, self.y+32+math.sin(0.25*math.pi)*radius)
-
-    -- overwise draw egg being laid
-	  elseif (not self.occupant) and (self.overlord.egg_ready > 0) then
-	  	local egg_radius = radius/32 * (0.2 + self.overlord.egg_ready*0.8)
-	    love.graphics.setColor(255, 255, 255, useful.tri(self.overlord.egg_ready < 1, 64, 223))
-	    love.graphics.draw(Egg.IMAGES[self.overlord.player][1][2], 
-	      self.x+32, self.y+32, 
-	      0, egg_radius, egg_radius, 32, 40)
 	  end
 
-	  -- reset colour
+	  -- reset
     love.graphics.setColor(255, 255, 255)
+    love.graphics.setLineWidth(1)
   end
 
   -- force draw occupants if needed

@@ -475,40 +475,6 @@ function Overlord.draw_static(x, y, team)
                                       y - 31)
 end
 
-function Overlord:draw_percent_conversion(x, y) -- DEPRECATED !!!
-
-  x, y = (x or self.x), (y or self.y)
-
-  local alpha, offset_y
-  if not game.winner then
-    alpha, offset_y = 255*self.percent_gui, 20*self.percent_gui
-  else
-    alpha, offset_y = 255, -24
-  end
-
-  love.graphics.setFont(FONT_SMALL)
-  
-  local total_conversion = math.floor(player[self.player].total_conversion*100)
-    love.graphics.setColor(5, 15, 5, alpha)
-      love.graphics.printf(tostring(total_conversion) .. "%", x+3, y+23+offset_y, 0, 'center')
-    player[self.player].bindTeamColour(alpha)
-      love.graphics.printf(tostring(total_conversion) .. "%", x, y+20+offset_y, 0, 'center')
-  love.graphics.setColor(255, 255, 255)
-end
-
-function Overlord:print_percent_conversion(x, y)
-
-  x, y = (x or player[self.player].ui.x), (y or player[self.player].ui.y)
-  
-  love.graphics.setFont(FONT_HUGE)
-  local total_conversion = math.floor(player[self.player].total_conversion*100)
-    love.graphics.setColor(210, 228, 210)
-      love.graphics.printf(tostring(total_conversion) .. "%", x+3, y+3, 0, 'center')
-    player[self.player].bindTeamColour()
-      love.graphics.printf(tostring(total_conversion) .. "%", x, y, 0, 'center')
-  love.graphics.setColor(255, 255, 255)
-end
-
 --[[----------------------------------------------------------------------------
 Export
 --]]--

@@ -133,6 +133,8 @@ Egg.IMAGES =
 			love.graphics.newImage("assets/purple_egg_pick_c.png")
 		}
 	},
+
+	OUTLINE = love.graphics.newImage("assets/egg_outline.png")
 }
 
 Egg.ANIMS = {}

@@ -41,6 +41,11 @@ function state:enter()
 
   -- not victory (yet)
   self.winner = false
+  for _, p in ipairs(player) do
+    p.total_conversion = 0
+    p.winning = 0
+    p.win_warnings = 0
+  end
 	
   -- log percents
   self.log = { highest = 0, total_time = 0, time_till_next = 3, period = 3, animation = 0 }
@@ -163,26 +168,11 @@ function state:update(dt)
           if (math.floor(p.winning) > p.win_warnings)
           and (p.winning < DELAY_BEFORE_WIN) then
             p.win_warnings = p.win_warnings + 1
-            --audio:play_sound("ticktock")
+            audio:play_sound("tick")
           end 
 				end
 			end
-
-			-- as soon as winner is announced
-			if self.winner then
-				self.scoreboard = { }
-				for i, overlord in ipairs(self.overlords) do
-					self.scoreboard[i] = { x = overlord.x, y = overlord.y }
-				end
-			end
 		end
-
-  -- winner previously announced
-  else
-    for i, score in ipairs(self.scoreboard) do
-      score.x, score.y = useful.lerp(score.x, player[i].startPosition.x, 3*dt), 
-                                useful.lerp(score.y, player[i].startPosition.y, 3*dt)
-    end
   end
 
 end
@@ -264,10 +254,39 @@ function state:draw()
   --- !!!
 
   for _, overlord in ipairs(self.overlords) do
+
+    -- draw radial menu
     if not self.winner then
       overlord:draw_radial_menu()
     end
-    overlord:print_percent_conversion()
+
+    -- draw percent conversion
+    local x, y = player[overlord.player].ui.x, player[overlord.player].ui.y
+    love.graphics.setFont(FONT_HUGE)
+    local total_conversion = math.floor(player[overlord.player].total_conversion*100)
+      love.graphics.setColor(210, 228, 210)
+        love.graphics.printf(tostring(total_conversion) .. "%", x+3, y+3, 0, 'center')
+      player[overlord.player].bindTeamColour()
+        love.graphics.printf(tostring(total_conversion) .. "%", x, y, 0, 'center')
+    love.graphics.setColor(255, 255, 255)
+
+    -- draw eggz in "storage" ready to be laid
+    if overlord.egg_ready > 0 then
+      
+      if overlord.egg_ready == 1 then
+        local flux = math.cos(overlord.wave)
+
+        love.graphics.draw(Egg.IMAGES[overlord.player][3][2], x, y+128, flux*math.pi*0.2, 1.1+flux*0.1, 1.1+flux*0.1, 32, 40)
+      else
+        player[overlord.player].bindTeamColour()
+        love.graphics.setFont(FONT_SMALL)
+          love.graphics.draw(Egg.IMAGES.OUTLINE, x, y+128, 0, 1.2, 1.2, 32, 40)
+          love.graphics.printf(tostring(math.floor((1 - overlord.egg_ready)/Overlord.EGG_PRODUCTION_SPEED) + 1), 
+                              x, y+108, 0, "center")
+        love.graphics.setColor(255, 255, 255)
+      end
+    end
+
   end
 
 

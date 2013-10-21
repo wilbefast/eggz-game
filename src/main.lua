@@ -125,7 +125,7 @@ player_select = require("gamestates/player_select")
 SINGLETON SETTINGS
 --]]------------------------------------------------------------
 
-audio.mute = DEBUG
+audio.mute = false--DEBUG
 
 --[[------------------------------------------------------------
 LOVE CALLBACKS
@@ -184,6 +184,8 @@ function love.load(arg)
   audio:load_sound("BOMB-dropped", 2, 2)
 
   audio:load_sound("intro", 1, 1)
+
+  audio:load_sound("tick", 0.8, 1)
 
   -- go to the initial gamestate
   GameState.switch(title)

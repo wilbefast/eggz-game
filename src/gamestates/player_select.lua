@@ -23,6 +23,10 @@ state.previous_n_players = n_players
 state.current_n_players = n_players
 state.desired_n_players = n_players
 
+function state:enter()
+  audio:play_music("loop_menu", 0.06)
+end
+
 function state:update(dt)
 
   -- if there is no horizontal input from anyone, stop !
