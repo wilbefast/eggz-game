@@ -134,7 +134,8 @@ Egg.IMAGES =
 		}
 	},
 
-	OUTLINE = love.graphics.newImage("assets/egg_outline.png")
+	OUTLINE = love.graphics.newImage("assets/egg_outline.png"),
+	FILL = love.graphics.newImage("assets/egg_full.png")
 }
 
 Egg.ANIMS = {}
