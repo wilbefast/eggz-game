@@ -50,6 +50,7 @@ local Egg = Class
   end,
 }
 Egg:include(Plant)
+Egg.class = Egg
 
 --[[------------------------------------------------------------
 Resources

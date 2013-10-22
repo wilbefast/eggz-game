@@ -76,6 +76,7 @@ local Turret = Class
   end,
 }
 Turret:include(Plant)
+Turret.class = Turret
 
 --[[------------------------------------------------------------
 Resources

@@ -54,6 +54,7 @@ local Convertor = Class
   end,
 }
 Convertor:include(Plant)
+Convertor.class = Convertor
 
 --[[------------------------------------------------------------
 Resources

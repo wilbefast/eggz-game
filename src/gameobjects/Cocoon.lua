@@ -35,10 +35,11 @@ local Cocoon = Class
 
   ARMOUR = 4,
 
-  init = function(self, tile, player, evolvesTo)
+  init = function(self, tile, player, evolvesTo, evolvesFrom)
     Plant.init(self, tile, player)
     self.maturity = 0
     self.evolvesTo = evolvesTo
+    self.evolvesFrom = (evolvesFrom or Egg)
     self.maturationTime = evolvesTo.maturationTime
     self.soundIsStarted = false
 
@@ -46,6 +47,7 @@ local Cocoon = Class
   end,
 }
 Cocoon:include(Plant)
+Cocoon.class = Cocoon
 
 --[[------------------------------------------------------------
 Resources
@@ -126,6 +128,8 @@ function Cocoon:draw(x, y)
       love.graphics.setColor(255, 255, 255, 255)
     end
   end
+
+  
 end
 
 --[[------------------------------------------------------------

@@ -46,6 +46,7 @@ local Plant = Class
   end,
 }
 Plant:include(GameObject)
+Plant.class = Plant
 
 --[[------------------------------------------------------------
 Resources

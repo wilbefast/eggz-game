@@ -59,6 +59,7 @@ local Overlord = Class
   end,
 }
 Overlord:include(GameObject)
+Overlord.class = Overlord
 
 --[[------------------------------------------------------------
 Resources
@@ -343,10 +344,12 @@ function Overlord:update(dt)
 
         local evolution
         if self.tile.occupant:isType("Cocoon") then
-          evolution = Egg(self.tile, self.player)
+          -- cancel
+          evolution = self.tile.occupant.evolvesFrom(self.tile, self.player)
           evolution.energy = 1
         else
-          evolution = Cocoon(self.tile, self.player, self.tile.occupant.EVOLUTION[self.radial_menu_choice])
+          evolution = Cocoon(self.tile, self.player, 
+              self.tile.occupant.EVOLUTION[self.radial_menu_choice], self.tile.occupant.class)
           evolution.child_energy = 1--self.tile.occupant.child_energy
         end
         evolution.hitpoints = self.tile.occupant.hitpoints
