@@ -271,21 +271,21 @@ function state:draw()
     love.graphics.setColor(255, 255, 255)
 
     -- draw eggz in "storage" ready to be laid
-    if overlord.egg_ready > 0 then
-      player[overlord.player].bindTeamColour()
-      love.graphics.setFont(FONT_SMALL)
-        if overlord.egg_ready == 1 then
-          local flux = math.cos(overlord.wave)
-          love.graphics.draw(Egg.IMAGES.FILL, x, y+128, 0, 1.3+flux*0.1, 1.3+flux*0.1, 32, 40)
-          love.graphics.setColor(210, 228, 210)
-          love.graphics.printf("Egg!", x, y+108, 0, "center")
-        else
-          love.graphics.draw(Egg.IMAGES.OUTLINE, x, y+128, 0, 1.2, 1.2, 32, 40)
-          local seconds = tostring(math.floor((1 - overlord.egg_ready)/Overlord.EGG_PRODUCTION_SPEED) + 1)
-          love.graphics.printf(seconds, x, y+108, 0, "center")
-        end
-        love.graphics.setColor(255, 255, 255)
-    end
+    -- if overlord.egg_ready > 0 then
+    --   player[overlord.player].bindTeamColour()
+    --   love.graphics.setFont(FONT_SMALL)
+    --     if overlord.egg_ready == 1 then
+    --       local flux = math.cos(overlord.wave)
+    --       love.graphics.draw(Egg.IMAGES.FILL, x, y+128, 0, 1.3+flux*0.1, 1.3+flux*0.1, 32, 40)
+    --       -- love.graphics.setColor(210, 228, 210)
+    --       -- love.graphics.printf("Egg!", x, y+108, 0, "center")
+    --     else
+    --       love.graphics.draw(Egg.IMAGES.OUTLINE, x, y+128, 0, 1.2, 1.2, 32, 40)
+    --       local seconds = tostring(math.floor((1 - overlord.egg_ready)/Overlord.EGG_PRODUCTION_SPEED) + 1)
+    --       love.graphics.printf(seconds, x, y+108, 0, "center")
+    --     end
+    --     love.graphics.setColor(255, 255, 255)
+    -- end
 
   end
 

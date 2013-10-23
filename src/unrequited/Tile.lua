@@ -95,10 +95,17 @@ function Tile:draw(x, y, forceDrawOccupant)
   -- draw overlord tile selection
   if self.overlord then
 
-  	-- draw circle
+  	-- cache
     local speed2 = useful.sqr(self.overlord.dx+self.overlord.dy)
     local lineWidth, radius = math.min(4, 200000/speed2), math.min(24, 1000000/speed2)
     love.graphics.setLineWidth(lineWidth)
+
+	  -- draw time-to-egg
+    local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*self.overlord.egg_ready)))
+    love.graphics.setColor(255, 255, 255)
+    useful.arc(self.x + 32, self.y + 32, radius + lineWidth, -math.pi*0.5, arc, 20)
+
+  	-- draw circle
     player[self.overlord.player].bindTeamColour()
       love.graphics.circle("line", self.x+32, self.y+32, radius)
 
@@ -107,6 +114,8 @@ function Tile:draw(x, y, forceDrawOccupant)
 	    love.graphics.line(self.x + 32 + math.cos(1.25*math.pi)*radius, self.y + 32 + math.sin(1.25*math.pi)*radius,
 	    									self.x + 32 + math.cos(0.25*math.pi)*radius, self.y+32+math.sin(0.25*math.pi)*radius)
 	  end
+
+
 
 	  -- reset
     love.graphics.setColor(255, 255, 255)
