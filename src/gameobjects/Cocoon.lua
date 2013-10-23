@@ -151,6 +151,7 @@ function Cocoon:draw(x, y)
   end
 
   -- how evolved is it
+  --player[self.player].bindTeamColour()
   love.graphics.setLineWidth(2)
   local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*(self.maturity/self.maturationTime))))
     useful.arc(self.x, self.y, 20, -math.pi*0.5, arc, 15)

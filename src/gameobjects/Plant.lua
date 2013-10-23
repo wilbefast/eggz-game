@@ -141,14 +141,28 @@ Game loop
 --]]--
 
 function Plant:draw()
-	if self.tile.overlord then
 
+	-- health bar
+	--if self.hitpoints < 1 then
+		
+			love.graphics.setLineWidth(4)
+    	
+    	love.graphics.setColor(love.graphics.getBackgroundColor())
+    		love.graphics.line(self.x - 14, self.y + 26, self.x + 14, self.y + 26)
+    	love.graphics.setColor(25, 255, 50)
+    		-- useful.arc(self.x, self.y, 20, math.pi*1.25, math.pi*(1.25 - 1.5*self.hitpoints), 15)
+    		love.graphics.line(self.x - 16, self.y + 24, self.x - 16 + 32*self.hitpoints, self.y + 24)
+
+		love.graphics.setColor(255, 255, 255)
+	--end
+
+	-- overlays if ovelord is hovering above
+	if self.tile.overlord then
 			local overlord = self.tile.overlord
 			local flux = math.cos(overlord.wave*0.3)
 			local offy = flux*4
 
 			player[overlord.player].bindTeamColour()
-
 			if overlord:canEvolve() then
 				love.graphics.draw(Plant.ICON_PROMOTE, self.x, self.y, 0, 0.1*flux+0.5, 0.1*flux+0.5, 32, 32)
 			elseif overlord:canSwap() then
@@ -159,8 +173,9 @@ function Plant:draw()
 				love.graphics.draw(Plant.ICON_INVALID, self.x, self.y, 0, 0.5, 0.5, 32, 32)
 			end
 		love.graphics.setColor(255, 255, 255)
-
 	end
+
+
 end
 
 function Plant:update(dt)
@@ -182,11 +197,11 @@ function Plant:update(dt)
 
   	-- On enemy territory
 		if (self.tile.conversion > 0.5) and (self.tile.owner ~= self.player) then
-			self.energy = math.max(0, self.energy - 0.1*dt)
-			if self.energy == 0 then
-				-- stopped conversion
-				--self.player = self.tile.owner
-			end
+			-- self.energy = math.max(0, self.energy - 0.1*dt)
+			-- if self.energy == 0 then
+			-- 	-- stopped conversion
+			-- 	--self.player = self.tile.owner
+			-- end
 		else
 			-- Not stunned ?
 			if (not self.stunned) then

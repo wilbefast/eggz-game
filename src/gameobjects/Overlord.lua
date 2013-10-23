@@ -355,16 +355,17 @@ function Overlord:update(dt)
         self.tile.occupant.purge = true
 
         local evolution
+        local original_hitpoints, original_energy = self.tile.occupant.hitpoints, self.tile.occupant.energy
         if self.tile.occupant:isType("Cocoon") then
           -- cancel
           evolution = self.tile.occupant.evolvesFrom(self.tile, self.player)
-          evolution.energy = 1
         else
+          
           evolution = Cocoon(self.tile, self.player, 
               self.tile.occupant.EVOLUTION[self.radial_menu_choice], self.tile.occupant.class)
-          evolution.child_energy = 1--self.tile.occupant.child_energy
+          evolution.child_energy = original_hitpoints
         end
-        evolution.hitpoints = self.tile.occupant.hitpoints
+        evolution.hitpoints, evolution.energy = original_hitpoints, original_energy
         self.radial_menu_x, self.radial_menu_y = 0, 0
     end
 
