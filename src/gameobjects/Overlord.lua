@@ -119,6 +119,14 @@ function Overlord:canUproot()
   end
 end
 
+function Overlord:canSwap()
+  return 
+    (((self.tile.occupant.player == self.player) or (not self:enemyTerritory())) 
+      and 
+    ((self.egg_ready >= 1)) or (self.passenger))
+end
+
+
 function Overlord:canPlant()
 
   local tile, payload = self.tile, self.passenger
@@ -427,6 +435,24 @@ function Overlord:draw(x, y)
 
     -- draw!
     love.graphics.draw(Overlord.EYES, eyes_x, eyes_y, 0, 1, scaley)
+  end
+
+  -- draw egg being laid
+  if self.egg_ready > 0 then
+    
+    local egg_y = y - (2.5 + 0.5*self.z)*self.h
+
+    -- if self.egg_ready < 1 then
+    --   local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*self.egg_ready)))
+    --   love.graphics.setColor(255, 255, 255)
+    --   love.graphics.setLineWidth(3)
+    --   useful.arc(x+2, egg_y, 14, -math.pi*0.5, arc, 15)
+    -- end
+
+    love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, self.egg_ready*128, 255))
+    love.graphics.draw(Egg.IMAGES[self.player][1][2],
+      x, egg_y,
+      0, 0.2 + self.egg_ready*0.8, 0.2 + self.egg_ready*0.8, 32, 40)
   end
 
   -- reset colours

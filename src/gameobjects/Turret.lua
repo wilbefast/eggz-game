@@ -294,6 +294,9 @@ function Turret:draw(x, y)
   if self.stunned then
     love.graphics.draw(Plant.IMG_STUN, x, y, 0, 1, 1, 32, 32)
   end
+  
+  -- draw overlay
+  Plant.draw(self)
 
 end
 

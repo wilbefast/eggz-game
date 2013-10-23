@@ -246,7 +246,12 @@ function Egg:draw(x, y)
 		--love.graphics.draw(Plant.IMG_EAT, self.x, self.y)
 		love.graphics.setColor(155, 255, 200, self.eat.amount*255)
 			self.eat:draw(self)
+
+		-- reset
 		love.graphics.setColor(255, 255, 255)
+
+		-- draw overlay
+		Plant.draw(self)
 end
 
 function Egg:drawTransported(x, y)

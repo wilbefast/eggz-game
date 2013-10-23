@@ -109,6 +109,9 @@ function Convertor:draw(x, y)
   if self.stunned then
     love.graphics.draw(Plant.IMG_STUN, x, y, 0, 0.8, 0.8, 32, 18)
   end
+
+  -- draw overlay
+  Plant.draw(self)
 end
 
 --[[------------------------------------------------------------

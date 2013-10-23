@@ -101,9 +101,9 @@ function Tile:draw(x, y, forceDrawOccupant)
     love.graphics.setLineWidth(lineWidth)
 
 	  -- draw time-to-egg
-    local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*self.overlord.egg_ready)))
-    love.graphics.setColor(255, 255, 255)
-    useful.arc(self.x + 32, self.y + 32, radius + lineWidth, -math.pi*0.5, arc, 20)
+    -- local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*self.overlord.egg_ready)))
+    -- love.graphics.setColor(255, 255, 255)
+    -- useful.arc(self.x + 32, self.y + 32, radius + lineWidth, -math.pi*0.5, arc, 20)
 
   	-- draw circle
     player[self.overlord.player].bindTeamColour()
@@ -111,11 +111,20 @@ function Tile:draw(x, y, forceDrawOccupant)
 
     -- draw cross if invalid
     if (not self.overlord:canLand()) then
-	    love.graphics.line(self.x + 32 + math.cos(1.25*math.pi)*radius, self.y + 32 + math.sin(1.25*math.pi)*radius,
-	    									self.x + 32 + math.cos(0.25*math.pi)*radius, self.y+32+math.sin(0.25*math.pi)*radius)
-	  end
+   		love.graphics.draw(Plant.ICON_INVALID, self.x+32, self.y+32, 0, 0.5*radius/24, 0.5*radius/24, 32, 32)
+   	end
 
+   	-- draw down-arrow if egg ready
+    if self.overlord:canPlant() then
+    	local offy = math.cos(self.overlord.wave*0.3)*4
+   		love.graphics.draw(Plant.ICON_DROP, self.x+32, self.y+32+offy, 0, 0.5*radius/24, 0.5*radius/24, 32, 32)
+   	end
 
+   --  -- draw cross if invalid
+   --  if (not self.overlord:canLand()) then
+	  --   love.graphics.line(self.x + 32 + math.cos(1.25*math.pi)*radius, self.y + 32 + math.sin(1.25*math.pi)*radius,
+	  --   									self.x + 32 + math.cos(0.25*math.pi)*radius, self.y+32+math.sin(0.25*math.pi)*radius)
+	  -- end
 
 	  -- reset
     love.graphics.setColor(255, 255, 255)

@@ -159,8 +159,11 @@ function Cocoon:draw(x, y)
   love.graphics.setColor(255, 255, 255, 128+64*math.cos(game.overlords[self.player].wave*0.3))
     love.graphics.draw(self.evolvesTo.ICON, self.x, self.y, 0, 1, 1, 18, 18)
 
+  -- reset
   love.graphics.setColor(255, 255, 255)
 
+  -- draw overlay
+  Plant.draw(self)
 end
 
 --[[------------------------------------------------------------
