@@ -131,7 +131,7 @@ function Overlord:canPlant()
     return false
 
   -- can't plant nothing
-  elseif not payload and (self.egg_ready == 0) then
+  elseif (not payload) and (self.egg_ready < 1) then
     return false
 
   -- nothing else can go on top of something
@@ -182,8 +182,8 @@ function Overlord:update(dt)
   -- Inform player that an action is impossible ------------------------
   self.cantDoIt = (inp.confirm.pressed and (not self:canLand()))
   self.wave = self.wave + dt*math.pi*4
-  if self.wave > math.pi*2 then
-    self.wave = self.wave - math.pi*2
+  if self.wave > math.pi*20 then
+    self.wave = self.wave - math.pi*20
   end
 
   -- Animation: blink eyes periodically

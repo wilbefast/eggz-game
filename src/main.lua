@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
@@ -113,6 +113,11 @@ Egg = require("gameobjects/Egg")
 Cocoon = require("gameobjects/Cocoon")
   Cocoon.EVOLUTION = { nil, Egg, nil }
 Overlord = require("gameobjects/Overlord")
+
+Egg.ICON = Plant.EVOLUTION_ICONS[2][1]
+Bomb.ICON = Egg.EVOLUTION_ICONS[1][1]
+Turret.ICON = Egg.EVOLUTION_ICONS[2][1]
+Convertor.ICON = Egg.EVOLUTION_ICONS[3][1]
 
 title = require("gamestates/title")
 game = require("gamestates/game")

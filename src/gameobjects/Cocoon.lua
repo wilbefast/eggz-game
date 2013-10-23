@@ -102,6 +102,27 @@ function Cocoon:update(dt)
     end
 end
 
+function useful.arc(centrex, centrey, radius, starta, enda, segments)
+  segments = (segments or 10)
+
+  if starta > enda then
+    local swap = starta
+    starta = enda
+    enda = swap
+  end
+
+  local x, y
+  local angle_step = (enda - starta)/segments
+  for i = 1, segments+1 do
+    local angle = starta + angle_step*(i-1)
+    local new_x, new_y = centrex + math.cos(angle)*radius, centrey + math.sin(angle)*radius
+    if (x and y) then
+      love.graphics.line(x, y, new_x, new_y)
+    end
+    x, y = new_x, new_y
+  end
+end
+
 function Cocoon:draw(x, y)
 
   x, y = x or self.x, y or self.y
@@ -129,7 +150,17 @@ function Cocoon:draw(x, y)
     end
   end
 
-  
+  -- how evolved is it
+  love.graphics.setLineWidth(2)
+  local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*(self.maturity/self.maturationTime))))
+    useful.arc(self.x, self.y, 20, -math.pi*0.5, arc, 15)
+
+  -- what is this evolving to ?
+  love.graphics.setColor(255, 255, 255, 128+64*math.cos(game.overlords[self.player].wave*0.3))
+    love.graphics.draw(self.evolvesTo.ICON, self.x, self.y, 0, 1, 1, 18, 18)
+
+  love.graphics.setColor(255, 255, 255)
+
 end
 
 --[[------------------------------------------------------------
