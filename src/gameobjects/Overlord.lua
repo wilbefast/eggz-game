@@ -119,6 +119,10 @@ function Overlord:canUproot()
   end
 end
 
+function Overlord:canEvolve()
+  return (self:canUproot() and (self.tile.occupant.player == self.player) and self.tile.occupant:canEvolve())
+end
+
 function Overlord:canSwap()
   return 
     (((self.tile.occupant.player == self.player) or (not self:enemyTerritory())) 
