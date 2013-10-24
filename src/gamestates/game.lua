@@ -21,6 +21,14 @@ local state = GameState.new()
 function state:init() 
 end
 
+function state:reset_winning()
+  self.winner = false
+  for _, p in ipairs(player) do
+    p.winning = 0
+    p.win_warnings = 0
+  end
+end
+
 function state:enter()
 
   GameObject.INSTANCES = { }
@@ -40,12 +48,10 @@ function state:enter()
   self.camera:lookAt(self.grid:centrePixel())
 
   -- not victory (yet)
-  self.winner = false
   for _, p in ipairs(player) do
     p.total_conversion = 0
-    p.winning = 0
-    p.win_warnings = 0
   end
+  self:reset_winning()
 	
   -- log percents
   self.log = { highest = 0, total_time = 0, time_till_next = 3, period = 3, animation = 0 }
@@ -162,15 +168,22 @@ function state:update(dt)
           audio.music:stop()
           audio:play_sound("intro")
         else
-          -- count down to win
-          p.winning = p.winning + dt
+          
+
           -- warn other players with a "tick tock"!
-          if (math.floor(p.winning) > p.win_warnings)
+          if p.winning == 0 then
+            audio:play_sound("tick")
+          elseif (math.floor(p.winning) > p.win_warnings)
           and (p.winning < DELAY_BEFORE_WIN) then
             p.win_warnings = p.win_warnings + 1
             audio:play_sound("tick")
           end 
+          -- count down to win
+          p.winning = p.winning + dt
 				end
+
+      else -- nobody winning :'(
+        self:reset_winning()
 			end
 		end
   end
