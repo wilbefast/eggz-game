@@ -28,6 +28,7 @@ local Plant = Class
   REGEN_SPEED = 0.1,
   REGEN_EFFICIENCY = 0.1,
   maturationTime = 1,
+  time_since_last_damage = 999,
 
   init = function(self, tile, player)
     GameObject.init(self, tile.x + tile.w/2, tile.y + tile.h/2, 
@@ -91,6 +92,8 @@ end
 
 function Plant:takeDamage(amount, attacker)
 	self.hitpoints = self.hitpoints - amount/(1 + self.ARMOUR)
+	self.tile.energy = math.max(0, self.tile.energy - amount*0.1)
+	self.time_since_last_damage = 0
 	if self.hitpoints < 0 then
 		self.purge = true
 		self.tile.energy = math.min(1, self.energy/self.ENERGY_DRAW_EFFICIENCY)
@@ -143,18 +146,24 @@ Game loop
 function Plant:draw()
 
 	-- health bar
-	--if self.hitpoints < 1 then
+	if self.hitpoints < 1 then
 		
+		local h = self.hitpoints
+
+			local panic = (1-math.min(0.5, self.time_since_last_damage)*2)
 			love.graphics.setLineWidth(4)
     	
-    	love.graphics.setColor(love.graphics.getBackgroundColor())
+    	local r, g, b, a = love.graphics.getBackgroundColor()
+    	a = useful.tri(h < 0.9, 255, (1-(h-0.9)*10)*255  )
+    	love.graphics.setColor(r, g, b, a)
     		love.graphics.line(self.x - 14, self.y + 26, self.x + 14, self.y + 26)
-    	love.graphics.setColor(25, 255, 50)
+    	love.graphics.setColor(25, 255, 50, a)
+    	love.graphics.setLineWidth(4 + panic*3)
     		-- useful.arc(self.x, self.y, 20, math.pi*1.25, math.pi*(1.25 - 1.5*self.hitpoints), 15)
     		love.graphics.line(self.x - 16, self.y + 24, self.x - 16 + 32*self.hitpoints, self.y + 24)
 
 		love.graphics.setColor(255, 255, 255)
-	--end
+	end
 
 	-- overlays if ovelord is hovering above
 	if self.tile.overlord then
@@ -184,7 +193,7 @@ function Plant:update(dt)
   self.w = self.MAX_W * self.energy
   self.h = self.MAX_H * self.energy
 
-  -- Unstunned -------------------------------------------------------
+  -- Unstun -------------------------------------------------------
   if self.stunned then
   	self.stunned = self.stunned - dt
   	if self.stunned <= 0 then
@@ -212,12 +221,17 @@ function Plant:update(dt)
 				self.eat.amount = (drawn_energy/(self.ENERGY_DRAW_SPEED*dt))
 				self.eat:update(dt * (0.2 + 0.8 * self.eat.amount))
  
-			  -- Regenerate ------------------------------------------------------
-			  local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
-			  											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)
-			  drawn_energy = drawn_energy - regen
-			  self.tile.energy = self.tile.energy - regen
-			  self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
+			  -- -- Regenerate ------------------------------------------------------
+			  -- local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
+			  -- 											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)
+			  -- drawn_energy = drawn_energy - regen
+			  -- self.tile.energy = self.tile.energy - regen
+			  -- self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
+			  if self.time_since_last_damage > 3 then
+			  	self.hitpoints = math.min(1, self.hitpoints + self.REGEN_SPEED*dt)
+		  	else
+		  		self.time_since_last_damage = self.time_since_last_damage + dt
+		  	end
 
 			  -- Store energy not consume by regeneration ------------------------
 			  if drawn_energy + self.energy > 1 then

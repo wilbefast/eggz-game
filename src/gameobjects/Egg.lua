@@ -35,7 +35,6 @@ local Egg = Class
 
   maturationTime = 15, -- seconds - after being recycled
 
-  REGEN_SPEED = 1,
   REGEN_EFFICIENCY = 1,
 
   ARMOUR = 0,

@@ -24,9 +24,9 @@ local Turret = Class
 {
   type = GameObject.TYPE.new("Turret"),
 
-  ENERGY_DRAW_SPEED = 0.1,              -- per second
+  ENERGY_DRAW_SPEED = 0,              -- per second
   ENERGY_CONSUME_SPEED = 0,           -- per second
-  ENERGY_DRAW_EFFICIENCY = 30,       -- percent
+  ENERGY_DRAW_EFFICIENCY = 0,       -- percent
   ENERGY_START = 1,
   MAX_W = 24,
   MAX_H = 24,
@@ -47,7 +47,6 @@ local Turret = Class
   ATTACK_COOLDOWN_DURATION = 0.8,
   ATTACK_DAMAGE = 0.4,
 
-  REGEN_SPEED = 0.01,
   REGEN_EFFICIENCY = 1,
 
   CAN_BE_STUNNED = true,
