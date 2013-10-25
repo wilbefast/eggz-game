@@ -23,10 +23,10 @@ local ARROWS_IMG = love.graphics.newImage("assets/menu/MENU-arrows.png")
 
 local BUTTON_IMG =
 {
-  love.graphics.newImage("assets/menu/MENU-play-" .. LANGUAGE ..  ".png"),
-  --love.graphics.newImage("assets/menu/MENU-controls-" .. LANGUAGE ..  ".png"),
-  love.graphics.newImage("assets/menu/MENU-credits-" .. LANGUAGE ..  ".png"),
-  love.graphics.newImage("assets/menu/MENU-leave-" .. LANGUAGE ..  ".png")
+  love.graphics.newImage("assets/menu/MENU-play-" .. language[current_language].initials ..  ".png"),
+  --love.graphics.newImage("assets/menu/MENU-controls-" .. languages[current_language].initials ..  ".png"),
+  love.graphics.newImage("assets/menu/MENU-credits-" .. language[current_language].initials ..  ".png"),
+  love.graphics.newImage("assets/menu/MENU-leave-" .. language[current_language].initials ..  ".png")
 }
 
 local PLAY = 1
@@ -90,7 +90,7 @@ function state:update(dt)
       self.controlling_player = i
     end
     -- confirm or cancel
-    if input[i].keyConfirm() or input[i].keyStart() then
+    if (input[i].start.trigger == 1) or (input[i].confirm.trigger == 1) then
       accept()
     end
   end

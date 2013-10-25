@@ -24,8 +24,6 @@ n_players = 2
 
 DELAY_BEFORE_WIN = 10 -- seconds
 
-LANGUAGE = "EN" -- TODO - set in menu
-
 N_TILES_ACROSS = 15
 N_TILES_DOWN = 11
 TILE_W = 64
@@ -90,6 +88,7 @@ Vector = require("hump/vector-light")
 
 player = require("player")
 
+language = require("language")
 useful = require("unrequited/useful")
 log = require("unrequited/log")
 audio = require("unrequited/audio")
@@ -120,6 +119,7 @@ Turret.ICON = Egg.EVOLUTION_ICONS[2][1]
 Convertor.ICON = Egg.EVOLUTION_ICONS[3][1]
 
 title = require("gamestates/title")
+language_select = require("gamestates/language_select")
 game = require("gamestates/game")
 credits = require("gamestates/credits")
 controls = require("gamestates/controls")
@@ -193,7 +193,7 @@ function love.load(arg)
   audio:load_sound("tick", 0.8, 1)
 
   -- go to the initial gamestate
-  GameState.switch(title)
+  GameState.switch(language_select)
 end
 
 function love.focus(f)

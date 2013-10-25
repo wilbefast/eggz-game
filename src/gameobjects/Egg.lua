@@ -210,7 +210,7 @@ function Egg:update(dt)
 	local evo = self:getEvolution()
 	self.view.anim = Egg.ANIMS[self.player][evo]
 
-	self.ARMOUR = (evo - 1)
+	self.ARMOUR = (evo - 1)*0.75
 
   if evo == 3 then
 	  self.wobble_time = self.wobble_time + 15*dt

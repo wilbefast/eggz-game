@@ -17,7 +17,7 @@ Lesser General Public License for more details.
 CREDITS GAMESTATE
 --]]------------------------------------------------------------
 
-local CREDITS_IMG = love.graphics.newImage("assets/menu/Credits-" .. LANGUAGE .. ".png")
+local CREDITS_IMG = love.graphics.newImage("assets/menu/Credits-" .. language[current_language].initials .. ".png")
 
 local state = GameState.new()
 
