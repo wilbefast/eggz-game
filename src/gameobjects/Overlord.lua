@@ -147,7 +147,7 @@ end
 
 function Overlord:canSwap()
   return
-    (self:canUproot() and ((self.egg_ready >= 1) or (self.passenger)))
+    (self:canUproot() and self.passenger)--((self.egg_ready >= 1) or (self.passenger)))
 end
 
 
@@ -277,13 +277,6 @@ function Overlord:update(dt)
 
     self.desired_dx, self.desired_dy = 0, 0
 
-    -- shake head if hovered unit cannot evolve
-    -- if (not self.tile.occupant) 
-    -- or (self.tile.occupant.player ~= self.player)
-    -- or (not self.tile.occupant:canEvolve()) then
-    --   self.cantDoIt = true
-    -- end
-
     local any_input = ((inp.x ~= 0) or (inp.y ~= 0))
     self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, useful.tri(any_input, 7, 1)*dt)
     self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, useful.tri(any_input, 7, 1)*dt)
@@ -321,7 +314,6 @@ function Overlord:update(dt)
 
 	-- Put down a plant  -------------------------------------------
 	if inp.confirm.pressed and self:canPlant() then
-
     -- put down passenger
     if self.passenger then
       self.previous_passenger = self.passenger
@@ -338,12 +330,26 @@ function Overlord:update(dt)
     if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
     and (not self.previous_passenger)
     and (self.radial_menu < 1) then
+        -- cache
         local swap, occ = self.passenger, self.tile.occupant
+
+        -- in any case uproot
         occ:uproot(self)
-        if swap then
-          swap:plant(self.tile)
+
+        -- swap if applicable
+        if swap or (self.egg_ready >= 1) then
+          -- swap for passenger
+          if swap then
+            swap:plant(self.tile)
+          -- swap by laying
+          -- elseif (self.egg_ready >= 1) then
+          --   self.previous_passenger = Egg(self.tile, self.player)
+          --   self.egg_ready = 0
+          end
           self.passenger = occ
         end
+
+        -- slow momentum when picking up
         self.dx = self.dx * 0.5
         self.dy = self.dy * 0.5
     end
@@ -466,13 +472,6 @@ function Overlord:draw(x, y)
   if self.egg_ready > 0 then
     
     local egg_y = y - (2.5 + 0.5*self.z)*self.h
-
-    -- if self.egg_ready < 1 then
-    --   local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*self.egg_ready)))
-    --   love.graphics.setColor(255, 255, 255)
-    --   love.graphics.setLineWidth(3)
-    --   useful.arc(x+2, egg_y, 14, -math.pi*0.5, arc, 15)
-    -- end
 
     love.graphics.setColor(255, 255, 255, useful.tri(self.egg_ready < 1, self.egg_ready*128, 255))
     love.graphics.draw(Egg.IMAGES[self.player][1][2],
