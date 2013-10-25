@@ -105,7 +105,7 @@ function state:draw()
   if flag_changing == 0 then
 
     local flagx = w/2
-    love.graphics.draw(language[current_language].flag, flagx, flagy, 0, 1.1 + cos/10, 1.1 + cos/10, flagw/2, flagh/2)
+    love.graphics.draw(language[current_language].flag, flagx, flagy, cos/10, 1.1, 1.1, flagw/2, flagh/2)
     love.graphics.setColor(255, 255, 255, 64)
       love.graphics.draw(language[before(current_language)].flag, flagx - flagw, flagy, 0, 0.9, 0.9, flagw/2, flagh/2)
       love.graphics.draw(language[after(current_language)].flag, flagx + flagw, flagy, 0, 0.9, 0.9, flagw/2, flagh/2)
@@ -118,7 +118,7 @@ function state:draw()
 
     local flagx = w/2 - flagw*flag_changing
     love.graphics.setColor(255, 255, 255, 64)
-      love.graphics.draw(language[current_language].flag, flagx, flagy, 0,  1 + cos/10, 1 + cos/10, flagw/2, flagh/2)
+      love.graphics.draw(language[current_language].flag, flagx, flagy, cos/10,  1.1, 1.1, flagw/2, flagh/2)
       love.graphics.draw(language[before(current_language)].flag, flagx - flagw, flagy, 0, 1, 1, flagw/2, flagh/2)
       love.graphics.draw(language[after(current_language)].flag, flagx + flagw, flagy, 0, 1, 1, flagw/2, flagh/2)
       love.graphics.draw(language[before(before(current_language))].flag, flagx - 2*flagw, flagy, 0, 1, 1, flagw/2, flagh/2)
@@ -127,9 +127,15 @@ function state:draw()
       love.graphics.rectangle("fill", 0, 0, bgx, h)
       love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
     love.graphics.setColor(255, 255, 255, 255)
-
   end
 
+  -- arrows
+  love.graphics.setColor(255, 255, 255, 255 - (sin+2)*32)
+    love.graphics.draw(ARROWS_IMG, w/2, h/2, 0, 
+      1.15 + 0.05*sin, 
+      1.15 + 0.05*sin, 
+      ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
+  love.graphics.setColor(255, 255, 255, 255)
   
   -- borders
   drawBorders()

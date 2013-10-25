@@ -19,7 +19,7 @@ TITLE GAMESTATE
 
 local TITLE_IMG = love.graphics.newImage("assets/menu/Title.png")
 
-local ARROWS_IMG = love.graphics.newImage("assets/menu/MENU-arrows.png")
+ARROWS_IMG = love.graphics.newImage("assets/menu/MENU-arrows.png")
 
 local BUTTON_IMG =
 {
