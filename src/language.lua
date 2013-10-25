@@ -24,7 +24,13 @@ languages[1] =
 {
 	flag = love.graphics.newImage("assets/languages/australia.png"),
 	initials = "EN",
-	title = { "Versus", "Language", "Creggits", "Quit" }
+	title = { "Versus", "Language", "Creggits", "Quit" },
+	credits = 
+	{ 
+		title = "Creggits", 
+		{ what = "Design and programming", who = "William 'Wilbefast' Dyce" },
+		{ what = "Graphics and sound", who = "Barth 'Nyrlem' Frey" }
+	}
 }
 
 
@@ -36,7 +42,13 @@ languages[2] =
 {
 	flag = love.graphics.newImage("assets/languages/france.png"),
 	initials = "FR",
-	title = { "Duel", "Langue", "Credits", "Quitter" }
+	title = { "Duel", "Langue", "Credits", "Quitter" },
+	credits = 
+	{ 
+		title = "Credits", 
+		{ what = "Concept et development", who = "William 'Wilbefast' Dyce" },
+		{ what = "Graphismes et son", who = "Barth 'Nyrlem' Frey" }
+	}
 }
 
 return languages

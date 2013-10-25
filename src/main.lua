@@ -41,6 +41,7 @@ MENU_BG = love.graphics.newImage("assets/menu/menubackground.jpg")
 
 -- font
 FONT_SMALL = love.graphics.newFont("assets/font/casual.ttf", 24)
+FONT_NORMAL = love.graphics.newFont("assets/font/casual.ttf", 32)
 FONT_BIG = love.graphics.newFont("assets/font/casual.ttf", 48)
 FONT_HUGE = love.graphics.newFont("assets/font/casual.ttf", 64)
 FONT_MASSIVE = love.graphics.newFont("assets/font/casual.ttf", 72)

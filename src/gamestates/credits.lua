@@ -17,8 +17,6 @@ Lesser General Public License for more details.
 CREDITS GAMESTATE
 --]]------------------------------------------------------------
 
-local CREDITS_IMG = love.graphics.newImage("assets/menu/Credits-" .. language[current_language].initials .. ".png")
-
 local state = GameState.new()
 
 function state:update(dt)
@@ -36,18 +34,38 @@ function state:keypressed(key, uni)
   end
 end
 
+local angle, cos, sin = 0, 0, 0
+
 function state:draw()
   -- background
   local w, h = love.graphics.getWidth(), love.graphics.getHeight()
   local bgx, bgy = (w - MENU_BG:getWidth())/2, (h - MENU_BG:getHeight())/2
   love.graphics.draw(MENU_BG, bgx, bgy)
 
-  -- credits
-  local x, y = (w - CREDITS_IMG:getWidth())/2, (h - CREDITS_IMG:getHeight())/2
-  love.graphics.draw(CREDITS_IMG, x, y)
+  -- title
+  love.graphics.setFont(FONT_MASSIVE)
+  useful.printf(language[current_language].credits.title, w*0.5, h*(0.15 - 0.01*cos), 0.03*sin)
+
+  -- task performed
+  love.graphics.setFont(FONT_NORMAL)
+  useful.printf(language[current_language].credits[1].what, w*0.4 , h*(0.35 + cos*0.01))
+  useful.printf(language[current_language].credits[2].what, w*0.4 , h*(0.65 + sin*0.01))
+
+  -- who performed them
+  love.graphics.setFont(FONT_SMALL)
+  useful.printf(language[current_language].credits[1].who, w*0.6, h*(0.37 + cos*0.01))
+  useful.printf(language[current_language].credits[2].who, w*0.6 , h*(0.67 + sin*0.01))
 
   -- borders
   drawBorders()
+end
+
+function state:update(dt)
+  angle = angle + dt
+  if angle > 2*math.pi then
+    angle = angle - 2*math.pi
+  end
+  cos, sin = math.cos(angle), math.sin(angle)
 end
 
 
