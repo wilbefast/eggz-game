@@ -92,7 +92,9 @@ end
 
 function Plant:takeDamage(amount, attacker)
 	self.hitpoints = self.hitpoints - amount/(1 + self.ARMOUR)
-	self.tile.energy = math.max(0, self.tile.energy - amount*0.1)
+	if self.tile then
+		self.tile.energy = math.max(0, self.tile.energy - amount*0.1)
+	end
 	self.time_since_last_damage = 0
 	if self.hitpoints < 0 then
 		self.purge = true

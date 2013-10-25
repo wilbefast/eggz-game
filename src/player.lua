@@ -27,13 +27,13 @@ player[1] =
 	-- top right
 	startPosition = 
 	{ 
-		x = 64*9 - 32,  	
-		y = 64*4 - 32 	
+		x = TILE_W*(N_TILES_ACROSS - 2.5),  	
+		y = TILE_W*2.5
 	},
 	-- top right
 	ui =
 	{
-		x = 64*14, 
+		x = TILE_W*(N_TILES_ACROSS + 1.5), 
 		y = 0
 	}
 
@@ -52,14 +52,14 @@ player[2] =
 	-- top left
 	startPosition = 
   { 
-  	x = 64*3 - 32, 					
-  	y = 64*4 - 32
+  	x = TILE_W*2.5, 					
+  	y = TILE_H*2.5
 	},
 
 	-- top left
 	ui =
 	{
-		x = -3*64, 
+		x = -1.5*TILE_W, 
 		y = 0
 	}
 }
@@ -77,14 +77,14 @@ player[3] =
 	-- bottom left
 	startPosition = 
   { 
-  	x = 64*3 - 32, 		
-  	y = 64*9 - 32        	
+  	x = TILE_W*2.5, 		
+  	y = TILE_H*(N_TILES_DOWN - 2.5)       	
 	},
 	-- bottom left
 	ui =
 	{
-		x = -3*64,
-		y = 64*9 - 32
+		x = -1.5*TILE_W,
+		y = TILE_W*(N_TILES_DOWN - 1)
 	}
 }
 
@@ -101,14 +101,14 @@ player[4] =
 	-- bottom right
 	startPosition =
   { 
-  	x = 64*9 - 32, 		
-  	y = 64*9 - 32 	
+  	x = TILE_W*(N_TILES_ACROSS - 2.5), 		
+  	y = TILE_H*(N_TILES_DOWN - 2.5) 	
 	},
 	-- bottom right
 	ui =
 	{
-		x = 64*14, 
-		y = 64*9 - 32
+		x = TILE_W*(N_TILES_ACROSS + 1.5), 
+		y = TILE_H*(N_TILES_DOWN - 1)
 	}
 }
 

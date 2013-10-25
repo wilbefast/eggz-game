@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false
+DEBUG = true
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
@@ -26,7 +26,7 @@ DELAY_BEFORE_WIN = 10 -- seconds
 
 LANGUAGE = "EN" -- TODO - set in menu
 
-N_TILES_ACROSS = 11
+N_TILES_ACROSS = 15
 N_TILES_DOWN = 11
 TILE_W = 64
 TILE_H = 64
