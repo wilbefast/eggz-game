@@ -115,6 +115,7 @@ Take damage
 --]]--
 
 function Turret:die()
+  Plant.die(self)
   audio:play_sound("KNIGHT-destroyed")
 end
 

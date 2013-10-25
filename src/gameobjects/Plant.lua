@@ -63,6 +63,9 @@ Plant.ICON_SWAP = love.graphics.newImage("assets/icon_swap.png")
 Plant.ICON_INVALID = love.graphics.newImage("assets/icon_invalid.png")
 Plant.ICON_PROMOTE = love.graphics.newImage("assets/icon_promote.png")
 
+Plant.IMG_DEATH = love.graphics.newImage("assets/death.png")
+Plant.ANIM_DEATH = Animation(Plant.IMG_DEATH, 96, 96, 5)
+
 -- default: recycle only
 Plant.EVOLUTION_ICONS =
 {
@@ -88,6 +91,7 @@ Take damage
 
 function Plant:die()
 	--override me
+	SpecialEffect(self.x, self.y+2, Plant.ANIM_DEATH, 7, 0, 32)
 end
 
 function Plant:takeDamage(amount, attacker)

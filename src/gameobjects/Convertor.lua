@@ -71,6 +71,7 @@ Take damage
 --]]--
 
 function Convertor:die()
+  Plant.die(self)
   audio:play_sound("FOUNTAIN-destroyed")
 end
 

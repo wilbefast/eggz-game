@@ -162,6 +162,7 @@ Take damage
 --]]--
 
 function Egg:die()
+	Plant.die(self)
   audio:play_sound("EGG-destroyed")
 end
 
