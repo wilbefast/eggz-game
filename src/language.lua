@@ -23,7 +23,8 @@ LANGUAGE 1 - 'STRALIAN
 languages[1] = 
 {
 	flag = love.graphics.newImage("assets/languages/australia.png"),
-	initials = "EN"
+	initials = "EN",
+	title = { "Versus", "Language", "Creggits", "Quit" }
 }
 
 
@@ -34,7 +35,8 @@ LANGUAGE 2 - FRENCH
 languages[2] = 
 {
 	flag = love.graphics.newImage("assets/languages/france.png"),
-	initials = "FR"
+	initials = "FR",
+	title = { "Duel", "Langue", "Credits", "Quitter" }
 }
 
 return languages

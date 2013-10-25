@@ -57,8 +57,8 @@ function state:update(dt)
       flag_changing = flag_changing + input[i].x*dt
       self.controlling_player = i
     end
-    -- confirm or cancel
-    if input[i].keyConfirm() or input[i].keyStart() then
+    -- confirm
+    if (input[i].start.trigger == 1) or (input[i].confirm.trigger == 1) then
       GameState.switch(title)
     end
   end

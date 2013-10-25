@@ -157,4 +157,14 @@ function useful.lerp(a, b, amount)
   return ((1-amount)*a + amount*b)
 end
 
+function useful.printf(text, x, y, angle)
+  love.graphics.push()
+    love.graphics.translate(x, y)
+    if angle then
+      love.graphics.rotate(angle)
+    end
+    love.graphics.printf(text, 0, 0, 0, "center")
+  love.graphics.pop()
+end
+
 return useful

@@ -21,33 +21,19 @@ local TITLE_IMG = love.graphics.newImage("assets/menu/Title.png")
 
 ARROWS_IMG = love.graphics.newImage("assets/menu/MENU-arrows.png")
 
-local BUTTON_IMG =
-{
-  love.graphics.newImage("assets/menu/MENU-play-" .. language[current_language].initials ..  ".png"),
-  --love.graphics.newImage("assets/menu/MENU-controls-" .. languages[current_language].initials ..  ".png"),
-  love.graphics.newImage("assets/menu/MENU-credits-" .. language[current_language].initials ..  ".png"),
-  love.graphics.newImage("assets/menu/MENU-leave-" .. language[current_language].initials ..  ".png")
-}
-
-local PLAY = 1
--- local CONTROLS = 2
--- local CREDITS = 3
--- local LEAVE = 4
-local CREDITS = 2
-local LEAVE = 3
-local current_button = PLAY
+local current_button = 1
 
 local before = function(i)
   local result = i - 1
   if result < 1 then
-    result = #BUTTON_IMG
+    result = #(language[current_language].title)
   end
   return result
 end
 
 local after = function(i)
   local result = i + 1
-  if result > #BUTTON_IMG then
+  if result > #(language[current_language].title) then
     result = 1
   end
   return result
@@ -61,13 +47,16 @@ function state:enter()
 end
 
 function accept()
-	if current_button == PLAY then 
+  local button_name = language[1].title[current_button]
+	if button_name == "Versus" then 
     GameState.switch(player_select)
-	elseif current_button == CREDITS then 
+	elseif button_name == "Creggits" then 
 		GameState.switch(credits)
-	elseif current_button == CONTROLS then 
+	elseif button_name == "Controls" then 
 		GameState.switch(controls)
-	elseif current_button == LEAVE then 
+  elseif button_name == "Language" then 
+    GameState.switch(language_select)
+	elseif button_name == "Quit" then 
 		love.event.push("quit")
 	end
 end
@@ -115,6 +104,7 @@ function state:update(dt)
   end
 end
 
+local BUTTON_OFFSET = 550
 
 function state:draw()
 
@@ -131,16 +121,18 @@ function state:draw()
   local cos, sin = math.cos(button_rotation), math.sin(button_rotation)
 
   -- buttons
-
-  local bw, bh, by = BUTTON_IMG[current_button]:getWidth(), BUTTON_IMG[current_button]:getHeight(), bgy + bgh*0.725
+  love.graphics.setFont(FONT_MASSIVE)
+  local button_names = language[current_language].title
+  local by = bgy + bgh*0.675
 
   if button_changing == 0 then
 
     local bx = w/2
-    love.graphics.draw(BUTTON_IMG[current_button], bx, by, cos/10, 1.1, 1.1, bw/2, bh/2)
+
+    useful.printf(button_names[current_button], bx, by, cos/10)
     love.graphics.setColor(255, 255, 255, 64)
-      love.graphics.draw(BUTTON_IMG[before(current_button)], bx - bw, by, 0, 0.9, 0.9, bw/2, bh/2)
-      love.graphics.draw(BUTTON_IMG[after(current_button)], bx + bw, by, 0, 0.9, 0.9, bw/2, bh/2)
+      useful.printf(button_names[before(current_button)], bx - BUTTON_OFFSET, by)
+      useful.printf(button_names[after(current_button)], bx + BUTTON_OFFSET, by)
     love.graphics.setColor(love.graphics.getBackgroundColor())
       love.graphics.rectangle("fill", 0, 0, bgx, h)
       love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
@@ -148,7 +140,7 @@ function state:draw()
 
     -- arrows
     love.graphics.setColor(255, 255, 255, 255 - (sin+2)*64)
-      love.graphics.draw(ARROWS_IMG, bx, by, 0, 
+      love.graphics.draw(ARROWS_IMG, bx, bgy + bgh*0.725, 0, 
         1.15 + 0.05*sin, 
         1.15 + 0.05*sin, 
         ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
@@ -156,13 +148,13 @@ function state:draw()
 
   else
 
-    local bx = w/2 - bw*button_changing
+    local bx = w/2 - BUTTON_OFFSET*button_changing
     love.graphics.setColor(255, 255, 255, 64)
-      love.graphics.draw(BUTTON_IMG[current_button], bx, by, cos/10, 1, 1, bw/2, bh/2)
-      love.graphics.draw(BUTTON_IMG[before(current_button)], bx - bw, by, 0, 1, 1, bw/2, bh/2)
-      love.graphics.draw(BUTTON_IMG[after(current_button)], bx + bw, by, 0, 1, 1, bw/2, bh/2)
-      love.graphics.draw(BUTTON_IMG[before(before(current_button))], bx - 2*bw, by, 0, 1, 1, bw/2, bh/2)
-      love.graphics.draw(BUTTON_IMG[after(after(current_button))], bx + 2*bw, by, 0, 1, 1, bw/2, bh/2)
+      useful.printf(button_names[current_button], bx, by, cos/10)
+      useful.printf(button_names[before(current_button)], bx - BUTTON_OFFSET, by)
+      useful.printf(button_names[after(current_button)], bx + BUTTON_OFFSET, by)
+      useful.printf(button_names[before(before(current_button))], bx - BUTTON_OFFSET*2, by)
+      useful.printf(button_names[after(after(current_button))], bx + BUTTON_OFFSET*2, by)
     love.graphics.setColor(love.graphics.getBackgroundColor())
       love.graphics.rectangle("fill", 0, 0, bgx, h)
       love.graphics.rectangle("fill", bgx+bgw, 0, bgx, h)
