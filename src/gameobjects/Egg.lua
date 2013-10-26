@@ -229,11 +229,6 @@ function Egg:draw(x, y)
 		end
 
 		local ev = self:getEvolution()
-		-- love.graphics.draw(Egg.IMAGES[self.player][ev][1],
-		-- 	x, 
-		-- 	y,
-		-- 	self.wobble,
-		-- 	1, 1, 32, 50)
 		self.view:draw(self, x, y, self.wobble)
 
 		-- stun overlay
@@ -243,9 +238,10 @@ function Egg:draw(x, y)
     end
 		
 		-- eat overlay
-		--love.graphics.draw(Plant.IMG_EAT, self.x, self.y)
-		love.graphics.setColor(155, 255, 200, self.eat.amount*255)
-			self.eat:draw(self)
+		if self.eat.amount > 0 then
+			love.graphics.setColor(155, 255, 200, self.eat.amount*255)
+				self.eat:draw(self)
+		end
 
 		-- reset
 		love.graphics.setColor(255, 255, 255)

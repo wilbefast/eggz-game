@@ -72,6 +72,7 @@ function applyStun(tile, t)
 end
 
 function Bomb:plant(tile)
+
   if self.transport then --and tile.occupant then
     
     -- deduct one use
@@ -85,6 +86,7 @@ function Bomb:plant(tile)
     SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
 
     -- audio queue
+    log:write("DROP")
     audio:play_sound("BOMB-dropped", 0.1)
 
     -- apply effect to the tile

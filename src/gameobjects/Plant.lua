@@ -151,6 +151,11 @@ Game loop
 
 function Plant:draw()
 
+	-- tile overlay
+	if self.tile then
+		self.tile:drawOverlay()
+	end
+
 	-- health bar
 	if self.hitpoints < 1 then
 		
@@ -210,13 +215,11 @@ function Plant:update(dt)
   -- Planted ? ------------------------------------------------------
   if self.tile then
 
+  	-- reset eat counter
+  	self.eat.amount = 0
+
   	-- On enemy territory
 		if (self.tile.conversion > 0.5) and (self.tile.owner ~= self.player) then
-			-- self.energy = math.max(0, self.energy - 0.1*dt)
-			-- if self.energy == 0 then
-			-- 	-- stopped conversion
-			-- 	--self.player = self.tile.owner
-			-- end
 
 		-- On acidic territory
 		elseif (self.tile.acidity > 0) then
@@ -234,11 +237,6 @@ function Plant:update(dt)
 				self.eat:update(dt * (0.2 + 0.8 * self.eat.amount))
  
 			  -- -- Regenerate ------------------------------------------------------
-			  -- local regen = math.min(math.min(drawn_energy, self.REGEN_SPEED*dt), 
-			  -- 											(1 - self.hitpoints)/self.REGEN_EFFICIENCY)
-			  -- drawn_energy = drawn_energy - regen
-			  -- self.tile.energy = self.tile.energy - regen
-			  -- self.hitpoints = self.hitpoints + regen*self.REGEN_EFFICIENCY
 			  if self.time_since_last_damage > 3 then
 			  	self.hitpoints = math.min(1, self.hitpoints + self.REGEN_SPEED*dt)
 		  	else

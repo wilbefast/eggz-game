@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false
+DEBUG = true
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
@@ -187,7 +187,7 @@ function love.load(arg)
 
   audio:load_sound("FOUNTAIN-destroyed", 1, 4)
 
-  audio:load_sound("BOMB-dropped", 2, 2)
+  audio:load_sound("BOMB-dropped", 2, 4)
 
   audio:load_sound("intro", 1, 1)
 

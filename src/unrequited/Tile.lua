@@ -32,6 +32,8 @@ local Tile = Class
 {
 		REGROWTH_SPEED = 0.05,
 
+		MAX_REGROWTH_PER_SECOND = 1,
+
 		ACID_DECAY = 0.9,
 
 		acidity = 0,
@@ -44,6 +46,7 @@ local Tile = Class
 			self.owner = 0
 			self.conversion = 0 
 			self.non_mans_land = true
+			self.acidView = AnimationView(Tile.ANIM_ACID, 5, 1, 0, 20)
 		end
 }
 
@@ -56,6 +59,9 @@ Tile.IMAGES = {}
 for i = 1, 6 do
   Tile.IMAGES[i] = love.graphics.newImage("assets/tiles/tile" .. i .. ".png")
 end
+
+Tile.IMG_ACID = love.graphics.newImage("assets/acid.png")
+Tile.ANIM_ACID = Animation(Tile.IMG_ACID, 64, 64, 5, 0, 0)
 
 --[[------------------------------------------------------------
 Conversion
@@ -88,6 +94,18 @@ Game loop
 
 local LINE_WIDTH = 3
 
+function Tile:drawOverlay(x, y)
+
+	x, y = x or self.x, y or self.y
+
+	-- draw acid burn
+	if self.acidity > 0 then
+		love.graphics.setColor(255, 255, 255, self.acidity*255)
+			self.acidView:draw(self)
+		love.graphics.setColor(255, 255, 255)
+	end
+end
+
 function Tile:draw(x, y, forceDrawOccupant)
 
 	x, y = x or self.x, y or self.y
@@ -96,6 +114,11 @@ function Tile:draw(x, y, forceDrawOccupant)
 	local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
 	love.graphics.draw(Tile.IMAGES[subimage], x, y)
 
+	-- draw overlay if empty
+	if not self.occupant then
+		self:drawOverlay(x, y)
+	end
+
   -- draw overlord tile selection
   if self.overlord then
 
@@ -103,11 +126,6 @@ function Tile:draw(x, y, forceDrawOccupant)
     local speed2 = useful.sqr(self.overlord.dx+self.overlord.dy)
     local lineWidth, radius = math.min(4, 200000/speed2), math.min(24, 1000000/speed2)
     love.graphics.setLineWidth(lineWidth)
-
-	  -- draw time-to-egg
-    -- local arc = math.pi*(-0.5 + math.max(0, math.min(2, 2*self.overlord.egg_ready)))
-    -- love.graphics.setColor(255, 255, 255)
-    -- useful.arc(self.x + 32, self.y + 32, radius + lineWidth, -math.pi*0.5, arc, 20)
 
   	-- draw circle
     player[self.overlord.player].bindTeamColour()
@@ -123,13 +141,6 @@ function Tile:draw(x, y, forceDrawOccupant)
     	local offy = math.cos(self.overlord.wave*0.3)*4
    		love.graphics.draw(Plant.ICON_DROP, self.x+32, self.y+32+offy, 0, 0.5*radius/24, 0.5*radius/24, 32, 32)
    	end
-
-   --  -- draw cross if invalid
-   --  if (not self.overlord:canLand()) then
-	  --   love.graphics.line(self.x + 32 + math.cos(1.25*math.pi)*radius, self.y + 32 + math.sin(1.25*math.pi)*radius,
-	  --   									self.x + 32 + math.cos(0.25*math.pi)*radius, self.y+32+math.sin(0.25*math.pi)*radius)
-	  -- end
-
 	  -- reset
     love.graphics.setColor(255, 255, 255)
     love.graphics.setLineWidth(1)
@@ -138,6 +149,10 @@ function Tile:draw(x, y, forceDrawOccupant)
   -- force draw occupants if needed
 	if forceDrawOccupant and self.occupant then
 		self.occupant:draw(x + self.w/2, y + self.h/2)
+	end
+
+	if self.BURNT then
+		love.graphics.print(tostring(self.acidity), self.x, self.y+16)
 	end
 end
 
@@ -207,6 +222,8 @@ function Tile:drawContours(x, y)
 				love.graphics.line(x + self.w - LINE_WIDTH, y + self.h + LINE_WIDTH, x + self.w + LINE_WIDTH, y + self.h - LINE_WIDTH)
 			end
 
+
+		-- reset
 		love.graphics.setLineWidth(1)
 		love.graphics.setColor(255, 255, 255)
 	end
@@ -217,8 +234,9 @@ function Tile:update(dt, total_energy)
 	if self.acidity == 0 then
 
 		-- regrowth
-		self.energy = math.min(1, 
-			self.energy + dt*Tile.REGROWTH_SPEED/(self.energy*total_energy)*(1+4*self.conversion))
+		local regrowth_speed = math.min(Tile.MAX_REGROWTH_PER_SECOND, 
+			Tile.REGROWTH_SPEED/(self.energy*total_energy)*(1 + 4*self.conversion))
+		self.energy = math.min(1, self.energy + dt*regrowth_speed)
 
 		-- convert
 		if self.no_mans_land then
@@ -229,6 +247,10 @@ function Tile:update(dt, total_energy)
 		end
 
 	else
+
+		-- acid - animate
+		self.acidView.speed = 5 + 5*self.acidity
+		self.acidView:update(dt)
 
 		-- acid - unconvert
 		self.conversion = math.max(0, self.conversion - dt)
