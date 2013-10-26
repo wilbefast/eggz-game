@@ -110,6 +110,9 @@ function Bomb:draw(x, y)
   end
   love.graphics.draw(Bomb.IMAGES[1], x, y,
     0, 1, 1, 32, 40)
+
+  -- draw overlay
+  Plant.draw(self)
 end
 
 function Bomb:drawTransported(x, y)
