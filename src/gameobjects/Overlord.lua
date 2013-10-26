@@ -184,7 +184,7 @@ end
 
 
 
---[[------------------------------------------------------------
+--[[---------------------------------------------------------------------------
 Game loop
 --]]--
 
@@ -211,7 +211,7 @@ function Overlord:update(dt)
   -- Get input
   local inp = input[self.player]
 
-  -- Inform player that an action is impossible ------------------------
+  -- Inform player that an action is impossible -------------------------------
   self.cantDoIt = (inp.confirm.pressed and (not self:canLand()))
   self.wave = self.wave + dt*math.pi*4
   if self.wave > math.pi*20 then
@@ -238,7 +238,7 @@ function Overlord:update(dt)
     self.percent_gui = math.max(0, self.percent_gui - dt*3)
   end
 
-  -- Snap to position -------------------------------------------------
+  -- Snap to position ---------------------------------------------------------
   if self.tile then self.tile.overlord = nil end
   self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
   if (inp.x == 0 and inp.y == 0) then
@@ -254,7 +254,7 @@ function Overlord:update(dt)
 		self.tile:convert(self.CONVERT_SPEED * dt, self.player)
 	end
 
-  -- Directional movement ---------------------------------------------
+  -- Directional movement -----------------------------------------------------
   if self.z > 0 then
     local acceleration = useful.tri(self.passenger, self.ACCELERATION_BURDENED, self.ACCELERATION)
     if (inp.x == 0) or (self.dx*inp.x < 0) then
@@ -271,7 +271,7 @@ function Overlord:update(dt)
     end 
     self.dy = self.dy + inp.y*dt*acceleration
 
-  -- Radial menu ---------------------------------------------------------
+  -- Radial menu --------------------------------------------------------------
   else -- self.z == self.z > 0
     self.dx, self.dx = 0, 0
 
@@ -306,26 +306,26 @@ function Overlord:update(dt)
     end
   end
 
-  -- Transportation ------------------------------------------------------
+  -- Transportation -----------------------------------------------------------
   if self.passenger then
     self.passenger.x = self.x
     self.passenger.y = self.y
   end
 
-	-- Put down a plant  -------------------------------------------
-	if inp.confirm.pressed and self:canPlant() then
+	-- Put down a plant  --------------------------------------------------------
+	if (inp.confirm.trigger == 1) and self:canPlant() then
     -- put down passenger
     if self.passenger then
       self.previous_passenger = self.passenger
       self.passenger:plant(self.tile)
     -- lay egg
-    elseif (self.egg_ready == 1) and (inp.confirm.trigger == 1) then
+    elseif (self.egg_ready == 1) then
       self.previous_passenger = Egg(self.tile, self.player)
       self.egg_ready = 0
     end
   
-  -- Pick up a plant  -------------------------------------------
-  elseif inp.confirm.trigger == -1 and self:canUproot() then
+  -- Pick up a plant  ---------------------------------------------------------
+  elseif (inp.confirm.trigger == -1) and self:canUproot() then
     -- pick up tile occupant
     if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
     and (not self.previous_passenger)
@@ -356,10 +356,10 @@ function Overlord:update(dt)
     self.previous_passenger = nil
   end
 
-  -- Egg production ------------------------------------------------------
+  -- Egg production -----------------------------------------------------------
   self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
 
-  -- Land on the ground --------------------------------------------------
+  -- Land on the ground -------------------------------------------------------
   if inp.confirm.pressed and self:canLand() then
     self.z = math.max(0, self.z - dt*10)
     if (self.z == 0) 
@@ -528,7 +528,7 @@ function Overlord.draw_static(x, y, team)
                                       y - 31)
 end
 
---[[----------------------------------------------------------------------------
+--[[---------------------------------------------------------------------------
 Export
 --]]--
 

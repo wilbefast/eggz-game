@@ -94,8 +94,8 @@ function Plant:die()
 	SpecialEffect(self.x, self.y+2, Plant.ANIM_DEATH, 7, 0, 32)
 end
 
-function Plant:takeDamage(amount, attacker)
-	self.hitpoints = self.hitpoints - amount/(1 + self.ARMOUR)
+function Plant:takeDamage(amount, attacker, ignoreArmour)
+	self.hitpoints = self.hitpoints - amount --/(1 + useful.tri(ignoreArmour, 0, self.ARMOUR))
 	if self.tile then
 		self.tile.energy = math.max(0, self.tile.energy - amount*0.1)
 	end
@@ -217,6 +217,12 @@ function Plant:update(dt)
 			-- 	-- stopped conversion
 			-- 	--self.player = self.tile.owner
 			-- end
+
+		-- On acidic territory
+		elseif (self.tile.acidity > 0) then
+
+			self:takeDamage(self.tile.acidity*0.1*dt, nil, true) --no attack, ignore armour
+
 		else
 			-- Not stunned ?
 			if (not self.stunned) then

@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
@@ -106,7 +106,6 @@ CollisionGrid = require("unrequited/CollisionGrid")
 Plant = require("gameobjects/Plant")
 Turret = require("gameobjects/Turret")
 Convertor = require("gameobjects/Convertor")
-BombBlast = require("gameobjects/BombBlast")
 Bomb = require("gameobjects/Bomb")
 Egg = require("gameobjects/Egg")
   Turret.EVOLUTION = { nil, Egg, nil}

@@ -32,6 +32,10 @@ local Tile = Class
 {
 		REGROWTH_SPEED = 0.05,
 
+		ACID_DECAY = 0.9,
+
+		acidity = 0,
+
 		init = function(self, i, j, w, h)
 			self.i, self.j = i, j
 			self.x, self.y, self.w, self.h = (i-1)*w, (j-1)*h, w, h
@@ -209,18 +213,38 @@ function Tile:drawContours(x, y)
 end
 
 function Tile:update(dt, total_energy)
-	if not self.occupant then
+
+	if self.acidity == 0 then
+
+		-- regrowth
 		self.energy = math.min(1, 
 			self.energy + dt*Tile.REGROWTH_SPEED/(self.energy*total_energy)*(1+4*self.conversion))
-	end
 
-	if self.no_mans_land then
-		self.conversion = math.max(0, self.conversion - 0.5*dt)
-		if self.conversion == 0 then
-			self.owner = 0
+		-- convert
+		if self.no_mans_land then
+			self.conversion = math.max(0, self.conversion - 0.5*dt)
+			if self.conversion == 0 then
+				self.owner = 0
+			end
 		end
+
+	else
+
+		-- acid - unconvert
+		self.conversion = math.max(0, self.conversion - dt)
+
+		-- acid - burn grass
+		self.energy = math.max(0, self.energy - self.acidity*dt)
+
+		-- acid - decay
+		self.acidity = self.acidity*math.pow(self.ACID_DECAY, dt)
+		if self.acidity < 0.1 then
+			self.acidity = 0
+		end
+
 	end
 
+	-- reset
 	self.no_mans_land = true
 end
 
