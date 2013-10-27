@@ -102,8 +102,8 @@ Turret.IMAGES =
   }
 }
 
-Turret.ATTACK_IMG = love.graphics.newImage("assets/FX-attack.png")
-Turret.ATTACK_ANIM = Animation(Turret.ATTACK_IMG, 36, 36, 6, 0, 0)
+-- Turret.ATTACK_IMG = love.graphics.newImage("assets/FX-attack.png")
+-- Turret.ATTACK_ANIM = Animation(Turret.ATTACK_IMG, 36, 36, 6, 0, 0)
 Turret.LIGHTNING_IMG = love.graphics.newImage("assets/FX-attack-bolt.png")
 Turret.LIGHTNING_ANIM = Animation(Turret.LIGHTNING_IMG, 128, 64, 5, 0, 0)
 Turret.LAUNCH_IMG = love.graphics.newImage("assets/FX-attack-launch.png")

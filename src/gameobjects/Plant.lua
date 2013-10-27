@@ -53,7 +53,7 @@ Plant.class = Plant
 Resources
 --]]--
 
-Plant.IMG_STUN = love.graphics.newImage("assets/FX-chains.png")
+-- Plant.IMG_STUN = love.graphics.newImage("assets/FX-chains.png")
 Plant.IMG_EAT = love.graphics.newImage("assets/FX-eat.png")
 Plant.ANIM_EAT = Animation(Plant.IMG_EAT, 64, 64, 5, 0, 0)
 

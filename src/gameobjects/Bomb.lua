@@ -54,7 +54,7 @@ Bomb.IMAGES =
 
 Bomb.EXPLODE_IMG = love.graphics.newImage("assets/FX-bomb.png")
 
-Bomb.EXPLODE_ANIM = Animation(Bomb.EXPLODE_IMG , 36, 36, 6)
+Bomb.EXPLODE_ANIM = Animation(Bomb.EXPLODE_IMG , 64, 64, 6)
 
 --[[------------------------------------------------------------
 Resources
@@ -71,7 +71,7 @@ function applyStun(tile, t)
 	end
 end
 
-function Bomb:plant(tile)
+function Bomb:drop(tile)
 
   if self.transport then --and tile.occupant then
     

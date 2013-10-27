@@ -156,10 +156,10 @@ function Overlord:canPlant()
   local tile, payload = self.tile, self.passenger
 
   -- bombs can be planted on anywhere
-  if payload and payload:isType("Bomb") then
-    return true
+  -- if payload and payload:isType("Bomb") then
+  --   return true
 
-  elseif self:enemyTerritory() then
+  if self:enemyTerritory() then
     return false
 
   -- can't plant nothing
@@ -179,8 +179,6 @@ end
 function Overlord:canLand()
   return (self:canUproot() or self:canPlant() or self:canEvolve())
 end
-
-
 
 
 
@@ -312,24 +310,34 @@ function Overlord:update(dt)
     self.passenger.y = self.y
   end
 
-	-- Put down a plant  --------------------------------------------------------
-	if (inp.confirm.trigger == 1) and self:canPlant() then
-    -- put down passenger
-    if self.passenger then
-      self.previous_passenger = self.passenger
-      self.passenger:plant(self.tile)
-    -- lay egg
-    elseif (self.egg_ready == 1) then
-      self.previous_passenger = Egg(self.tile, self.player)
-      self.egg_ready = 0
+  -- Drop a bomb --------------------------------------------------------------
+  if (inp.confirm.pressed) then
+    if (self.z == 0) and self.passenger and self.passenger:isType("Bomb") and (not self.skip_next_grab) then
+      self.passenger:drop(self.tile)
+      self.skip_next_grab = true
     end
   
-  -- Pick up a plant  ---------------------------------------------------------
-  elseif (inp.confirm.trigger == -1) and self:canUproot() then
-    -- pick up tile occupant
-    if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
-    and (not self.previous_passenger)
-    and (self.radial_menu < 1) then
+  -- Pick down or pick up a plant  ---------------------------------------------------------
+  elseif (inp.confirm.trigger == -1) then
+
+
+    if (not self.skip_next_grab) and self:canPlant() then
+      -- put down passenger
+      if self.passenger then
+        self.passenger:plant(self.tile)
+        self.skip_next_grab = true
+      -- lay egg
+      elseif (self.egg_ready == 1) then
+        Egg(self.tile, self.player)
+        self.egg_ready = 0
+        self.skip_next_grab = true
+      end
+    end
+
+    if (not self.skip_next_grab) and self:canUproot() then
+      -- pick up tile occupant
+      if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
+      and (self.radial_menu < 1) then
         -- cache
         local swap, occ = self.passenger, self.tile.occupant
 
@@ -341,10 +349,6 @@ function Overlord:update(dt)
           -- swap for passenger
           if swap then
             swap:plant(self.tile)
-          -- swap by laying
-          -- elseif (self.egg_ready >= 1) then
-          --   self.previous_passenger = Egg(self.tile, self.player)
-          --   self.egg_ready = 0
           end
           self.passenger = occ
         end
@@ -352,8 +356,10 @@ function Overlord:update(dt)
         -- slow momentum when picking up
         self.dx = self.dx * 0.5
         self.dy = self.dy * 0.5
-    end
-    self.previous_passenger = nil
+      end
+    end 
+
+    self.skip_next_grab = false
   end
 
   -- Egg production -----------------------------------------------------------
@@ -386,7 +392,6 @@ function Overlord:update(dt)
           -- cancel
           evolution = self.tile.occupant.evolvesFrom(self.tile, self.player)
         else
-          
           evolution = Cocoon(self.tile, self.player, 
               self.tile.occupant.EVOLUTION[self.radial_menu_choice], self.tile.occupant.class)
           evolution.child_energy = original_hitpoints
@@ -422,7 +427,7 @@ function Overlord:draw(x, y)
     love.graphics.draw(Overlord.CARRY_BACK, x, y - self.h/2*self.z, 
                                0, 1, 1, 42, 86)
     love.graphics.setColor(255, 255, 255)
-      self.passenger:drawTransported(x, y)
+      self.passenger:drawTransported(x, y + 16*(1 - self.z))
     player[self.player].bindTeamColour()
   end
 
