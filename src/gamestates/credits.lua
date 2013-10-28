@@ -48,13 +48,13 @@ function state:draw()
 
   -- task performed
   love.graphics.setFont(FONT_NORMAL)
-  useful.printf(language[current_language].credits[1].what, w*0.4 , h*(0.35 + cos*0.01))
-  useful.printf(language[current_language].credits[2].what, w*0.4 , h*(0.65 + sin*0.01))
+  useful.printf(language[current_language].credits[1].what, w*0.4 , h*0.35)--h*(0.35 + cos*0.01))
+  useful.printf(language[current_language].credits[2].what, w*0.4 , h*0.65)--h*(0.65 + sin*0.01))
 
   -- who performed them
   love.graphics.setFont(FONT_SMALL)
-  useful.printf(language[current_language].credits[1].who, w*0.6, h*(0.37 + cos*0.01))
-  useful.printf(language[current_language].credits[2].who, w*0.6 , h*(0.67 + sin*0.01))
+  useful.printf(language[current_language].credits[1].who, w*0.6, h*0.37)--h*(0.37 + cos*0.01))
+  useful.printf(language[current_language].credits[2].who, w*0.6 , h*0.67)--h*(0.67 + sin*0.01))
 
   -- borders
   drawBorders()
