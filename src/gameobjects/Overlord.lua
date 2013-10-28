@@ -101,8 +101,12 @@ function Overlord:enemyTerritory()
 end
 
 function Overlord:canUproot()
+
+  if self.skip_next_grab then
+    return false
+
   -- can't uproot if nothing to uproot
-  if not self.tile.occupant then
+  elseif not self.tile.occupant then
     return false
 
   -- stunned plants are locked down
@@ -150,16 +154,20 @@ function Overlord:canSwap()
     (self:canUproot() and self.passenger)--((self.egg_ready >= 1) or (self.passenger)))
 end
 
+function Overlord:canBomb()
+  -- bombs can be planted on anywhere
+  return ((not self.skip_next_grab) and self.passenger and self.passenger:isType("Bomb"))
+end
+
 
 function Overlord:canPlant()
 
   local tile, payload = self.tile, self.passenger
 
-  -- bombs can be planted on anywhere
-  -- if payload and payload:isType("Bomb") then
-  --   return true
+  if self.skip_next_grab then
+    return false
 
-  if self:enemyTerritory() then
+  elseif self:enemyTerritory() then
     return false
 
   -- can't plant nothing
@@ -177,7 +185,7 @@ function Overlord:canPlant()
 end
 
 function Overlord:canLand()
-  return (self:canUproot() or self:canPlant() or self:canEvolve())
+  return (self:canUproot() or self:canPlant() or self:canEvolve() or self:canBomb())
 end
 
 
@@ -226,7 +234,7 @@ function Overlord:update(dt)
   end
 
   -- Inform player if an action is impossible -------------------------------
-  self.cantDoIt = (inp.confirm.pressed and (not self:canLand()))
+  self.cantDoIt = (inp.confirm.pressed and (not self:canLand()) and (not self.skip_next_grab))
   self.wave = self.wave + dt*math.pi*4
   if self.wave > math.pi*20 then
     self.wave = self.wave - math.pi*20
@@ -312,8 +320,8 @@ function Overlord:update(dt)
   end
 
   -- Drop a bomb --------------------------------------------------------------
-  if (inp.confirm.pressed) then
-    if (self.z == 0) and self.passenger and self.passenger:isType("Bomb") and (not self.skip_next_grab) then
+  if inp.confirm.pressed and self:canBomb() then
+    if (self.z == 0) or (not self:enemyTerritory()) then
       self.passenger:drop(self.tile)
       self.skip_next_grab = true
     end
@@ -322,7 +330,7 @@ function Overlord:update(dt)
   elseif (inp.confirm.trigger == -1) then
 
 
-    if (not self.skip_next_grab) and self:canPlant() then
+    if self:canPlant() then
       -- put down passenger
       if self.passenger then
         self.passenger:plant(self.tile)
@@ -335,7 +343,7 @@ function Overlord:update(dt)
       end
     end
 
-    if (not self.skip_next_grab) and self:canUproot() then
+    if self:canUproot() then
       -- pick up tile occupant
       if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
       and (self.radial_menu < 1) then

@@ -131,13 +131,17 @@ function Tile:draw(x, y, forceDrawOccupant)
     player[self.overlord.player].bindTeamColour()
       love.graphics.circle("line", self.x+32, self.y+32, radius)
 
+    -- draw acid icon if bomb is ready
+    if self.overlord:canBomb() then
+    	local bulge = math.cos(self.overlord.wave*0.3)
+    	love.graphics.draw(Plant.ICON_ACID, self.x+32, self.y+32, 0, 0.1*bulge+0.7, 0.1*bulge+0.7, 32, 32)
+
     -- draw cross if invalid
-    if (not self.overlord:canLand()) then
+    elseif (not self.overlord:canLand()) then
    		love.graphics.draw(Plant.ICON_INVALID, self.x+32, self.y+32, 0, 0.5*radius/24, 0.5*radius/24, 32, 32)
-   	end
 
    	-- draw down-arrow if egg ready
-    if self.overlord:canPlant() then
+    elseif self.overlord:canPlant() then
     	local offy = math.cos(self.overlord.wave*0.3)*4
    		love.graphics.draw(Plant.ICON_DROP, self.x+32, self.y+32+offy, 0, 0.5*radius/24, 0.5*radius/24, 32, 32)
    	end

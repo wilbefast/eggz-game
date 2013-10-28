@@ -62,6 +62,7 @@ Plant.ICON_DROP = love.graphics.newImage("assets/icon_drop.png")
 Plant.ICON_SWAP = love.graphics.newImage("assets/icon_swap.png")
 Plant.ICON_INVALID = love.graphics.newImage("assets/icon_invalid.png")
 Plant.ICON_PROMOTE = love.graphics.newImage("assets/icon_promote.png")
+Plant.ICON_ACID = love.graphics.newImage("assets/icon_acid.png")
 
 Plant.IMG_DEATH = love.graphics.newImage("assets/death.png")
 Plant.ANIM_DEATH = Animation(Plant.IMG_DEATH, 96, 96, 5)
@@ -183,7 +184,9 @@ function Plant:draw()
 			local offy = flux*4
 
 			player[overlord.player].bindTeamColour()
-			if overlord:canEvolve() then
+			if overlord:canBomb() then
+				love.graphics.draw(Plant.ICON_ACID, self.x, self.y, 0, 0.1*flux+0.7, 0.1*flux+0.7, 32, 32)
+			elseif overlord:canEvolve() then
 				love.graphics.draw(Plant.ICON_PROMOTE, self.x, self.y, 0, 0.1*flux+0.5, 0.1*flux+0.5, 32, 32)
 			elseif overlord:canSwap() then
 				love.graphics.draw(Plant.ICON_SWAP, self.x, self.y + offy, 0, 0.5, 0.5, 32, 32)
