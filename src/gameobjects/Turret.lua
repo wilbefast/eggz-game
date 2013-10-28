@@ -64,8 +64,8 @@ local Turret = Class
     -- set guard area
     self.guardArea = GameObject.COLLISIONGRID:getNeighbours8(tile)
 		
-		-- target to damage on animation end
-		self.target = nil
+		-- targetTile to damage on animation end
+		self.targetTile = nil
 	
 	-- lightning
 	self.lightning = AnimationView(Turret.LIGHTNING_ANIM, 10.0, 0, 30, 54)
@@ -102,8 +102,7 @@ Turret.IMAGES =
   }
 }
 
--- Turret.ATTACK_IMG = love.graphics.newImage("assets/FX-attack.png")
--- Turret.ATTACK_ANIM = Animation(Turret.ATTACK_IMG, 36, 36, 6, 0, 0)
+
 Turret.LIGHTNING_IMG = love.graphics.newImage("assets/FX-attack-bolt.png")
 Turret.LIGHTNING_ANIM = Animation(Turret.LIGHTNING_IMG, 128, 64, 5, 0, 0)
 Turret.LAUNCH_IMG = love.graphics.newImage("assets/FX-attack-launch.png")
@@ -149,19 +148,21 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
   if #(self.enemies) == 0 then
     self.timer = 0
     self.state = Turret.IDLE
+    self.subimage = 1
+
   elseif self.timer > self.ATTACK_WARMUP_DURATION then
     audio:play_sound("KNIGHT-attack2", 0.3)
-		--SpecialEffect(self.x, self.y+1, Turret.LAUNCH_ANIM, 7, 0, 20)
-    self.target = (self.aggro or useful.randIn(self.enemies))
+    self.targetTile = (self.aggro or useful.randIn(self.enemies)).tile -- NB: here self.enemies CANNOT be empty
     self.state = Turret.ATTACK
     self.subimage = 1
     self.timer = 0
 		self.lightning.frame = 1
 		self.lightning.visible = true
 		
-		if self.target.x == self.x then
+		if self.targetTile.x == self.tile.x then
 			-- in line vertically
-			if ((self.target.y < self.y) and not (self.target.y < self.y - 196)) or self.target.y > self.y + 196 then -- KLUDGE
+			if ((self.targetTile.y < self.tile.y) and not (self.targetTile.y < self.tile.y - 196)) 
+      or self.targetTile.y > self.tile.y + 196 then -- KLUDGE
 				-- above => 90 degrees
 				self.lightning.angle = -math.pi*0.5
 			else
@@ -170,9 +171,10 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 			end
 		else
 			-- not in line vertically
-			if self.target.y == self.y then
+			if self.targetTile.y == self.tile.y then
 				-- in line horizontally
-				if ((self.target.x < self.x) and not (self.target.x < self.x - 196)) or self.target.x > self.x + 196 then
+				if ((self.targetTile.x < self.tile.x) and not (self.targetTile.x < self.tile.x - 196)) 
+        or self.targetTile.x > self.tile.x + 196 then
 					-- left => 180 degrees
 					self.lightning.angle = math.pi
 				else
@@ -182,9 +184,11 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 			else
 			
 				-- not in line horizontally
-				if ((self.target.x < self.x) and not (self.target.x < self.x - 196)) or self.target.x > self.x + 196 then
+				if ((self.targetTile.x < self.tile.x) and not (self.targetTile.x < self.tile.x - 196)) 
+        or self.targetTile.x > self.tile.x + 196 then
 					-- West
-					if ((self.target.y < self.y) and not (self.target.y < self.y - 196)) or self.target.y > self.y + 196 then
+					if ((self.targetTile.y < self.tile.y) and not (self.targetTile.y < self.tile.y - 196)) 
+          or self.targetTile.y > self.tile.y + 196 then
 						-- North-west => 135 degree
 						self.lightning.angle = math.pi*1.25
 					else
@@ -193,7 +197,8 @@ Turret.state_update[Turret.WARMUP] = function(self, dt)
 					end
 				else
 					-- East
-					if ((self.target.y < self.y) and not (self.target.y < self.y - 196)) or self.target.y > self.y + 196 then
+					if ((self.targetTile.y < self.tile.y) and not (self.targetTile.y < self.tile.y - 196)) 
+          or self.targetTile.y > self.tile.y + 196 then
 						-- North-east => 45 degree
 						self.lightning.angle = -math.pi*0.25
 					else
@@ -253,10 +258,12 @@ function Turret:update(dt)
 		if self.lightning.visible then
 			if self.lightning:update(dt) then
 				self.lightning.visible = false
-				if self.target then
-					self.target:takeDamage(self.ATTACK_DAMAGE, self)
-					--SpecialEffect(self.target.x, self.target.y+1, Turret.ATTACK_ANIM, 7, 0, 12)
-					SpecialEffect(self.target.x, self.target.y+1, Turret.LAUNCH_ANIM, 7, 0, 20)
+				if self.targetTile then
+
+          if self.targetTile.occupant then
+					 self.targetTile.occupant:takeDamage(self.ATTACK_DAMAGE, self)
+          end
+					SpecialEffect(self.targetTile.x+32, self.targetTile.y+33, Turret.LAUNCH_ANIM, 7, 0, 20)
             .colourise = function() player[self.player].bindTeamColour() end
 					audio:play_sound("KNIGHT-attack-hit", 0.1)
 				end
@@ -275,7 +282,7 @@ function Turret:draw(x, y)
 
   x, y = x or self.x, y or self.y
 	
-	if (not self.stunned) and self.target and (self.target.y < y) and self.lightning.visible then
+	if (not self.stunned) and self.targetTile and (self.targetTile.y < y) and self.lightning.visible then
 		self:draw_lightning()
 	end
 
@@ -286,7 +293,7 @@ function Turret:draw(x, y)
   love.graphics.draw(Turret.IMAGES[self.player][self.subimage], x, y,
     0, 1, 1, 32, 50)
 	
-	if (not self.stunned) and self.target and (self.target.y >= y) and self.lightning.visible then
+	if (not self.stunned) and self.targetTile and (self.targetTile.y >= y) and self.lightning.visible then
     self:draw_lightning()
 	end
 
