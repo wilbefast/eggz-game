@@ -209,7 +209,23 @@ function Overlord:update(dt)
   -- Get input
   local inp = input[self.player]
 
-  -- Inform player that an action is impossible -------------------------------
+  -- Snap to position ---------------------------------------------------------
+  if self.tile then self.tile.overlord = nil end
+  self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
+  if (inp.x == 0 and inp.y == 0) then
+    self.x = useful.lerp(self.x, self.tile.x + 32, dt*3)
+    self.y = useful.lerp(self.y, self.tile.y + 32, dt*3)
+  end
+
+  -- current tile is inacessible to the other player
+  self.tile.overlord = self
+
+  -- Convert tile
+  if (self.tile.owner == 0) or (self.tile.owner == self.player) then
+    self.tile:convert(self.CONVERT_SPEED * dt, self.player)
+  end
+
+  -- Inform player if an action is impossible -------------------------------
   self.cantDoIt = (inp.confirm.pressed and (not self:canLand()))
   self.wave = self.wave + dt*math.pi*4
   if self.wave > math.pi*20 then
@@ -236,21 +252,6 @@ function Overlord:update(dt)
     self.percent_gui = math.max(0, self.percent_gui - dt*3)
   end
 
-  -- Snap to position ---------------------------------------------------------
-  if self.tile then self.tile.overlord = nil end
-  self.tile = GameObject.COLLISIONGRID:pixelToTile(self.x, self.y)
-  if (inp.x == 0 and inp.y == 0) then
-    self.x = useful.lerp(self.x, self.tile.x + 32, dt*3)
-    self.y = useful.lerp(self.y, self.tile.y + 32, dt*3)
-  end
-
-  -- current tile is inacessible to the other player
-  self.tile.overlord = self
-
-  -- Convert tile
-	if (self.tile.owner == 0) or (self.tile.owner == self.player) then
-		self.tile:convert(self.CONVERT_SPEED * dt, self.player)
-	end
 
   -- Directional movement -----------------------------------------------------
   if self.z > 0 then

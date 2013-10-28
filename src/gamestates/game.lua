@@ -334,7 +334,8 @@ function state:draw()
     -- display 'winner is X' text
     player[self.winner].bindTeamColour()
       love.graphics.setFont(FONT_HUGE)
-      love.graphics.printf(player[self.winner].name .. " wins!", w*0.5, 0, 0, 'center')
+      useful.printf(language[current_language].colour[self.winner] .. " " ..
+                    language[current_language].wins, w*0.5, 0)
     love.graphics.setColor(255, 255, 255)
 end
 

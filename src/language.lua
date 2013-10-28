@@ -30,7 +30,16 @@ languages[1] =
 		title = "Creggits", 
 		{ what = "Design and programming", who = "William 'Wilbefast' Dyce" },
 		{ what = "Graphics and sound", who = "Barth 'Nyrlem' Frey" }
-	}
+	},
+	player_select =
+	{
+		title = "Versus",
+		humans = "Humans",
+		robots = "Robots",
+		coming_soon = "Coming soon ..."
+	},
+	colour = { "Red", "Blue", "Yellow", "Purple" },
+	wins = "wins!"
 }
 
 
@@ -48,7 +57,16 @@ languages[2] =
 		title = "Credits", 
 		{ what = "Concept et development", who = "William 'Wilbefast' Dyce" },
 		{ what = "Graphismes et son", who = "Barth 'Nyrlem' Frey" }
-	}
+	},
+	player_select =
+	{
+		title = "Duel",
+		humans = "Humains",
+		robots = "Robots",
+		coming_soon = "A venir ..."
+	},
+	colour = { "Rouge", "Bleu", "Jaune", "Violet" },
+	wins = "gagne!"
 }
 
 return languages

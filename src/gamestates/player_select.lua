@@ -27,7 +27,15 @@ function state:enter()
   audio:play_music("loop_menu", 0.06)
 end
 
+local angle, cos, sin = 0, 0, 0
+
 function state:update(dt)
+
+  angle = angle + dt
+  if angle > 2*math.pi then
+    angle = angle - 2*math.pi
+  end
+  cos, sin = math.cos(angle), math.sin(angle)
 
   -- if there is no horizontal input from anyone, stop !
   local h_input = false
@@ -48,8 +56,15 @@ function state:update(dt)
     -- ... request a change in the number of players ?
     if (input[i].x ~= 0) then
 
-      self.desired_n_players = useful.clamp(useful.round(self.current_n_players) 
+      local new_desired_n_players = useful.clamp(useful.round(self.current_n_players) 
         + useful.sign(input[i].x), 2, MAX_PLAYERS)
+
+      if (self.desired_n_players == self.current_n_players) 
+      and (new_desired_n_players ~= self.current_n_players) then
+        audio:play_sound("EGG-pick")
+      end
+
+      self.desired_n_players = new_desired_n_players
       h_input = true
     end
   end
@@ -83,7 +98,9 @@ end
 
 function state:leave()
   n_players = math.floor(state.current_n_players)
+  audio:play_sound("EGG-drop")
 end
+
 
 function state:draw()
 
@@ -93,27 +110,36 @@ function state:draw()
   love.graphics.draw(MENU_BG, bgx, bgy)
 
   -- play !
-  love.graphics.setFont(FONT_HUGE)
-  love.graphics.printf("Play", w*0.5, h*0.1, 0, "center")
+  love.graphics.setFont(FONT_MASSIVE)
+  useful.printf(language[current_language].player_select.title, w*0.5, h*(0.15 - 0.01*cos), 0.03*sin)
 
   -- menu options
   love.graphics.setFont(FONT_BIG)
 
   -- 1. number of human players
-  love.graphics.print("Humans", w*0.25, h*0.3)
+  love.graphics.print(language[current_language].player_select.humans, w*0.2, h*0.35)
   for i = 1, useful.round(self.current_n_players) do
-    Overlord.draw_static(w*0.45 + i*w/18, h*0.3 + 16, i)
+    Overlord.draw_static(w*0.47 + i*w/18, h*0.37 + math.cos(i*angle)*6, i)
   end
 
   -- 2. number of robot players
-  love.graphics.print("Robots", w*0.25, h*0.5)
+  love.graphics.print(language[current_language].player_select.robots, w*0.2, h*0.65)
   love.graphics.setFont(FONT_SMALL)
-  love.graphics.print("Coming soon ...", w*0.5, h*0.5 + 16)
+  love.graphics.print(language[current_language].player_select.coming_soon, w*0.5, h*0.67)
+
+  -- 3. arrows
+  love.graphics.setColor(255, 255, 255, 255 - (sin+2)*32)
+    love.graphics.draw(ARROWS_IMG, w*0.61, h*0.37, 0, 
+      1 + 0.05*sin, 
+      1 + 0.05*sin, 
+      ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
+  love.graphics.setColor(255, 255, 255, 255)
 
   -- borders
   drawBorders()
 
 end
+
 
 
 --[[------------------------------------------------------------

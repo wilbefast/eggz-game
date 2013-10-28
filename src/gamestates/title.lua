@@ -46,6 +46,10 @@ function state:enter()
   audio:play_music("loop_menu", 0.06)
 end
 
+function state:leave()
+  audio:play_sound("EGG-drop")
+end
+
 function accept()
   local button_name = language[1].title[current_button]
 	if button_name == "Versus" then 
@@ -74,7 +78,8 @@ function state:update(dt)
 
   for i = 1, MAX_PLAYERS do
     -- launch button switch
-    if button_changing == 0 then
+    if (button_changing == 0) and (input[i].x ~= 0) then
+      audio:play_sound("EGG-pick")
       button_changing = button_changing + input[i].x*dt
       self.controlling_player = i
     end

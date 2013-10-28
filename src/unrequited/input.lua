@@ -46,7 +46,7 @@ if n_pads < MAX_PLAYERS then
 	input[n_pads + 1].KeyUp = function () return love.keyboard.isDown("up") end
 	input[n_pads + 1].keyDown = function () return love.keyboard.isDown("down") end
 	input[n_pads + 1].keyStart = function () return love.keyboard.isDown("return") end
-	input[n_pads + 1].keyConfirm = function () return love.keyboard.isDown("rctrl") end
+	input[n_pads + 1].keyConfirm = function () return love.keyboard.isDown("rctrl", "rshift") end
 	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("backspace") end
 
 	if n_pads < MAX_PLAYERS - 1 then
@@ -55,7 +55,7 @@ if n_pads < MAX_PLAYERS then
 		input[n_pads + 2].KeyUp = function () return love.keyboard.isDown("w", "z") end
 		input[n_pads + 2].keyDown = function () return love.keyboard.isDown("s") end
 		input[n_pads + 2].keyStart = function () return love.keyboard.isDown("return") end
-		input[n_pads + 2].keyConfirm = function () return love.keyboard.isDown("lctrl") end
+		input[n_pads + 2].keyConfirm = function () return love.keyboard.isDown("lctrl", "lshift") end
 		input[n_pads + 2].keyCancel = function () return love.keyboard.isDown("backspace") end
 	end
 

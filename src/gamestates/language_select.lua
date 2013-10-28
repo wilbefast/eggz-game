@@ -40,6 +40,10 @@ function state:enter()
   audio:play_music("loop_menu", 0.06)
 end
 
+function state:leave()
+  audio:play_sound("EGG-drop")
+end
+
 function state:keypressed(key)
   if key=="escape" then
     love.event.push("quit")
@@ -53,7 +57,8 @@ function state:update(dt)
 
   for i = 1, MAX_PLAYERS do
     -- launch language switch
-    if flag_changing == 0 then
+    if (flag_changing == 0) and (input[i].x ~= 0) then
+      audio:play_sound("EGG-pick")
       flag_changing = flag_changing + input[i].x*dt
       self.controlling_player = i
     end

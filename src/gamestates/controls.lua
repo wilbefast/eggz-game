@@ -17,9 +17,6 @@ Lesser General Public License for more details.
 CONTROLS GAMESTATE
 --]]------------------------------------------------------------
 
-local CONTROLS_IMG = love.graphics.newImage("assets/menu/Controls-" .. 
-	useful.tri(input[1].gamepad, "Gamepad-", "") .. language[current_language].initials .. ".png")
-
 local state = GameState.new()
 
 function state:update(dt)
@@ -29,6 +26,10 @@ function state:update(dt)
       GameState.switch(title)
     end
   end
+end
+
+function state:leave()
+  audio:play_sound("EGG-drop")
 end
 
 function state:keypressed(key, uni)

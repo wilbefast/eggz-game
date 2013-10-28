@@ -34,6 +34,10 @@ function state:keypressed(key, uni)
   end
 end
 
+function state:leave()
+  audio:play_sound("EGG-drop")
+end
+
 local angle, cos, sin = 0, 0, 0
 
 function state:draw()
