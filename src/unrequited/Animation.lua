@@ -62,7 +62,8 @@ Game loop
   
 function Animation:draw(x, y, subimage, flip_x, flip_y, ox, oy, angle)
   subimage = (math.min(self.n_frames, math.floor(subimage)) 
-              or 1)           
+              or 1)     
+  
   flip_x = (flip_x or self.flip_x)
   flip_y = (flip_y or self.flip_y)
   love.graphics.drawq(self.img, self.quads[subimage], x, y, angle or self.angle or 0,

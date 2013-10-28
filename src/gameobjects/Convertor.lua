@@ -62,7 +62,7 @@ Resources
 
 Convertor.ANIMS = {}
 for i = 1, #Convertor.IMAGES do
-  Convertor.ANIMS[i] = Animation(Convertor.IMAGES[i], 64, 64, 5)
+  Convertor.ANIMS[i] = Animation(Convertor.IMAGES[i], 64, 64, 6)
 end
 
 
