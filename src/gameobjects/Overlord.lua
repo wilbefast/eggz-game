@@ -321,7 +321,7 @@ function Overlord:update(dt)
 
   -- Drop a bomb --------------------------------------------------------------
   if inp.confirm.pressed and self:canBomb() then
-    if (self.z == 0) or (not self:enemyTerritory()) then
+    if (self.z == 0) or self:enemyTerritory() then
       self.passenger:drop(self.tile)
       self.skip_next_grab = true
     end
