@@ -50,6 +50,7 @@ function state:enter()
   -- not victory (yet)
   for _, p in ipairs(player) do
     p.total_conversion = 0
+    p.tutorial = 1
   end
   self:reset_winning()
 	

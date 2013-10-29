@@ -12,7 +12,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 --]]
 
-local languages = {}
+local language = {}
 
 current_language = 1
 
@@ -20,7 +20,7 @@ current_language = 1
 LANGUAGE 1 - 'STRALIAN
 --]]
 
-languages[1] = 
+language[1] = 
 {
 	flag = love.graphics.newImage("assets/languages/australia.png"),
 	initials = "EN",
@@ -39,7 +39,14 @@ languages[1] =
 		coming_soon = "Coming soon ..."
 	},
 	colour = { "Red", "Blue", "Yellow", "Purple" },
-	wins = "wins!"
+	wins = "wins!",
+	tutorial =
+	{
+		lay = "tap to lay",
+		pick = "tap to grab",
+		grow = "blah",
+		evolve = "hold to evolve"
+	}
 }
 
 
@@ -47,7 +54,7 @@ languages[1] =
 LANGUAGE 2 - FRENCH
 --]]
 
-languages[2] = 
+language[2] = 
 {
 	flag = love.graphics.newImage("assets/languages/france.png"),
 	initials = "FR",
@@ -69,4 +76,4 @@ languages[2] =
 	wins = "gagne!"
 }
 
-return languages
+return language

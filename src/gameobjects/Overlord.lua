@@ -246,6 +246,9 @@ function Overlord:update(dt)
     self.blink = self.BLINK_PERIOD + self.BLINK_PERIOD_VAR*math.random()
   end
 
+  -- Egg production -----------------------------------------------------------
+  self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
+
   -- Desired move, for animation
   if self.radial_menu == 0 then
     self.desired_dx, self.desired_dy = inp.x, inp.y
@@ -371,9 +374,6 @@ function Overlord:update(dt)
     self.skip_next_grab = false
   end
 
-  -- Egg production -----------------------------------------------------------
-  self.egg_ready = math.min(1, self.egg_ready + dt*self.EGG_PRODUCTION_SPEED)
-
   -- Land on the ground -------------------------------------------------------
   if inp.confirm.pressed and self:canLand() then
     self.z = math.max(0, self.z - dt*10)
@@ -413,6 +413,11 @@ function Overlord:update(dt)
     self.z = math.min(1, self.z + dt*10)
     self.radial_menu = math.max(0, self.radial_menu - dt*8)
     self.radial_menu_x, self.radial_menu_y = 0, 0
+  end
+
+  -- Advance through tutorials
+  if tutorial.get(self.player).isPassed(self) then
+    tutorial.next(self.player)
   end
 end
 
@@ -495,6 +500,10 @@ function Overlord:draw(x, y)
 
   -- reset colours
 	love.graphics.setColor(255, 255, 255)
+
+
+  useful.printf("tutorial " .. tostring(player[self.player].tutorial) .. tostring(tutorial.getMessage(self.player)), 
+    self.x, self.y + 20)
 end
 
 function Overlord:draw_radial_menu(x, y)
