@@ -119,8 +119,8 @@ function state:draw()
   love.graphics.draw(MENU_BG, bgx, bgy)
 
   -- title
-  local tx, ty = (w - TITLE_IMG:getWidth())/2, h/3 - TITLE_IMG:getHeight()/2
-  love.graphics.draw(TITLE_IMG, tx, ty)
+  local tx, ty = w*0.5, h*0.3
+  love.graphics.draw(TITLE_IMG, tx, ty, 0, 0.7, 0.7, TITLE_IMG:getWidth()*0.5, TITLE_IMG:getHeight()*0.5)
 
   -- animation
   local cos, sin = math.cos(button_rotation), math.sin(button_rotation)
