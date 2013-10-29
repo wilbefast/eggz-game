@@ -515,15 +515,15 @@ function Overlord:draw_radial_menu(x, y)
 
     function drawRadial(dx, dy, i)
       if self.evolvee.EVOLUTION[i] then
-        local scale, image
+        local image
         if i == self.radial_menu_choice then
-          scale, image = 1.3*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][2]
+          image = self.evolvee.EVOLUTION_ICONS[i][2]
           love.graphics.draw(self.RADIAL_HL, x + dx, y + dy, 0, scale, scale, 32, 32)
         else
-          scale, image = 1*self.radial_menu, self.evolvee.EVOLUTION_ICONS[i][1]
+          image = self.evolvee.EVOLUTION_ICONS[i][1]
         end
         love.graphics.draw(image, x + dx, y + dy, 
-                            0, scale, scale, 18, 18)
+                            0, self.radial_menu, self.radial_menu, 18, 18)
       end
     end
 
