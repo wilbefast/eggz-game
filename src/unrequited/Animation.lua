@@ -61,8 +61,11 @@ Game loop
 --]]
   
 function Animation:draw(x, y, subimage, flip_x, flip_y, ox, oy, angle)
-  subimage = (math.min(self.n_frames, math.floor(subimage)) 
-              or 1)     
+  if subimage then
+    subimage = math.min(self.n_frames, math.floor(subimage))
+  else
+    subimage = 1
+  end  
   
   flip_x = (flip_x or self.flip_x)
   flip_y = (flip_y or self.flip_y)

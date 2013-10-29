@@ -34,8 +34,8 @@ language[1] =
 	player_select =
 	{
 		title = "Versus",
-		humans = "Humans",
-		robots = "AIs",
+		humans = "Human",
+		robots = "A.I.",
 		coming_soon = "Coming soon ..."
 	},
 	colour = { "Red", "Blue", "Yellow", "Purple" },
@@ -68,8 +68,8 @@ language[2] =
 	player_select =
 	{
 		title = "Versus",
-		humans = "Humains",
-		robots = "IAs",
+		humans = "Humain",
+		robots = "I.A.",
 		coming_soon = "À venir ..."
 	},
 	colour = { "Rouge", "Bleu", "Jaune", "Violet" },

@@ -55,7 +55,7 @@ function state:enter()
   self:reset_winning()
 	
   -- log percents
-  self.log = { highest = 0, total_time = 0, time_till_next = 3, period = 3, animation = 0 }
+  self.gamelog = { highest = 0, total_time = 0, time_till_next = 3, period = 3, animation = 0 }
 
 	-- not pause (yet)
 	self.pause = false
@@ -78,29 +78,28 @@ function state:update(dt)
 
   -- log conversion amount
   if (not self.winner) and (not self.pause) then
-    self.log.time_till_next = self.log.time_till_next - dt
-    self.log.total_time = self.log.total_time + dt
-    if self.log.time_till_next < 0 then
-      self.log.time_till_next = self.log.period
+    self.gamelog.time_till_next = self.gamelog.time_till_next - dt
+    self.gamelog.total_time = self.gamelog.total_time + dt
+    if self.gamelog.time_till_next < 0 then
+      self.gamelog.time_till_next = self.gamelog.period
 
       -- create log entry with timestamp
-      local log_entry = { time_stamp = self.log.total_time }
+      local log_entry = { time_stamp = self.gamelog.total_time }
       -- at each player's conversion to log entry
       for i = 1, n_players do
         local log_value = player[i].total_conversion
         log_entry[i] = log_value
         
-        if log_value > self.log.highest then
-          self.log.highest = log_value
+        if log_value > self.gamelog.highest then
+          self.gamelog.highest = log_value
         end
       end
 
-      log:write(log_entry[1])
-      self.log[#(self.log) + 1] = log_entry
+      self.gamelog[#(self.gamelog) + 1] = log_entry
     end
   -- log animation
   elseif self.winner then
-    self.log.animation = math.min(self.log.animation + dt)
+    self.gamelog.animation = math.min(self.gamelog.animation + dt)
   end
 
 
@@ -310,21 +309,21 @@ function state:draw()
     -- graph players' progression
     love.graphics.setLineWidth(3)
 
-    local max_log_i = self.log.animation*(#(self.log))
+    local max_log_i = self.gamelog.animation*(#(self.gamelog))
 
     previous =  { x = 0, y = h*0.9 }
     current = { }
     for i = 1, n_players do  
       player[i].bindTeamColour(220)
       
-      for log_i, entry in ipairs(self.log) do
+      for log_i, entry in ipairs(self.gamelog) do
 
         if log_i > max_log_i then
           break
         end
 
-        current.x, current.y = (entry.time_stamp/self.log.total_time) * w - 2*i, 
-                                (0.1 + (1 - entry[i]/self.log.highest)*0.8) * h - 2*i
+        current.x, current.y = (entry.time_stamp/self.gamelog.total_time) * w - 2*i, 
+                                (0.1 + (1 - entry[i]/self.gamelog.highest)*0.8) * h - 2*i
         love.graphics.line(previous.x, previous.y, current.x, current.y)
         previous.x, previous.y = current.x, current.y
       end 
