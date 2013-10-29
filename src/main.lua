@@ -177,8 +177,8 @@ function love.load(arg)
   audio:load_music("loop_menu")
   audio:load_music("loop_game")
 
-  audio:load_sound("EGG-pick", 0.5, 2)
-  audio:load_sound("EGG-drop", 0.5, 2)
+  audio:load_sound("EGG-pick", 0.4, 2)
+  audio:load_sound("EGG-drop", 0.4, 2)
   audio:load_sound("EGG-hatch", 1, 4)
   audio:load_sound("EGG-destroyed", 2.3, 3)
 

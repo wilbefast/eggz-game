@@ -204,7 +204,7 @@ Game loop
 function Egg:update(dt)
 	Plant.update(self, dt)
 
-	self.view.speed = 5 + 5*self.eat.amount
+	self.view.speed = 7 + 5*self.eat.amount
 	self.view:update(dt)
 
 	local evo = self:getEvolution()
@@ -238,8 +238,8 @@ function Egg:draw(x, y)
     end
 		
 		-- eat overlay
-		if self.eat.amount > 0 then
-			love.graphics.setColor(155, 255, 200, self.eat.amount*255)
+		if (self.energy < 1) and (self.eat.amount) > 0 then
+			love.graphics.setColor(255, 255, 255, 255*(0.5 + 0.5*self.eat.amount))
 				self.eat:draw(self)
 		end
 
