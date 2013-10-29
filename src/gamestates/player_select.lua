@@ -119,7 +119,7 @@ function state:draw()
   -- 1. number of human players
   love.graphics.print(language[current_language].player_select.humans, w*0.2, h*0.35)
   for i = 1, useful.round(self.current_n_players) do
-    Overlord.draw_static(w*0.47 + i*w/18, h*0.37 + math.cos(i*angle)*6, i)
+    Overlord.draw_static(w*0.47 + i*w/18, h*0.37 + math.cos(angle + i*math.pi*1.618)*6, i)
   end
 
   -- 2. number of robot players

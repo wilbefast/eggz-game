@@ -35,7 +35,7 @@ language[1] =
 	{
 		title = "Versus",
 		humans = "Humans",
-		robots = "Robots",
+		robots = "AIs",
 		coming_soon = "Coming soon ..."
 	},
 	colour = { "Red", "Blue", "Yellow", "Purple" },
@@ -58,7 +58,7 @@ language[2] =
 {
 	flag = love.graphics.newImage("assets/languages/france.png"),
 	initials = "FR",
-	title = { "Duel", "Langue", "Credits", "Quitter" },
+	title = { "Versus", "Langue", "Credits", "Quitter" },
 	credits = 
 	{ 
 		title = "Credits", 
@@ -67,10 +67,10 @@ language[2] =
 	},
 	player_select =
 	{
-		title = "Duel",
+		title = "Versus",
 		humans = "Humains",
-		robots = "Robots",
-		coming_soon = "A venir ..."
+		robots = "IAs",
+		coming_soon = "À venir ..."
 	},
 	colour = { "Rouge", "Bleu", "Jaune", "Violet" },
 	wins = "gagne!"

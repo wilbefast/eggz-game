@@ -502,8 +502,8 @@ function Overlord:draw(x, y)
 	love.graphics.setColor(255, 255, 255)
 
 
-  useful.printf("tutorial " .. tostring(player[self.player].tutorial) .. tostring(tutorial.getMessage(self.player)), 
-    self.x, self.y + 20)
+  -- useful.printf("tutorial " .. tostring(player[self.player].tutorial) .. tostring(tutorial.getMessage(self.player)), 
+  --   self.x, self.y + 20)
 end
 
 function Overlord:draw_radial_menu(x, y)
