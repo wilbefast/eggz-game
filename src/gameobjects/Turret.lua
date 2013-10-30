@@ -85,7 +85,7 @@ Turret.IMAGES =
   {
     love.graphics.newImage("assets/red_tower_1.png"),
     love.graphics.newImage("assets/red_tower_2.png"),
-    projectile = love.graphics.newImage("assets/RED_attack.png")
+    projectile = love.graphics.newImage("assets/BLUE_attack.png")
   },
   {
     love.graphics.newImage("assets/blue_tower_1.png"),
@@ -95,12 +95,12 @@ Turret.IMAGES =
   {
     love.graphics.newImage("assets/yellow_tower_1.png"),
     love.graphics.newImage("assets/yellow_tower_2.png"),
-    projectile = love.graphics.newImage("assets/RED_attack.png")
+    projectile = love.graphics.newImage("assets/BLUE_attack.png")
   },
   {
     love.graphics.newImage("assets/purple_tower_1.png"),
     love.graphics.newImage("assets/purple_tower_2.png"),
-    projectile = love.graphics.newImage("assets/RED_attack.png")
+    projectile = love.graphics.newImage("assets/BLUE_attack.png")
   }
 }
 
@@ -113,12 +113,6 @@ for i = 1, 4 do
   Turret.ANIMATIONS[i].projectile = Animation(Turret.IMAGES[i].projectile, 64, 64, 1, 320, 0)
   Turret.ANIMATIONS[i].impact = Animation(Turret.IMAGES[i].projectile, 64, 64, 4, 384, 0)
 end
-
-Turret.LIGHTNING_IMG = love.graphics.newImage("assets/FX-attack-bolt.png")
-Turret.LIGHTNING_ANIM = Animation(Turret.LIGHTNING_IMG, 128, 64, 5, 0, 0)
-Turret.LAUNCH_IMG = love.graphics.newImage("assets/FX-attack-launch.png")
-Turret.LAUNCH_ANIM = Animation(Turret.LAUNCH_IMG, 64, 64, 3, 0, 0)
-
 
 --[[------------------------------------------------------------
 Take damage
