@@ -24,8 +24,8 @@ n_players = 2
 
 DELAY_BEFORE_WIN = 10 -- seconds
 
-N_TILES_ACROSS = 15
-N_TILES_DOWN = 11
+N_TILES_ACROSS = 19
+N_TILES_DOWN = 12
 TILE_W = 64
 TILE_H = 64
 
