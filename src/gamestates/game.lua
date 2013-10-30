@@ -45,6 +45,7 @@ function state:enter()
 
   -- point camera at centre of collision-grid
   self.camera = Camera(0, 0)
+  self.camera:zoomTo(SCALE_MIN)
   self.camera:lookAt(self.grid:centrePixel())
 
   -- not victory (yet)

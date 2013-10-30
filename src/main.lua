@@ -123,7 +123,6 @@ title = require("gamestates/title")
 language_select = require("gamestates/language_select")
 game = require("gamestates/game")
 credits = require("gamestates/credits")
-controls = require("gamestates/controls")
 player_select = require("gamestates/player_select")
 
 tutorial = require("tutorial")
@@ -136,24 +135,68 @@ SINGLETON SETTINGS
 audio.mute = DEBUG
 
 --[[------------------------------------------------------------
+DEAL WITH DIFFERENT RESOLUTIONS (scale images)
+--]]------------------------------------------------------------
+
+DEFAULT_W, DEFAULT_H, SCALE_X, SCALE_Y, SCALE_MIN, SCALE_MAX = 1280, 720, 1, 1, 1, 1
+
+function scaled_draw(img, x, y, rot, sx, sy, ox, oy)
+  x, y, rot, sx, sy = (x or 0), (y or 0), (rot or 0), (sx or 1), (sy or 1)
+  love.graphics.draw(img, x*SCALE_MIN + DEFAULT_W*(SCALE_X-SCALE_MIN)/2, 
+                          y*SCALE_MIN + DEFAULT_H*(SCALE_Y-SCALE_MIN)/2, 
+                          rot, 
+                          sx*SCALE_MIN, 
+                          sy*SCALE_MIN,
+                          ox,
+                          oy)
+end
+
+function scaled_drawq(img, quad, x, y, rot, sx, sy)
+  x, y, rot, sx, sy = (x or 0), (y or 0), (rot or 0), (sx or 1), (sy or 1)
+  love.graphics.drawq(img, quad, x*SCALE_MIN, --+ DEFAULT_W*(SCALE_X-SCALE_MIN)/2, 
+                                  y*SCALE_MIN, --+ DEFAULT_H*(SCALE_Y-SCALE_MIN)/2, 
+                                  rot, 
+                                  sx*SCALE_MIN, 
+                                  sy*SCALE_MIN,
+                                  ox,
+                                  oy)
+end
+
+local function setBestResolution()
+  
+  -- get and sort the available screen modes from best to worst
+  local modes = love.graphics.getModes()
+  table.sort(modes, function(a, b) 
+    return ((a.width*a.height > b.width*b.height) 
+          and (a.width <= DEFAULT_W) and a.height <= DEFAULT_H) end)
+       
+  -- try each mode from best to worst
+  for i, m in ipairs(modes) do
+    
+    if DEBUG then
+      m = modes[#modes - 1]
+    end
+    
+    -- try to set the resolution
+    local success = love.graphics.setMode(m.width, m.height, (not DEBUG))
+    if success then
+      SCALE_X, SCALE_Y = m.width/DEFAULT_W, m.height/DEFAULT_H
+      SCALE_MIN, SCALE_MAX = math.min(SCALE_X, SCALE_Y), math.max(SCALE_X, SCALE_Y)
+      return true -- success!
+    
+    end
+  end
+  return false -- failure!
+end
+
+
+--[[------------------------------------------------------------
 LOVE CALLBACKS
 --]]------------------------------------------------------------
 
 function love.load(arg)
     
-  -- set up the screen resolution
-  local modes = love.graphics.getModes()
-  local success = false
-  table.sort(modes, function(a, b) 
-    return (a.width*a.height > b.width*b.height) end)
-  for i, m in ipairs(modes) do
-    -- try to set the resolution
-    if love.graphics.setMode(m.width, m.height, (not DEBUG)) then
-      success = true
-      break
-    end
-  end
-  if not success then
+  if not setBestResolution() then
     print("Failed to set video mode")
     love.event.push("quit")
   end

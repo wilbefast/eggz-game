@@ -104,32 +104,33 @@ end
 
 function state:draw()
 
+  -- cache
+  local w, h = DEFAULT_W, DEFAULT_H
+
   -- background
-  local w, h = love.graphics.getWidth(), love.graphics.getHeight()
-  local bgx, bgy = (w - MENU_BG:getWidth())/2, (h - MENU_BG:getHeight())/2
-  love.graphics.draw(MENU_BG, bgx, bgy)
+  scaled_draw(MENU_BG, w*0.5, h*0.5, 0, 0.8, 0.8, MENU_BG:getWidth()*0.5, MENU_BG:getHeight()*0.5)
 
   -- play !
   love.graphics.setFont(FONT_MASSIVE)
-  useful.printf(language[current_language].player_select.title, w*0.5, h*(0.15 - 0.01*cos), 0.03*sin)
+  useful.printf(language[current_language].player_select.title, w*0.5, h*(0.1 - 0.01*cos), 0.03*sin)
 
   -- menu options
   love.graphics.setFont(FONT_BIG)
 
   -- 1. number of human players
-  love.graphics.print(language[current_language].player_select.humans, w*0.2, h*0.35)
+  love.graphics.print(language[current_language].player_select.humans, w*0.1, h*0.35)
   for i = 1, useful.round(self.current_n_players) do
-    Overlord.draw_static(w*0.47 + i*w/18, h*0.37 + math.cos(angle + i*math.pi*1.618)*6, i)
+    Overlord.draw_static(w*0.45 + i*w*0.065, h*0.42 + math.cos(angle + i*math.pi*1.618)*6, i)
   end
 
   -- 2. number of robot players
-  love.graphics.print(language[current_language].player_select.robots, w*0.2, h*0.65)
+  love.graphics.print(language[current_language].player_select.robots, w*0.1, h*0.65)
   love.graphics.setFont(FONT_SMALL)
   love.graphics.print(language[current_language].player_select.coming_soon, w*0.5, h*0.67)
 
   -- 3. arrows
   love.graphics.setColor(255, 255, 255, 255 - (sin+2)*32)
-    love.graphics.draw(ARROWS_IMG, w*0.61, h*0.37, 0, 
+    scaled_draw(ARROWS_IMG, w*0.61, h*0.37, 0, 
       1 + 0.05*sin, 
       1 + 0.05*sin, 
       ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)

@@ -41,24 +41,26 @@ end
 local angle, cos, sin = 0, 0, 0
 
 function state:draw()
+  
+  -- cache
+  local w, h = DEFAULT_W, DEFAULT_H
+
   -- background
-  local w, h = love.graphics.getWidth(), love.graphics.getHeight()
-  local bgx, bgy = (w - MENU_BG:getWidth())/2, (h - MENU_BG:getHeight())/2
-  love.graphics.draw(MENU_BG, bgx, bgy)
+  scaled_draw(MENU_BG, w*0.5, h*0.5, 0, 0.8, 0.8, MENU_BG:getWidth()*0.5, MENU_BG:getHeight()*0.5)
 
   -- title
   love.graphics.setFont(FONT_MASSIVE)
-  useful.printf(language[current_language].credits.title, w*0.5, h*(0.15 - 0.01*cos), 0.03*sin)
+  useful.printf(language[current_language].credits.title, w*0.5, h*(0.1 - 0.01*cos), 0.03*sin)
 
   -- task performed
   love.graphics.setFont(FONT_NORMAL)
-  useful.printf(language[current_language].credits[1].what, w*0.4 , h*0.35)--h*(0.35 + cos*0.01))
-  useful.printf(language[current_language].credits[2].what, w*0.4 , h*0.65)--h*(0.65 + sin*0.01))
+  useful.printf(language[current_language].credits[1].what, w*0.3 , h*0.35)
+  useful.printf(language[current_language].credits[2].what, w*0.3 , h*0.65)
 
   -- who performed them
   love.graphics.setFont(FONT_SMALL)
-  useful.printf(language[current_language].credits[1].who, w*0.6, h*0.37)--h*(0.37 + cos*0.01))
-  useful.printf(language[current_language].credits[2].who, w*0.6 , h*0.67)--h*(0.67 + sin*0.01))
+  useful.printf(language[current_language].credits[1].who, w*0.7, h*0.37)
+  useful.printf(language[current_language].credits[2].who, w*0.7 , h*0.67)
 
   -- borders
   drawBorders()

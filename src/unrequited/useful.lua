@@ -159,6 +159,8 @@ end
 
 function useful.printf(text, x, y, angle)
   love.graphics.push()
+    
+    love.graphics.scale(SCALE_MIN, SCALE_MIN)
     love.graphics.translate(x, y)
     if angle then
       love.graphics.rotate(angle)
