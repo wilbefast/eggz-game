@@ -162,6 +162,14 @@ function scaled_drawq(img, quad, x, y, rot, sx, sy)
                                   oy)
 end
 
+function scaled_print(text, x, y)
+  love.graphics.push()
+    love.graphics.scale(SCALE_MIN, SCALE_MIN)
+    love.graphics.translate(x, y)
+    love.graphics.print(text, 0, 0)
+  love.graphics.pop()
+end
+
 local function setBestResolution()
   
   -- get and sort the available screen modes from best to worst
