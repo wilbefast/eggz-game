@@ -54,6 +54,8 @@ function accept()
   local button_name = language[1].title[current_button]
 	if button_name == "Versus" then 
     GameState.switch(player_select)
+  elseif button_name == "Tutorial" then 
+    GameState.switch(howtoplay)        
 	elseif button_name == "Creggits" then 
 		GameState.switch(credits)
 	elseif button_name == "Controls" then 

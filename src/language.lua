@@ -24,7 +24,15 @@ language[1] =
 {
 	flag = love.graphics.newImage("assets/languages/australia.png"),
 	initials = "EN",
-	title = { "Versus", "Language", "Creggits", "Quit" },
+	title = { "Versus", "Controls", "Tutorial", "Language", "Creggits", "Quit" },
+	howtoplay = 
+	{
+		title = "Tutorial"
+	},
+	controls = 
+	{
+		title = "Controls"
+	},
 	credits = 
 	{ 
 		title = "Creggits", 
@@ -58,7 +66,15 @@ language[2] =
 {
 	flag = love.graphics.newImage("assets/languages/france.png"),
 	initials = "FR",
-	title = { "Versus", "Langue", "Credits", "Quitter" },
+	title = { "Versus", "Contrôles", "Tutoriel", "Langue", "Credits", "Quitter" },
+	howtoplay =
+	{
+		title = "Tutoriel"
+	},
+	controls = 
+	{
+		title = "Contrôles"
+	},
 	credits = 
 	{ 
 		title = "Credits", 

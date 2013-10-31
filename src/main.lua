@@ -124,6 +124,8 @@ language_select = require("gamestates/language_select")
 game = require("gamestates/game")
 credits = require("gamestates/credits")
 player_select = require("gamestates/player_select")
+controls = require("gamestates/controls")
+howtoplay = require("gamestates/howtoplay")
 
 tutorial = require("tutorial")
 

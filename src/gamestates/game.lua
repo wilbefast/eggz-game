@@ -279,15 +279,6 @@ function state:draw()
     if not self.winner then
       overlord:draw_radial_menu()
     end
-
-    -- draw percent conversion
-    -- local x, y = player[overlord.player].ui.x, player[overlord.player].ui.y
-    -- love.graphics.setFont(FONT_HUGE)
-    -- local total_conversion = math.floor(player[overlord.player].total_conversion*100)
-    --   love.graphics.setColor(210, 228, 210)
-    --     love.graphics.printf(tostring(total_conversion) .. "%", x+3, y+3, 0, 'center')
-    --   player[overlord.player].bindTeamColour()
-    --     love.graphics.printf(tostring(total_conversion) .. "%", x, y, 0, 'center')
     
     -- reset
     love.graphics.setColor(255, 255, 255)
