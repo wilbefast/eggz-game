@@ -87,7 +87,9 @@ function state:update(dt)
       self.controlling_player = i
     end
     -- cancel
-    if (input[i].cancel.trigger == 1) then
+    if (input[i].cancel.trigger == 1) 
+    or ((input[i].confirm.trigger == 1) and (message_i == #(language[current_language].howtoplay)) ) 
+    then
       GameState.switch(title)
     end
   end

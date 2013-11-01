@@ -30,7 +30,6 @@ function state:reset_winning()
 end
 
 function state:enter()
-
   GameObject.INSTANCES = { }
   GameObject.NEW_INSTANCES = { }
 

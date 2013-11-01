@@ -14,75 +14,127 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 --]]
 
-
-local n_pads = love.joystick.getNumJoysticks()
-
 local input = {}
-for i = 1, MAX_PLAYERS do
-  input[i] = 
-  { 
-  	x = 0, 
-  	y = 0, 
 
-  	confirm = { pressed = false, previous = false, trigger = 0 },
-  	start = { pressed = false, previous = false, trigger = 0 },
-  	cancel = { pressed = false, previous = false, trigger = 0 },
+function input:reset()
+	self.n_pads = love.joystick.getNumJoysticks()
 
-  	gamepad = (n_pads >= i)
-  }
-end
+	-- rebuild input object
+	for i = 1, MAX_PLAYERS do
+	  self[i] = 
+	  { 
+	  	x = 0, 
+	  	y = 0, 
 
-for i = 1, n_pads do
-	input[i].keyConfirm = function () return love.joystick.isDown(i, 1) end
-	input[i].keyCancel = function () return love.joystick.isDown(i, 2) end
-	input[i].keyWest = function () return love.joystick.isDown(i, 3) end
-	input[i].keyNorth = function () return love.joystick.isDown(i, 4) end
-	input[i].keyStart = function () return love.joystick.isDown(i, 1) end -- FIXME
-end
+	  	confirm = { pressed = false, previous = true, trigger = 0 },
+	  	start = { pressed = false, previous = true, trigger = 0 },
+	  	cancel = { pressed = false, previous = true, trigger = 0 },
 
-if n_pads < MAX_PLAYERS then
-	input[n_pads + 1].keyLeft = function () return love.keyboard.isDown("left") end
-	input[n_pads + 1].keyRight = function () return love.keyboard.isDown("right") end
-	input[n_pads + 1].KeyUp = function () return love.keyboard.isDown("up") end
-	input[n_pads + 1].keyDown = function () return love.keyboard.isDown("down") end
-	input[n_pads + 1].keyStart = function () return love.keyboard.isDown("return") end
-	input[n_pads + 1].keyConfirm = function () return love.keyboard.isDown("rctrl", "rshift") end
-	input[n_pads + 1].keyCancel = function () return love.keyboard.isDown("backspace") end
+	  	gamepad = (self.n_pads >= i),
 
-	if n_pads < MAX_PLAYERS - 1 then
-		input[n_pads + 2].keyLeft = function () return love.keyboard.isDown("a", "q") end
-		input[n_pads + 2].keyRight = function () return love.keyboard.isDown("d") end
-		input[n_pads + 2].KeyUp = function () return love.keyboard.isDown("w", "z") end
-		input[n_pads + 2].keyDown = function () return love.keyboard.isDown("s") end
-		input[n_pads + 2].keyStart = function () return love.keyboard.isDown("return") end
-		input[n_pads + 2].keyConfirm = function () return love.keyboard.isDown("lctrl", "lshift") end
-		input[n_pads + 2].keyCancel = function () return love.keyboard.isDown("backspace") end
+	  	keyname = {},
+
+	  	drawButton = function(self, buttonName, x, y)
+	  		-- nothing for gamepads (for the moment)
+	  		if self.gamepad then return end
+
+	  		-- convert button name
+	  		buttonName = self.keyname[buttonName]
+
+	  		-- if it's a letter, draw it
+	  		if (string.len(buttonName) == 1) then
+	  			-- take layouts into account
+	  			if language[current_language].keyboard_layout == "azerty" then
+	  				if buttonName == "a" then 
+	  					buttonName = "q" 
+	  				elseif buttonName == "w" then 
+	  					buttonName = "z" 	
+	  				end
+	  			end
+	  			-- just print the letter
+	  			useful.printf(buttonName, x, y)
+	  		end	
+		end
+	  }
 	end
 
-	if n_pads < MAX_PLAYERS - 2 then
-		input[n_pads + 3].keyLeft = function () return love.keyboard.isDown("f") end
-		input[n_pads + 3].keyRight = function () return love.keyboard.isDown("h") end
-		input[n_pads + 3].KeyUp = function () return love.keyboard.isDown("t") end
-		input[n_pads + 3].keyDown = function () return love.keyboard.isDown("g") end
-		input[n_pads + 3].keyStart = function () return love.keyboard.isDown("return") end
-		input[n_pads + 3].keyConfirm = function () return love.keyboard.isDown("y") end
-		input[n_pads + 3].keyCancel = function () return love.keyboard.isDown("backspace") end
+
+	-- gamepads 
+	for i = 1, self.n_pads do
+		local inp = self[i]
+		inp.keyConfirm = function () return love.joystick.isDown(i, 1) end
+		inp.keyCancel = function () return love.joystick.isDown(i, 2) end
+		inp.keyWest = function () return love.joystick.isDown(i, 3) end
+		inp.keyNorth = function () return love.joystick.isDown(i, 4) end
+		inp.keyStart = function () return love.joystick.isDown(i, 1) end -- FIXME
 	end
 
-	if n_pads < MAX_PLAYERS - 3 then
-		input[n_pads + 4].keyLeft = function () return love.keyboard.isDown("j") end
-		input[n_pads + 4].keyRight = function () return love.keyboard.isDown("l") end
-		input[n_pads + 4].KeyUp = function () return love.keyboard.isDown("i") end
-		input[n_pads + 4].keyDown = function () return love.keyboard.isDown("k") end
-		input[n_pads + 4].keyStart = function () return love.keyboard.isDown("return") end
-		input[n_pads + 4].keyConfirm = function () return love.keyboard.isDown("o") end
-		input[n_pads + 4].keyCancel = function () return love.keyboard.isDown("backspace") end
+	-- keyboard 1
+	if self.n_pads < MAX_PLAYERS then
+		local inp = self[self.n_pads + 1]
+		inp.keyname.left = "left"
+		inp.keyname.right = "right"
+		inp.keyname.up = "up"
+		inp.keyname.down = "down" 
+		inp.keyname.confirm = "lctrl" 
+			inp.keyname.altconfirm = "lshift"
 	end
 
+	-- keyboard 2
+	if self.n_pads < MAX_PLAYERS - 1 then
+		local inp = self[self.n_pads + 2]
+		inp.keyname.left = "a" 
+			inp.keyname.altleft = "q"
+		inp.keyname.right = "d"
+		inp.keyname.up = "w"
+			inp.keyname.altup = "z"
+		inp.keyname.down = "s" 
+		inp.keyname.confirm = "lctrl"
+			inp.keyname.altconfirm = "lshift"
+	end
+
+	-- keyboard 3
+	if self.n_pads < MAX_PLAYERS - 2 then
+		local inp = self[self.n_pads + 3]
+		inp.keyname.left = "f"
+		inp.keyname.right = "h"
+		inp.keyname.up = "t"
+		inp.keyname.down = "g"
+		inp.keyname.confirm = "y"
+	end
+
+	-- keyboard 4
+	if self.n_pads < MAX_PLAYERS - 3 then
+		local inp = self[self.n_pads + 4]
+		inp.keyname.left = "j"
+		inp.keyname.right = "l"
+		inp.keyname.up = "i"
+		inp.keyname.down = "k"
+		inp.keyname.confirm = "o"
+	end
+
+	-- keyboards
+	for i = self.n_pads + 1, MAX_PLAYERS do
+		local inp = self[i]
+
+		function checkKey(key, altkey) 
+			return useful.tri(altkey, 
+				function() return love.keyboard.isDown(key, altkey) end, 
+				function() return love.keyboard.isDown(key) end) 
+		end
+
+		inp.keyLeft = checkKey(inp.keyname.left, inp.keyname.altleft)
+		inp.keyRight = checkKey(inp.keyname.right)
+		inp.KeyUp = checkKey(inp.keyname.up, inp.keyname.altup)
+		inp.keyDown = checkKey(inp.keyname.down)
+		inp.keyConfirm = checkKey(inp.keyname.confirm, inp.keyname.altconfirm)
+		inp.keyStart = checkKey("return")
+		inp.keyCancel = checkKey("backspace")
+	end
 end
 
 
-function generateTrigger(key, key_accessor)
+local generateTrigger = function(key, key_accessor)
 	key.previous = key.pressed
 	key.pressed = key_accessor()
 	if key.pressed == key.previous then

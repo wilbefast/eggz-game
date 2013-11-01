@@ -34,6 +34,9 @@ function state:keypressed(key, uni)
   end
 end
 
+function state:enter()
+end
+
 function state:leave()
   audio:play_sound("EGG-drop")
 end

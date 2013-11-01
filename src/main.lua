@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false
+DEBUG = true
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
@@ -234,6 +234,9 @@ function love.load(arg)
   -- window icon
   --love.graphics.setIcon()  
 
+  -- initialise input
+  input:reset()
+
   -- clear colour
   love.graphics.setBackgroundColor(3, 9, 3)
 
@@ -297,6 +300,11 @@ function love.update(dt)
 	
   input:update(dt, true)
   GameState.update(dt)
+
+  -- check for joysticks
+  if love.joystick.getNumJoysticks() ~= input.n_pads then
+    input:reset()
+  end
 end
 
 function love.draw()

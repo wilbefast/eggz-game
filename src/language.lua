@@ -30,7 +30,7 @@ language[1] =
 		title = "Tutorial",
 		"Press to lay, pick and drop eggz.",
 		"Eggz mature faster on fertile land.",
-		"Hold to evolve mature eggz.",
+		"Hold to hatch mature eggz.",
 		"Statues attack nearby foes.",
 		"Shrines convert the area.",
 		"Hold to pour acid.",
@@ -57,11 +57,12 @@ language[1] =
 	wins = "wins!",
 	tutorial =
 	{
-		lay = "tap to lay",
-		pick = "tap to grab",
-		grow = "blah",
-		evolve = "hold to evolve"
-	}
+		lay = "TODO",
+		pick = "TODO",
+		grow = "TODO",
+		evolve = "TODO"
+	},
+	keyboard_layout = "qwerty"
 }
 
 
@@ -79,7 +80,7 @@ language[2] =
 		title = "Tutoriel",
 		"Appuyer pour pondre, prendre et déposer les oeufs.",
 		"Les oeufs grandissent plus vite sur du terrain fertile.",
-		"Maintenir enfoncé pour evolver un oeuf mature.",
+		"Maintenir enfoncé pour éclore un oeuf mature.",
 		"Les statues attaquent tout enemi proche.",
 		"Les lieux saints convertissent du terrain.",
 		"Maintenir enfoncé pour verser de l'acide.",
@@ -103,7 +104,15 @@ language[2] =
 		coming_soon = "À venir ..."
 	},
 	colour = { "Rouge", "Bleu", "Jaune", "Violet" },
-	wins = "gagne!"
+	wins = "gagne!",
+	tutorial =
+	{
+		lay = "TODO",
+		pick = "TODO",
+		grow = "TODO",
+		evolve = "TODO"
+	},
+	keyboard_layout = "azerty"
 }
 
 return language
