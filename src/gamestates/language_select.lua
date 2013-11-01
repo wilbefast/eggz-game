@@ -133,10 +133,6 @@ function state:draw()
       1.15 + 0.05*sin, 
       ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
   love.graphics.setColor(255, 255, 255, 255)
-  
-  -- borders
-  drawBorders()
-
 end
 
 

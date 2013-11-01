@@ -24,6 +24,8 @@ local images =
   love.graphics.newImage("assets/howtoplay/pick_drop.png"),
   love.graphics.newImage("assets/howtoplay/fertile.png"),
   love.graphics.newImage("assets/howtoplay/evolve.png"),
+  love.graphics.newImage("assets/howtoplay/altars.png"),
+  love.graphics.newImage("assets/howtoplay/statues.png"),
 }
 
 local before = function(i)
@@ -127,14 +129,14 @@ function state:draw()
   -- prepare to draw menu options
   love.graphics.setFont(FONT_MASSIVE)
   local tutorial_messages = language[current_language].howtoplay
-  local arrow_y, message_y = h*0.75, h*0.8
+  local arrow_y, message_y = h*0.7, h*0.75
 
   -- small font for messages
   love.graphics.setFont(FONT_SMALL)
 
   -- cache
   local arrow_width = ARROWS_IMG:getWidth()
-  local message_width = arrow_width*2
+  local message_width = arrow_width*0.8
   local im = images[message_i]
 
   -- not currently changing message => current message 'floats around'
@@ -185,8 +187,10 @@ function state:draw()
       useful.printf(tutorial_messages[after(after(message_i))], message_x + BUTTON_OFFSET*2, message_y, 0, message_width)
     end
 
-  -- borders
-  drawBorders()
+  -- current page
+  love.graphics.setColor(255, 255, 255)
+    love.graphics.setFont(FONT_NORMAL)
+    useful.printf(tostring(message_i) .. " / " .. tostring(#tutorial_messages), 0.5*w, h, 0, w)
 end
 
 --[[------------------------------------------------------------

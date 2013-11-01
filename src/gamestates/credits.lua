@@ -61,9 +61,6 @@ function state:draw()
   love.graphics.setFont(FONT_SMALL)
   useful.printf(language[current_language].credits[1].who, w*0.7, h*0.37)
   useful.printf(language[current_language].credits[2].who, w*0.7 , h*0.67)
-
-  -- borders
-  drawBorders()
 end
 
 function state:update(dt)

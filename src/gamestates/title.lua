@@ -163,10 +163,7 @@ function state:draw()
       useful.printf(button_names[after(after(current_button))], option_x + BUTTON_OFFSET*2, option_y)
   end
 
-  
-  -- borders
-  drawBorders()
-
+  love.graphics.setColor(255, 255, 255)
 end
 
 

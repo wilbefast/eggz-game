@@ -51,9 +51,6 @@ function state:draw()
   -- title
   love.graphics.setFont(FONT_MASSIVE)
   useful.printf(language[current_language].controls.title, w*0.5, h*(0.1 - 0.01*cos), 0.03*sin)
-
-  -- borders
-  drawBorders()
 end
 
 function state:update(dt)

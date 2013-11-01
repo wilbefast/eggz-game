@@ -31,8 +31,8 @@ language[1] =
 		"Press to lay, pick and drop eggz.",
 		"Eggz mature faster on fertile land.",
 		"Hold to evolve mature eggz.",
-		-- "Altars convert nearby land.",
-		-- "Statues fight nearby foes."
+		"Shrines convert the area.",
+		"Statues attack nearby foes."
 	},
 	controls = 
 	{
@@ -78,8 +78,8 @@ language[2] =
 		"Appuie pour pondre, prendre et déposer les oeufs.",
 		"Les oeufs grandissent plus vite sur du terrain fertile.",
 		"Maintenir enfoncé pour evolver un oeuf mature.",
-		-- "Altars convert nearby land.",
-		-- "Statues fight nearby foes."
+		"Les lieux saints convertissent du terrain.",
+		"Les statues attaquent tout enemi proches."
 	},
 	controls = 
 	{
