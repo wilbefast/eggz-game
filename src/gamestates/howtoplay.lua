@@ -126,7 +126,7 @@ function state:draw()
 
   -- title
   love.graphics.setFont(FONT_MASSIVE)
-  useful.printf(language[current_language].howtoplay.title, w*0.5, h*(0.1 - 0.01*cos), 0.03*sin)
+  useful.printf(language[current_language].howtoplay.title, w*0.5, h*(0.1 - 0.01*cos), 0.03*sin, w)
 
   -- animation
   local cos, sin = math.cos(rotation), math.sin(rotation)

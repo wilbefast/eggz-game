@@ -24,10 +24,10 @@ language[1] =
 {
 	flag = love.graphics.newImage("assets/languages/australia.png"),
 	initials = "EN",
-	title = { "Versus", "Controls", "Tutorial", "Language", "Creggits", "Quit" },
+	title = { "Versus", "Controls", "How to play", "Language", "Creggits", "Quit" },
 	howtoplay = 
 	{
-		title = "Tutorial",
+		title = "How to play",
 		"Press to lay, pick and drop eggz.",
 		"Eggz mature faster on fertile land.",
 		"Hold to hatch mature eggz.",
@@ -74,10 +74,10 @@ language[2] =
 {
 	flag = love.graphics.newImage("assets/languages/france.png"),
 	initials = "FR",
-	title = { "Versus", "Contrôles", "Tutoriel", "Langue", "Credits", "Quitter" },
+	title = { "Versus", "Contrôles", "Comment jouer", "Langue", "Credits", "Quitter" },
 	howtoplay = 
 	{
-		title = "Tutoriel",
+		title = "Comment jouer",
 		"Appuyer pour pondre, prendre et déposer les oeufs.",
 		"Les oeufs grandissent plus vite sur du terrain fertile.",
 		"Maintenir enfoncé pour éclore un oeuf mature.",

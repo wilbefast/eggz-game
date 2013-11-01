@@ -54,7 +54,7 @@ function accept()
   local button_name = language[1].title[current_button]
 	if button_name == "Versus" then 
     GameState.switch(player_select)
-  elseif button_name == "Tutorial" then 
+  elseif button_name == "How to play" then 
     GameState.switch(howtoplay)        
 	elseif button_name == "Creggits" then 
 		GameState.switch(credits)
@@ -131,6 +131,7 @@ function state:draw()
   love.graphics.setFont(FONT_MASSIVE)
   local button_names = language[current_language].title
   local option_y = h*0.75
+  local option_w = ARROWS_IMG:getWidth()
 
   -- not currently changing option => current option 'floats around'
   if button_changing == 0 then
@@ -138,10 +139,10 @@ function state:draw()
     local option_x = w*0.5
 
     -- draw the current option
-    useful.printf(button_names[current_button], option_x, option_y, cos/10)
+    useful.printf(button_names[current_button], option_x, option_y, cos/10,  option_w)
     love.graphics.setColor(255, 255, 255, 64)
-      useful.printf(button_names[before(current_button)], option_x - BUTTON_OFFSET, option_y)
-      useful.printf(button_names[after(current_button)], option_x + BUTTON_OFFSET, option_y)
+      useful.printf(button_names[before(current_button)], option_x - BUTTON_OFFSET, option_y, 0,  option_w)
+      useful.printf(button_names[after(current_button)], option_x + BUTTON_OFFSET, option_y, 0,  option_w)
 
     -- arrows
     love.graphics.setColor(255, 255, 255, 255 - (sin+2)*64)
@@ -156,11 +157,11 @@ function state:draw()
     -- the the current option
     local option_x = w/2 - BUTTON_OFFSET*button_changing
     love.graphics.setColor(255, 255, 255, 64)
-      useful.printf(button_names[current_button], option_x, option_y, cos/10)
-      useful.printf(button_names[before(current_button)], option_x - BUTTON_OFFSET, option_y)
-      useful.printf(button_names[after(current_button)], option_x + BUTTON_OFFSET, option_y)
-      useful.printf(button_names[before(before(current_button))], option_x - BUTTON_OFFSET*2, option_y)
-      useful.printf(button_names[after(after(current_button))], option_x + BUTTON_OFFSET*2, option_y)
+      useful.printf(button_names[current_button], option_x, option_y, cos/10, option_w)
+      useful.printf(button_names[before(current_button)], option_x - BUTTON_OFFSET, option_y, 0,  option_w)
+      useful.printf(button_names[after(current_button)], option_x + BUTTON_OFFSET, option_y, 0,  option_w)
+      useful.printf(button_names[before(before(current_button))], option_x - BUTTON_OFFSET*2, option_y, 0,  option_w)
+      useful.printf(button_names[after(after(current_button))], option_x + BUTTON_OFFSET*2, option_y, 0,  option_w)
   end
 
   love.graphics.setColor(255, 255, 255)
