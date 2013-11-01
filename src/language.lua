@@ -27,7 +27,12 @@ language[1] =
 	title = { "Versus", "Controls", "Tutorial", "Language", "Creggits", "Quit" },
 	howtoplay = 
 	{
-		title = "Tutorial"
+		title = "Tutorial",
+		"Press to lay, pick and drop eggz.",
+		"Eggz mature faster on fertile land.",
+		"Hold to evolve mature eggz.",
+		-- "Altars convert nearby land.",
+		-- "Statues fight nearby foes."
 	},
 	controls = 
 	{
@@ -67,9 +72,14 @@ language[2] =
 	flag = love.graphics.newImage("assets/languages/france.png"),
 	initials = "FR",
 	title = { "Versus", "Contrôles", "Tutoriel", "Langue", "Credits", "Quitter" },
-	howtoplay =
+	howtoplay = 
 	{
-		title = "Tutoriel"
+		title = "Tutoriel",
+		"Appuie pour pondre, prendre et déposer les oeufs.",
+		"Les oeufs grandissent plus vite sur du terrain fertile.",
+		"Maintenir enfoncé pour evolver un oeuf mature.",
+		-- "Altars convert nearby land.",
+		-- "Statues fight nearby foes."
 	},
 	controls = 
 	{

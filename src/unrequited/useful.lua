@@ -157,15 +157,17 @@ function useful.lerp(a, b, amount)
   return ((1-amount)*a + amount*b)
 end
 
-function useful.printf(text, x, y, angle)
+function useful.printf(text, x, y, angle, maxwidth)
+  
+  maxwidth = (maxwidth or 0)*SCALE_MIN
+
   love.graphics.push()
-    
     love.graphics.scale(SCALE_MIN, SCALE_MIN)
     love.graphics.translate(x, y)
     if angle then
       love.graphics.rotate(angle)
     end
-    love.graphics.printf(text, 0, 0, 0, "center")
+    love.graphics.printf(text, -maxwidth*0.5, 0, maxwidth, "center")
   love.graphics.pop()
 end
 

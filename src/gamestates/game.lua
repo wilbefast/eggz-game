@@ -56,7 +56,7 @@ function state:enter()
   self:reset_winning()
 	
   -- log percents
-  self.gamelog = { highest = 0, total_time = 0, time_till_next = 3, period = 3, animation = 0 }
+  self.gamelog = { highest = 0, total_time = 0, time_till_next = 10, period = 3*n_players, animation = 0 }
 
 	-- not pause (yet)
 	self.pause = false
@@ -273,20 +273,15 @@ function state:draw()
   self.camera:attach()
   --- !!!
 
-  for _, overlord in ipairs(self.overlords) do
-
-    -- draw radial menu
-    if not self.winner then
-      overlord:draw_radial_menu()
+  -- draw radial menus
+  if not self.winner then
+    for _, overlord in ipairs(self.overlords) do
+        overlord:draw_radial_menu()
     end
-    
-    -- reset
-    love.graphics.setColor(255, 255, 255)
-  end
 
 
-
-  if self.winner then
+  -- if winner
+  else
 
     -- graph players' progression
     love.graphics.setLineWidth(3)
@@ -319,7 +314,7 @@ function state:draw()
       useful.printf(language[current_language].colour[self.winner] .. " " ..
                     language[current_language].wins, DEFAULT_W*0.5, 0)
     love.graphics.setColor(255, 255, 255)
-end
+  end
 
   --- !!!
   self.camera:detach()

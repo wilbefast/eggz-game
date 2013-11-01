@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false
+DEBUG = true
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
@@ -169,6 +169,17 @@ function scaled_print(text, x, y)
     love.graphics.scale(SCALE_MIN, SCALE_MIN)
     love.graphics.translate(x, y)
     love.graphics.print(text, 0, 0)
+  love.graphics.pop()
+end
+
+function scaled_printf(text, x, y, angle, maxwidth, align)
+  love.graphics.push()
+    love.graphics.scale(SCALE_MIN, SCALE_MIN)
+    love.graphics.translate(x, y)
+    if angle then
+      love.graphics.rotate(angle)
+    end
+    love.graphics.printf(text, 0, 0, maxwidth, align)
   love.graphics.pop()
 end
 

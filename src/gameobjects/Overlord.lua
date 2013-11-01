@@ -531,6 +531,8 @@ function Overlord:draw_radial_menu(x, y)
     drawRadial(0, -self.radial_menu*64, 2)
     drawRadial(-self.radial_menu*64, 0, 3)
   end
+
+  love.graphics.setColor(255, 255, 255)
 end
 
 function Overlord.draw_static(x, y, team)
