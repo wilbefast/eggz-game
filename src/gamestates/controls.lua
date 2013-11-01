@@ -57,18 +57,24 @@ function state:draw()
   
   -- cache
   local w, h = DEFAULT_W, DEFAULT_H
+  local lang = language[current_language].controls
 
   -- background
   scaled_draw(MENU_BG, w*0.5, h*0.5, 0, 0.8, 0.8, MENU_BG:getWidth()*0.5, MENU_BG:getHeight()*0.5)
 
   -- title
   love.graphics.setFont(FONT_MASSIVE)
-  useful.printf(language[current_language].controls.title, w*0.5, h*(0.1 - 0.01*cos), 0.03*sin)
+  useful.printf(lang.title, w*0.5, h*(0.1 - 0.01*cos), 0.03*sin)
+
+  -- row headers ("move" and "action")
+  love.graphics.setFont(FONT_NORMAL)
+  useful.printf("movement", w*0.2, h*0.45)
+  useful.printf("action", w*0.2, h*0.8)
 
   -- controls for each player
   love.graphics.setFont(FONT_SMALL)
   for i = 1, MAX_PLAYERS do
-    local x, y = w*(0.2 + (i-1)*0.2), h*0.35
+    local x, y = w*(0.4 + (i-1)*0.15), h*0.35
 
     if input[i].gamepad then
       -- gamepad outline
@@ -78,7 +84,6 @@ function state:draw()
       player[i].bindTeamColour()
         scaled_draw(IMG_KEYDIRS, x, y, 0, 1.2, 1.2, IMG_KEYDIRS:getWidth()*0.5, IMG_KEYDIRS:getHeight()*0.5)
       -- keyboard buttons
-      local lang = language[current_language]
       love.graphics.setColor(255, 255, 255)
         input[i]:drawButton("up", x, y+30)
         input[i]:drawButton("left", x-40, y+70)

@@ -52,7 +52,26 @@ function input:reset()
 	  				end
 	  			end
 	  			-- just print the letter
-	  			useful.printf(buttonName, x, y)
+	  			love.graphics.setColor(love.graphics.getBackgroundColor())
+	  				useful.printf(buttonName, x+2, y+2)
+	  			love.graphics.setColor(255, 255, 255)
+	  				useful.printf(buttonName, x-2, y-2)
+
+	  		-- up, down, left, right
+	  		elseif (buttonName == "up") 
+  			or (buttonName == "down") 
+  			or (buttonName == "left") 
+  			or (buttonName == "right") then
+  				local angle = 0
+  				if (buttonName == "down") then angle = math.pi end
+  				if (buttonName == "left") then angle = math.pi*0.5 end
+  				if (buttonName == "right") then angle = -math.pi*0.5 end
+  				local im, imw, imh = Plant.ICON_PICKUP, Plant.ICON_PICKUP:getWidth()*0.5, Plant.ICON_PICKUP:getHeight()*0.5
+  				love.graphics.setColor(love.graphics.getBackgroundColor())
+  					scaled_draw(im, x+2, y-46, angle, 0.4, 0.4, imw, imh)
+				love.graphics.setColor(255, 255, 255)
+  					scaled_draw(im, x-2, y-50, angle, 0.4, 0.4, imw, imh)
+
 	  		end	
 		end
 	  }
