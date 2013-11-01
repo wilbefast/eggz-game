@@ -33,7 +33,8 @@ language[1] =
 		"Hold to evolve mature eggz.",
 		"Statues attack nearby foes.",
 		"Shrines convert the area.",
-		"Convert 50% of the map to win."
+		"Hold to pour acid.",
+		"Convert 50% of the map to win!"
 	},
 	controls = 
 	{
@@ -76,12 +77,13 @@ language[2] =
 	howtoplay = 
 	{
 		title = "Tutoriel",
-		"Appuyez pour pondre, prendre et déposer les oeufs.",
+		"Appuyer pour pondre, prendre et déposer les oeufs.",
 		"Les oeufs grandissent plus vite sur du terrain fertile.",
 		"Maintenir enfoncé pour evolver un oeuf mature.",
 		"Les statues attaquent tout enemi proche.",
 		"Les lieux saints convertissent du terrain.",
-		"Convertir 50% du terrain pour gagner."
+		"Maintenir enfoncé pour verser de l'acide.",
+		"Convertir 50% du terrain pour gagner !"
 	},
 	controls = 
 	{

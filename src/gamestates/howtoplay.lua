@@ -26,6 +26,7 @@ local images =
   love.graphics.newImage("assets/howtoplay/evolve.png"),
   love.graphics.newImage("assets/howtoplay/statues.png"),
   love.graphics.newImage("assets/howtoplay/altars.png"),
+  love.graphics.newImage("assets/howtoplay/acid.png"),
   love.graphics.newImage("assets/howtoplay/winning.png"),
   
 }
