@@ -67,8 +67,8 @@ function state:draw()
 
   -- row headers ("move" and "action")
   love.graphics.setFont(FONT_NORMAL)
-  useful.printf("movement", w*0.2, h*0.4)
-  useful.printf("action", w*0.2, h*0.83)
+  useful.printf(lang.movement, w*0.2, h*0.4)
+  useful.printf(lang.action, w*0.2, h*0.83)
 
   -- controls for each player
   love.graphics.setFont(FONT_SMALL)

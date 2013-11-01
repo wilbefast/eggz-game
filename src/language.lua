@@ -38,7 +38,9 @@ language[1] =
 	},
 	controls = 
 	{
-		title = "Controls"
+		title = "Controls",
+		movement = "movement",
+		action = "action"
 	},
 	credits = 
 	{ 
@@ -88,7 +90,9 @@ language[2] =
 	},
 	controls = 
 	{
-		title = "Contrôles"
+		title = "Contrôles",
+		movement = "mouvement",
+		action = "action"
 	},
 	credits = 
 	{ 
