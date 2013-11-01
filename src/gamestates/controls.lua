@@ -21,6 +21,8 @@ local state = GameState.new()
 
 local IMG_KEYDIRS = love.graphics.newImage("assets/menu/keyboard_directions.png")
 local IMG_KEYACTION = love.graphics.newImage("assets/menu/keyboard_action.png")
+local IMG_GAMEPADBACK = love.graphics.newImage("assets/menu/gamepad_background.png")
+local IMG_GAMEPADFORE = love.graphics.newImage("assets/menu/gamepad_foreground.png")
 
 local angle, cos, sin = 0, 0, 0
 
@@ -77,7 +79,12 @@ function state:draw()
 
     if input[i].gamepad then
       -- gamepad outline
-
+      player[i].bindTeamColour()
+        scaled_draw(IMG_GAMEPADBACK, x, (y+y2)*0.5, math.pi*0.5, 1, 1, 
+          IMG_GAMEPADBACK:getWidth()*0.5, IMG_GAMEPADBACK:getHeight()*0.5)
+      love.graphics.setColor(255, 255, 255)
+        scaled_draw(IMG_GAMEPADFORE, x, (y+y2)*0.5, math.pi*0.5, 1, 1, 
+          IMG_GAMEPADFORE:getWidth()*0.5, IMG_GAMEPADFORE:getHeight()*0.5)
     else
       -- keyboard outline
       player[i].bindTeamColour()
