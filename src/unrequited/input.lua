@@ -14,6 +14,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 --]]
 
+local IMG_KEYARROW = love.graphics.newImage("assets/menu/keyboard_arrow.png")
+
 local input = {}
 
 function input:reset()
@@ -51,7 +53,8 @@ function input:reset()
   				if (buttonName == "down") then angle = math.pi end
   				if (buttonName == "left") then angle = math.pi*0.5 end
   				if (buttonName == "right") then angle = -math.pi*0.5 end
-  				local im, imw, imh = Plant.ICON_PICKUP, Plant.ICON_PICKUP:getWidth()*0.5, Plant.ICON_PICKUP:getHeight()*0.5
+  				local im = IMG_KEYARROW
+  				local imw, imh = im:getWidth()*0.5, im:getHeight()*0.5
   				love.graphics.setColor(love.graphics.getBackgroundColor())
   					scaled_draw(im, x+2, y-16, angle, 0.4, 0.4, imw, imh)
 				love.graphics.setColor(255, 255, 255)

@@ -22,7 +22,6 @@ local state = GameState.new()
 local IMG_KEYDIRS = love.graphics.newImage("assets/menu/keyboard_directions.png")
 local IMG_KEYACTION = love.graphics.newImage("assets/menu/keyboard_action.png")
 
-
 local angle, cos, sin = 0, 0, 0
 
 function state:update(dt)
