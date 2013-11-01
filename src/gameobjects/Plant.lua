@@ -96,10 +96,13 @@ function Plant:die()
 end
 
 function Plant:takeDamage(amount, attacker, ignoreArmour)
-	self.hitpoints = self.hitpoints - amount --/(1 + useful.tri(ignoreArmour, 0, self.ARMOUR))
+
+	self.hitpoints = self.hitpoints - amount/useful.tri(ignoreArmour, 1, self.ARMOUR)
+
 	if self.tile then
 		self.tile.energy = math.max(0, self.tile.energy - amount*0.1)
 	end
+
 	self.time_since_last_damage = 0
 	if self.hitpoints < 0 then
 		self.purge = true
@@ -171,7 +174,6 @@ function Plant:draw()
     		love.graphics.line(self.x - 14, self.y + 26, self.x + 14, self.y + 26)
     	love.graphics.setColor(25, 255, 50, a)
     	love.graphics.setLineWidth(4 + panic*3)
-    		-- useful.arc(self.x, self.y, 20, math.pi*1.25, math.pi*(1.25 - 1.5*self.hitpoints), 15)
     		love.graphics.line(self.x - 16, self.y + 24, self.x - 16 + 32*self.hitpoints, self.y + 24)
 
 		love.graphics.setColor(255, 255, 255)
@@ -227,7 +229,7 @@ function Plant:update(dt)
 		-- On acidic territory
 		elseif (self.tile.acidity > 0) then
 
-			self:takeDamage(self.tile.acidity*0.1*dt, nil, true) --no attack, ignore armour
+			self:takeDamage(self.tile.acidity*0.1*dt, false, true) --no attacker, ignore armour
 
 		else
 			-- Not stunned ?
@@ -242,9 +244,9 @@ function Plant:update(dt)
 			  -- -- Regenerate ------------------------------------------------------
 			  if self.time_since_last_damage > 3 then
 			  	self.hitpoints = math.min(1, self.hitpoints + self.REGEN_SPEED*dt)
-		  	else
+			  else
 		  		self.time_since_last_damage = self.time_since_last_damage + dt
-		  	end
+			  end
 
 			  -- Store energy not consume by regeneration ------------------------
 			  if drawn_energy + self.energy > 1 then

@@ -85,7 +85,7 @@ Turret.IMAGES =
   {
     love.graphics.newImage("assets/red_tower_1.png"),
     love.graphics.newImage("assets/red_tower_2.png"),
-    projectile = love.graphics.newImage("assets/BLUE_attack.png")
+    projectile = love.graphics.newImage("assets/RED_attack.png")
   },
   {
     love.graphics.newImage("assets/blue_tower_1.png"),
@@ -95,12 +95,12 @@ Turret.IMAGES =
   {
     love.graphics.newImage("assets/yellow_tower_1.png"),
     love.graphics.newImage("assets/yellow_tower_2.png"),
-    projectile = love.graphics.newImage("assets/BLUE_attack.png")
+    projectile = love.graphics.newImage("assets/YELLOW_attack.png")
   },
   {
     love.graphics.newImage("assets/purple_tower_1.png"),
     love.graphics.newImage("assets/purple_tower_2.png"),
-    projectile = love.graphics.newImage("assets/BLUE_attack.png")
+    projectile = love.graphics.newImage("assets/PURPLE_attack.png")
   }
 }
 
@@ -123,9 +123,10 @@ function Turret:die()
   audio:play_sound("KNIGHT-destroyed")
 end
 
-function Turret:takeDamage(amount, attacker)
-  Plant.takeDamage(self, amount, attacker)
-  if not self.aggro then
+function Turret:takeDamage(amount, attacker, ignoreArmour)
+  Plant.takeDamage(self, amount, attacker, ignoreArmour)
+
+  if attacker and (not self.aggro) then
     self.aggro = attacker
   end
 end
