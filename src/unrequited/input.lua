@@ -39,26 +39,11 @@ function input:reset()
 	  		if self.gamepad then return end
 
 	  		-- convert button name
+	  		local altButtonName = self.keyname["alt" .. buttonName]
 	  		buttonName = self.keyname[buttonName]
 
-	  		-- if it's a letter, draw it
-	  		if (string.len(buttonName) == 1) then
-	  			-- take layouts into account
-	  			if language[current_language].keyboard_layout == "azerty" then
-	  				if buttonName == "a" then 
-	  					buttonName = "q" 
-	  				elseif buttonName == "w" then 
-	  					buttonName = "z" 	
-	  				end
-	  			end
-	  			-- just print the letter
-	  			love.graphics.setColor(love.graphics.getBackgroundColor())
-	  				useful.printf(buttonName, x+2, y+2)
-	  			love.graphics.setColor(255, 255, 255)
-	  				useful.printf(buttonName, x-2, y-2)
-
 	  		-- up, down, left, right
-	  		elseif (buttonName == "up") 
+	  		if (buttonName == "up") 
   			or (buttonName == "down") 
   			or (buttonName == "left") 
   			or (buttonName == "right") then
@@ -68,15 +53,45 @@ function input:reset()
   				if (buttonName == "right") then angle = -math.pi*0.5 end
   				local im, imw, imh = Plant.ICON_PICKUP, Plant.ICON_PICKUP:getWidth()*0.5, Plant.ICON_PICKUP:getHeight()*0.5
   				love.graphics.setColor(love.graphics.getBackgroundColor())
-  					scaled_draw(im, x+2, y-46, angle, 0.4, 0.4, imw, imh)
+  					scaled_draw(im, x+2, y-16, angle, 0.4, 0.4, imw, imh)
 				love.graphics.setColor(255, 255, 255)
-  					scaled_draw(im, x-2, y-50, angle, 0.4, 0.4, imw, imh)
+  					scaled_draw(im, x-2, y-20, angle, 0.4, 0.4, imw, imh)
 
-	  		end	
+	  		-- anything else
+	  		else
+		  		-- if it's a letter take layouts into account
+		  		if (string.len(buttonName) == 1) then
+		  			if (language[current_language].keyboard_layout == "azerty") then
+		  				if buttonName == "a" then 
+		  					buttonName = "q" 
+		  				elseif buttonName == "w" then 
+		  					buttonName = "z" 	
+		  				end
+	  				end
+  				end
+
+	  			-- print button name and alt button name
+	  			if (string.len(buttonName) > 1) and altButtonName then
+		  			love.graphics.setColor(love.graphics.getBackgroundColor())
+		  				useful.printf(buttonName, x+2, y+2 - 16 + (1-SCALE_MIN)*60)
+		  			love.graphics.setColor(255, 255, 255)
+		  				useful.printf(buttonName, x-2, y-2 - 16 + (1-SCALE_MIN)*60)
+
+		  			love.graphics.setColor(love.graphics.getBackgroundColor())
+		  				useful.printf(altButtonName, x+2, y+2 + 20 + (1-SCALE_MIN)*60)
+		  			love.graphics.setColor(255, 255, 255)
+		  				useful.printf(altButtonName, x-2, y-2 + 20 + (1-SCALE_MIN)*60)
+	  			-- just print the button name
+	  			else
+		  			love.graphics.setColor(love.graphics.getBackgroundColor())
+		  				useful.printf(buttonName, x+2, y+2 + (1-SCALE_MIN)*60)
+		  			love.graphics.setColor(255, 255, 255)
+		  				useful.printf(buttonName, x-2, y-2 + (1-SCALE_MIN)*60)
+	  			end
+			end
 		end
 	  }
-	end
-
+  	end
 
 	-- gamepads 
 	for i = 1, self.n_pads do
@@ -95,8 +110,8 @@ function input:reset()
 		inp.keyname.right = "right"
 		inp.keyname.up = "up"
 		inp.keyname.down = "down" 
-		inp.keyname.confirm = "lctrl" 
-			inp.keyname.altconfirm = "lshift"
+		inp.keyname.confirm = "rctrl" 
+			inp.keyname.altconfirm = "rshift"
 	end
 
 	-- keyboard 2

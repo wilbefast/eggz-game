@@ -68,13 +68,13 @@ function state:draw()
 
   -- row headers ("move" and "action")
   love.graphics.setFont(FONT_NORMAL)
-  useful.printf("movement", w*0.2, h*0.45)
-  useful.printf("action", w*0.2, h*0.8)
+  useful.printf("movement", w*0.2, h*0.4)
+  useful.printf("action", w*0.2, h*0.83)
 
   -- controls for each player
   love.graphics.setFont(FONT_SMALL)
   for i = 1, MAX_PLAYERS do
-    local x, y = w*(0.4 + (i-1)*0.15), h*0.35
+    local x, y, y2 = w*(0.4 + (i-1)*0.15), h*0.35, h*0.8
 
     if input[i].gamepad then
       -- gamepad outline
@@ -83,12 +83,17 @@ function state:draw()
       -- keyboard outline
       player[i].bindTeamColour()
         scaled_draw(IMG_KEYDIRS, x, y, 0, 1.2, 1.2, IMG_KEYDIRS:getWidth()*0.5, IMG_KEYDIRS:getHeight()*0.5)
-      -- keyboard buttons
+        scaled_draw(IMG_KEYACTION, x, y2, 0, 1.2, 1.2, IMG_KEYACTION:getWidth()*0.5, IMG_KEYACTION:getHeight()*0.5)
+
+      -- keyboard directional buttons
       love.graphics.setColor(255, 255, 255)
-        input[i]:drawButton("up", x, y+30)
-        input[i]:drawButton("left", x-40, y+70)
-        input[i]:drawButton("down", x, y+70)
-        input[i]:drawButton("right", x+40, y+70)
+        input[i]:drawButton("up", x, y)
+        input[i]:drawButton("left", x-40, y+40)
+        input[i]:drawButton("down", x, y+40)
+        input[i]:drawButton("right", x+40, y+40)
+
+      -- keyboard action button
+      input[i]:drawButton("confirm", x, y2+20)
     end
   end
 
