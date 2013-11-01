@@ -246,8 +246,25 @@ end
 
 function Turret:draw_projectile()
   local projectNearness, projectileFarness = (1 - self.projectileProgress), self.projectileProgress
-  local x = self.tile.x*projectNearness + (self.targetTile.x)*projectileFarness
-  local y = self.tile.y*projectNearness + (self.targetTile.y)*projectileFarness - 20
+  local targetX, targetY = self.targetTile.x, self.targetTile.y
+
+  -- lap around X
+  if targetX < (self.tile.x - game.grid.tilew) then
+    targetX = targetX + (game.grid.tilew*game.grid.w)
+  elseif targetX > (self.tile.x + game.grid.tilew) then
+    targetX = targetX - (game.grid.tilew*game.grid.w)
+  end
+
+  -- lap around Y
+  if targetY < (self.tile.y - game.grid.tileh) then
+    targetY = targetY + (game.grid.tileh*game.grid.h)
+  elseif targetY > (self.tile.y + game.grid.tileh) then
+    targetY = targetY - (game.grid.tileh*game.grid.h)
+  end
+
+  -- draw projectile
+  local x = self.tile.x*projectNearness + targetX*projectileFarness
+  local y = self.tile.y*projectNearness + targetY*projectileFarness - 20
   Turret.ANIMATIONS[self.player].projectile:draw(x, y)
 end
 

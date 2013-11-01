@@ -55,7 +55,7 @@ function state:enter()
   self:reset_winning()
 	
   -- log percents
-  self.gamelog = { highest = 0, total_time = 0, time_till_next = 10, period = 3*n_players, animation = 0 }
+  self.gamelog = { highest = 0, total_time = 0, time_till_next = 10, period = 5*n_players, animation = 0 }
 
 	-- not pause (yet)
 	self.pause = false
