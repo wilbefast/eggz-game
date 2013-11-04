@@ -305,6 +305,9 @@ function love.update(dt)
   if love.joystick.getNumJoysticks() ~= input.n_pads then
     input:reset()
   end
+
+  -- collect garbage
+  collectgarbage("collect")
 end
 
 function love.draw()
