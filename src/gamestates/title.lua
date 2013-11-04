@@ -88,6 +88,13 @@ function state:update(dt)
     -- confirm or cancel
     if (input[i].start.trigger == 1) or (input[i].confirm.trigger == 1) then
       accept()
+    elseif (input[i].cancel.trigger == 1) then
+      local quit_i = #(language[1].title)
+      if current_button == quit_i then
+        love.event.push("quit")
+      else
+        current_button = quit_i
+      end
     end
   end
 

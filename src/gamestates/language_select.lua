@@ -63,7 +63,7 @@ function state:update(dt)
       self.controlling_player = i
     end
     -- confirm
-    if (input[i].start.trigger == 1) or (input[i].confirm.trigger == 1) then
+    if (input[i].start.trigger == 1) or (input[i].confirm.trigger == 1) or (input[i].cancel.trigger == 1) then
       GameState.switch(title)
     end
   end

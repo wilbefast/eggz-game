@@ -19,7 +19,15 @@ CREDITS GAMESTATE
 
 local state = GameState.new()
 
+local angle, cos, sin = 0, 0, 0
+
 function state:update(dt)
+  angle = angle + dt
+  if angle > 2*math.pi then
+    angle = angle - 2*math.pi
+  end
+  cos, sin = math.cos(angle), math.sin(angle)
+
   for i = 1, MAX_PLAYERS do
     if (input[i].cancel.trigger == 1) or (input[i].start.trigger == 1) or
     (input[i].confirm.trigger == 1) then
@@ -40,8 +48,6 @@ end
 function state:leave()
   audio:play_sound("EGG-drop")
 end
-
-local angle, cos, sin = 0, 0, 0
 
 function state:draw()
   
@@ -64,14 +70,6 @@ function state:draw()
   love.graphics.setFont(FONT_SMALL)
   useful.printf(language[current_language].credits[1].who, w*0.7, h*0.37)
   useful.printf(language[current_language].credits[2].who, w*0.7 , h*0.67)
-end
-
-function state:update(dt)
-  angle = angle + dt
-  if angle > 2*math.pi then
-    angle = angle - 2*math.pi
-  end
-  cos, sin = math.cos(angle), math.sin(angle)
 end
 
 
