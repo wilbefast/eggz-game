@@ -97,7 +97,7 @@ end
 
 function Plant:takeDamage(amount, attacker, ignoreArmour)
 
-	self.hitpoints = self.hitpoints - amount/useful.tri(ignoreArmour, 1, self.ARMOUR)
+	self.hitpoints = self.hitpoints - amount/useful.tri(ignoreArmour, 1, (self.ARMOUR + 1))
 
 	if self.tile then
 		self.tile.energy = math.max(0, self.tile.energy - amount*0.1)
