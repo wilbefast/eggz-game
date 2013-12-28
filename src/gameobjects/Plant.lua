@@ -27,6 +27,7 @@ local Plant = Class
   -- defaults
   REGEN_SPEED = 0.1,
   REGEN_EFFICIENCY = 0.1,
+  ACID_DAMAGE = 0.4,
   maturationTime = 1,
   time_since_last_damage = 999,
 
@@ -96,6 +97,10 @@ function Plant:die()
 end
 
 function Plant:takeDamage(amount, attacker, ignoreArmour)
+
+	if self.invulnerable then
+		return
+	end
 
 	self.hitpoints = self.hitpoints - amount/useful.tri(ignoreArmour, 1, (self.ARMOUR + 1))
 
@@ -229,7 +234,7 @@ function Plant:update(dt)
 		-- On acidic territory
 		elseif (self.tile.acidity > 0) then
 
-			self:takeDamage(self.tile.acidity*0.1*dt, false, true) --no attacker, ignore armour
+			self:takeDamage(self.tile.acidity*self.ACID_DAMAGE*dt, false, true) --no attacker, ignore armour
 
 		else
 			-- Not stunned ?

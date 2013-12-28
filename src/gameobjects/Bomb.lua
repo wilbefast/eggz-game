@@ -31,6 +31,8 @@ local Bomb = Class
   MAX_W = 24,
   MAX_H = 24,
 
+  invulnerable = true,
+
   maturationTime = 16, -- seconds
 
   uses = 3,
@@ -50,6 +52,13 @@ Bomb.IMAGES =
 {
   love.graphics.newImage("assets/BOMB.png"),
   love.graphics.newImage("assets/BOMB-carry.png")
+}
+
+Bomb.QUADS = 
+{
+  love.graphics.newQuad(0, 0, 64, 64, Bomb.IMAGES[1]:getWidth(), Bomb.IMAGES[1]:getHeight()),
+  love.graphics.newQuad(64, 0, 64, 64, Bomb.IMAGES[1]:getWidth(), Bomb.IMAGES[1]:getHeight()),
+  love.graphics.newQuad(128, 0, 64, 64, Bomb.IMAGES[1]:getWidth(), Bomb.IMAGES[1]:getHeight())
 }
 
 Bomb.EXPLODE_IMG = love.graphics.newImage("assets/FX-bomb.png")
@@ -86,11 +95,10 @@ function Bomb:drop(tile)
     SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
 
     -- audio queue
-    log:write("DROP")
     audio:play_sound("BOMB-dropped", 0.1)
 
     -- apply effect to the tile
-    tile.acidity = 1
+    tile.acidity = 0.33
 
   else
     Plant.plant(self, tile)
@@ -108,7 +116,7 @@ function Bomb:draw(x, y)
   if self.transport then
     return
   end
-  love.graphics.draw(Bomb.IMAGES[1], x, y,
+  love.graphics.draw(Bomb.IMAGES[1], Bomb.QUADS[Bomb.uses - self.uses + 1], x, y,
     0, 1, 1, 32, 40)
 
   -- draw overlay
@@ -117,7 +125,7 @@ end
 
 function Bomb:drawTransported(x, y)
   x, y = x or self.x, y or self.y
-  love.graphics.draw(Bomb.IMAGES[2], x, y,
+  love.graphics.draw(Bomb.IMAGES[2], Bomb.QUADS[Bomb.uses - self.uses + 1], x, y,
     0, 1, 1, 24, 64)
 end
 

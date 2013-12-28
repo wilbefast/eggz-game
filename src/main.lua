@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false -- DOESN'T WORK AT THE MOMENT!
+DEBUG = false
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
@@ -195,7 +195,11 @@ local function setBestResolution()
   for i, m in ipairs(modes) do
     
     if DEBUG then
-      m = modes[#modes - 1]
+      if #modes > 1 then
+        m = modes[#modes - 1]
+      else
+        m = { width = 640, height = 480 }
+      end
     end
     
     -- try to set the resolution

@@ -100,7 +100,7 @@ function Tile:drawOverlay(x, y)
 
 	-- draw acid burn
 	if self.acidity > 0 then
-		love.graphics.setColor(255, 255, 255, self.acidity*255)
+		love.graphics.setColor(255, 255, 255, math.min(1, 10*self.acidity*self.acidity)*255)
 			self.acidView:draw(self)
 		love.graphics.setColor(255, 255, 255)
 	end
@@ -153,10 +153,6 @@ function Tile:draw(x, y, forceDrawOccupant)
   -- force draw occupants if needed
 	if forceDrawOccupant and self.occupant then
 		self.occupant:draw(x + self.w/2, y + self.h/2)
-	end
-
-	if self.BURNT then
-		love.graphics.print(tostring(self.acidity), self.x, self.y+16)
 	end
 end
 
