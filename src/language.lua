@@ -46,7 +46,7 @@ language[1] =
 	{ 
 		title = "Creggits", 
 		{ what = "Design and programming", who = "William 'Wilbefast' Dyce" },
-		{ what = "Graphics and sound", who = "Barth 'Nyrlem' Frey" }
+		{ what = "Graphics and sound", who = "Barth 'Nylrem' Frey" }
 	},
 	player_select =
 	{
@@ -98,7 +98,7 @@ language[2] =
 	{ 
 		title = "Credits", 
 		{ what = "Concept et development", who = "William 'Wilbefast' Dyce" },
-		{ what = "Graphismes et son", who = "Barth 'Nyrlem' Frey" }
+		{ what = "Graphismes et son", who = "Barth 'Nylrem' Frey" }
 	},
 	player_select =
 	{
