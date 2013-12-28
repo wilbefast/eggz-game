@@ -112,46 +112,54 @@ function CollisionGrid:update(dt)
     player[i].total_conversion = 0
   end
 
+  -- count the number of non-rock tiles
+  local total_tiles = 0
+
   -- update tiles
   for x = 1, self.w do
     for y = 1, self.h do
       local t = self.tiles[x][y]
+      if not t.isRock then
 
-      function allied(t1, t2)
-        return ((t1.owner == t2.owner) and (t1.conversion > 0.1) and (t2.conversion > 0.1))
-      end
+        -- function to determine if two tiles are allied
+        function allied(t1, t2)
+          return ((t1.owner == t2.owner) and (t1.conversion > 0.1) and (t2.conversion > 0.1))
+        end
 
-      -- wrap around
-      local left = useful.tri(x > 1, x-1, self.w)
-      local right = useful.tri(x < self.w, x+1, 1)
-      local above = useful.tri(y > 1, y-1, self.h)
-      local below = useful.tri(y < self.h, y+1, 1)
+        -- don't count rocks
+        total_tiles = total_tiles + 1
 
-      -- check tile neighbours for territory contour drawing
-      t.leftContiguous = allied(self.tiles[left][y], t)
-      t.nwContiguous = allied(self.tiles[left][above], t)
-      t.swContiguous = allied(self.tiles[left][below], t)
-      t.rightContiguous = allied(self.tiles[right][y], t)
-      t.neContiguous = allied(self.tiles[right][above], t)
-      t.seContiguous = allied(self.tiles[right][below], t)
-      t.aboveContiguous = allied(self.tiles[x][above], t)
-      t.belowContiguous = allied(self.tiles[x][below], t)
-    
-      -- update the tile
-      t:update(dt, self.total_energy)
+        -- wrap around
+        local left = useful.tri(x > 1, x-1, self.w)
+        local right = useful.tri(x < self.w, x+1, 1)
+        local above = useful.tri(y > 1, y-1, self.h)
+        local below = useful.tri(y < self.h, y+1, 1)
 
-      -- add energy to total (to determine growth next turn)
-      new_total_energy = new_total_energy + t.energy
+        -- check tile neighbours for territory contour drawing
+        t.leftContiguous = allied(self.tiles[left][y], t)
+        t.nwContiguous = allied(self.tiles[left][above], t)
+        t.swContiguous = allied(self.tiles[left][below], t)
+        t.rightContiguous = allied(self.tiles[right][y], t)
+        t.neContiguous = allied(self.tiles[right][above], t)
+        t.seContiguous = allied(self.tiles[right][below], t)
+        t.aboveContiguous = allied(self.tiles[x][above], t)
+        t.belowContiguous = allied(self.tiles[x][below], t)
+      
+        -- update the tile
+        t:update(dt, self.total_energy)
 
-      -- award the "point" to the owner if control is over 0.5
-      if t.conversion > 0.5 then
-        player[t.owner].total_conversion = player[t.owner].total_conversion + 1
+        -- add energy to total (to determine growth next turn)
+        new_total_energy = new_total_energy + t.energy
+
+        -- award the "point" to the owner if control is over 0.5
+        if t.conversion > 0.5 then
+          player[t.owner].total_conversion = player[t.owner].total_conversion + 1
+        end
       end
     end
   end
 
   -- normalise total conversion
-  local total_tiles = self.w*self.h
   for i = 1, MAX_PLAYERS do 
     player[i].total_conversion = player[i].total_conversion / total_tiles
   end
@@ -180,13 +188,14 @@ function CollisionGrid:draw(view)
   -- draw tile backgrond images
   -- ... for each column ...
   for x = start_x, end_x do
+    -- ... copy the bottom tile at the top
+    self.tiles[x][end_y]:draw(_, (start_y-2)*self.tileh, true)
     -- ... for each row ...
     for y = start_y, end_y do
       -- draw the 'normal' versions of the tiles (ie. not 'lapping')
       self.tiles[x][y]:draw()
     end
-    -- ... copy the bottom tile at the top and vice-versa
-    self.tiles[x][end_y]:draw(_, (start_y-2)*self.tileh, true)
+    -- ... copy the top tile at the bottom
     self.tiles[x][start_y]:draw(_, (end_y)*self.tileh, true)
   end
   -- ... for each row ...

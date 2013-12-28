@@ -89,7 +89,9 @@ function Convertor:update(dt)
 
     -- convert surrounding area
     for _, tile in pairs(self.convertArea) do
-      tile:convert(3*dt*(1/#self.convertArea), self.player)
+      if not tile.isRock then
+        tile:convert(3*dt*(1/#self.convertArea), self.player)
+      end
     end
 
     -- convert center tile faster

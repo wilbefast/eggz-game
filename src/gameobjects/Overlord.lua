@@ -171,6 +171,11 @@ function Overlord:canPlant()
   if self.skip_next_grab then
     return false
 
+  -- can't plant on rocks
+  elseif self.tile.isRock then
+    return false
+
+  -- can't plant on enemy territory
   elseif self:enemyTerritory() then
     return false
 
@@ -510,31 +515,35 @@ end
 
 function Overlord:draw_radial_menu(x, y)
 
-  x, y = (x or self.x), (y or self.y)
-
   if self.radial_menu > 0 then
+    x, y = (x or self.x), (y or self.y)
+
     love.graphics.setColor(255, 255, 255, self.radial_menu*255)
 
     function drawRadial(dx, dy, i)
       if self.evolvee.EVOLUTION[i] then
-        local image
+        local image, scale
         if i == self.radial_menu_choice then
+          scale = 1.1
           image = self.evolvee.EVOLUTION_ICONS[i][2]
           love.graphics.draw(self.RADIAL_HL, x + dx, y + dy, 0, scale, scale, 32, 32)
         else
+          scale = 0.9
           image = self.evolvee.EVOLUTION_ICONS[i][1]
         end
         love.graphics.draw(image, x + dx, y + dy, 
-                            0, self.radial_menu, self.radial_menu, 18, 18)
+                            0, self.radial_menu*scale, self.radial_menu*scale, 18, 18)
       end
     end
 
     drawRadial(self.radial_menu*64, 0, 1)
     drawRadial(0, -self.radial_menu*64, 2)
     drawRadial(-self.radial_menu*64, 0, 3)
+
+    love.graphics.setColor(255, 255, 255)
   end
 
-  love.graphics.setColor(255, 255, 255)
+  
 end
 
 function Overlord.draw_static(x, y, team)

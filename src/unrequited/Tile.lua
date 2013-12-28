@@ -30,24 +30,28 @@ Initialisation
 
 local Tile = Class
 {
-		REGROWTH_SPEED = 0.05,
+	REGROWTH_SPEED = 0.05,
 
-		MAX_REGROWTH_PER_SECOND = 1,
+	MAX_REGROWTH_PER_SECOND = 1,
 
-		ACID_DECAY = 0.9,
+	ACID_DECAY = 0.9,
 
-		acidity = 0,
+	acidity = 0,
 
-		init = function(self, i, j, w, h)
-			self.i, self.j = i, j
-			self.x, self.y, self.w, self.h = (i-1)*w, (j-1)*h, w, h
-			self.energy = math.random()
+	init = function(self, i, j, w, h)
+		self.i, self.j = i, j
+		self.x, self.y, self.w, self.h = (i-1)*w, (j-1)*h, w, h
+		self.energy = math.random()
 
-			self.owner = 0
-			self.conversion = 0 
-			self.non_mans_land = true
-			self.acidView = AnimationView(Tile.ANIM_ACID, 5, 1, 0, 20)
+		self.owner = 0
+		self.conversion = 0 
+		self.non_mans_land = true
+		self.acidView = AnimationView(Tile.ANIM_ACID, 5, 1, 0, 20)
+
+		if math.random() < 1/(n_players*n_players) then
+			self.isRock = true
 		end
+	end
 }
 
 
@@ -62,6 +66,8 @@ end
 
 Tile.IMG_ACID = love.graphics.newImage("assets/acid.png")
 Tile.ANIM_ACID = Animation(Tile.IMG_ACID, 64, 64, 5, 0, 0)
+
+Tile.IMG_ROCK = love.graphics.newImage("assets/tiles/rock.png")
 
 --[[------------------------------------------------------------
 Conversion
@@ -110,9 +116,14 @@ function Tile:draw(x, y, forceDrawOccupant)
 
 	x, y = x or self.x, y or self.y
 
-	-- draw grass on tiles
-	local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
-	love.graphics.draw(Tile.IMAGES[subimage], x, y)
+	if not self.isRock then
+		-- draw grass on tile
+		local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
+		love.graphics.draw(Tile.IMAGES[subimage], x, y)
+	else
+		-- draw rock on tile
+		love.graphics.draw(Tile.IMG_ROCK, x, y - 32)
+	end
 
 	-- draw overlay if empty
 	if not self.occupant then
