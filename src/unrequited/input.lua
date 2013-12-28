@@ -14,6 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 --]]
 
+
 local IMG_KEYARROW = love.graphics.newImage("assets/menu/keyboard_arrow.png")
 
 local input = {}
@@ -99,11 +100,11 @@ function input:reset()
 	-- gamepads 
 	for i = 1, self.n_pads do
 		local inp = self[i]
-		inp.keyConfirm = function () return inp.gamepad:isDown(1) end
-		inp.keyCancel = function () return inp.gamepad:isDown(2) end
-		inp.keyWest = function () return inp.gamepad:isDown(3) end
-		inp.keyNorth = function () return inp.gamepad:isDown(4) end
-		inp.keyStart = function () return inp.gamepad:isDown(1) end -- FIXME
+		inp.keyConfirm = function () return inp.gamepad:isDown(1 - 1) end
+		inp.keyCancel = function () return inp.gamepad:isDown(2 - 1) end
+		inp.keyWest = function () return inp.gamepad:isDown(3 - 1) end
+		inp.keyNorth = function () return inp.gamepad:isDown(4 - 1) end
+		inp.keyStart = function () return inp.gamepad:isDown(1 - 1) end -- FIXME
 	end
 
 	-- keyboard 1

@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = false
+DEBUG = false -- DOESN'T WORK AT THE MOMENT!
 
 CHEATS = DEBUG
 MAX_PLAYERS = 4
