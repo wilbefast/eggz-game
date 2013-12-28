@@ -143,6 +143,10 @@ function Overlord:canEvolve()
   elseif not self.tile.occupant:canEvolve() then
     return false
 
+  -- can't evolve your own plants if they're on enemy territory
+  elseif self:enemyTerritory() then
+    return false
+
   -- all good otherwise
   else
     return true
@@ -282,7 +286,7 @@ function Overlord:update(dt)
     self.dy = self.dy + inp.y*dt*acceleration
 
   -- Radial menu --------------------------------------------------------------
-  else -- self.z == self.z > 0
+  else -- self.z == 0
     self.dx, self.dx = 0, 0
 
     self.desired_dx, self.desired_dy = 0, 0
@@ -378,9 +382,7 @@ function Overlord:update(dt)
   if inp.confirm.pressed and self:canLand() then
     self.z = math.max(0, self.z - dt*10)
     if (self.z == 0) 
-    and self.tile.occupant 
-    and (self.tile.occupant.player == self.player)
-    and (self.tile.occupant:canEvolve()) then
+    and self:canEvolve() then
       -- Open radial menu
       self.evolvee = self.tile.occupant
       self.radial_menu = math.min(1, self.radial_menu + dt*6)
