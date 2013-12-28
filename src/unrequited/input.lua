@@ -15,7 +15,8 @@ Lesser General Public License for more details.
 --]]
 
 
-local n_pads = love.joystick.getNumJoysticks()
+local n_pads = love.joystick.getJoystickCount()
+local pads = love.joystick.getJoysticks()
 
 local input = {}
 for i = 1, MAX_PLAYERS do
@@ -28,16 +29,17 @@ for i = 1, MAX_PLAYERS do
   	start = { pressed = false, previous = false, trigger = 0 },
   	cancel = { pressed = false, previous = false, trigger = 0 },
 
-  	gamepad = (n_pads >= i)
+  	gamepad = pads[i]
   }
 end
 
 for i = 1, n_pads do
-	input[i].keyConfirm = function () return love.joystick.isDown(i, 1) end
-	input[i].keyCancel = function () return love.joystick.isDown(i, 2) end
-	input[i].keyWest = function () return love.joystick.isDown(i, 3) end
-	input[i].keyNorth = function () return love.joystick.isDown(i, 4) end
-	input[i].keyStart = function () return love.joystick.isDown(i, 1) end -- FIXME
+	local gamepad = input[i].gamepad
+	input[i].keyConfirm = function () return gamepad:isDown(1) end
+	input[i].keyCancel = function () return gamepad:isDown(2) end
+	input[i].keyWest = function () return gamepad:isDown(3) end
+	input[i].keyNorth = function () return gamepad:isDown(4) end
+	input[i].keyStart = function () return gamepad:isDown(1) end -- FIXME
 end
 
 if n_pads < MAX_PLAYERS then
@@ -102,11 +104,11 @@ function input:update(dt, bink)
 		local p = self[i]
 		
 		if p.gamepad then
-			p.x = love.joystick.getAxis(i, 1)
+			p.x = p.gamepad:getAxis(1)
 			if math.abs(p.x) < 0.5 then
 				p.x = 0
 			end
-			p.y = love.joystick.getAxis(i, 2)
+			p.y = p.gamepad:getAxis(2)
 			if math.abs(p.y) < 0.5 then
 				p.y = 0
 			end

@@ -142,13 +142,13 @@ LOVE CALLBACKS
 function love.load(arg)
     
   -- set up the screen resolution
-  local modes = love.graphics.getModes()
+  local modes = love.window.getFullscreenModes()
   local success = false
   table.sort(modes, function(a, b) 
     return (a.width*a.height > b.width*b.height) end)
   for i, m in ipairs(modes) do
     -- try to set the resolution
-    if love.graphics.setMode(m.width, m.height, (not DEBUG)) then
+    if love.window.setMode(m.width, m.height, { fullscreen = (not DEBUG) }) then
       success = true
       break
     end
@@ -165,7 +165,7 @@ function love.load(arg)
   love.mouse.setVisible(false)
 
   -- window title
-  love.graphics.setCaption("Eggz")
+  love.window.setTitle("Eggz")
   
   -- window icon
   --love.graphics.setIcon()  
