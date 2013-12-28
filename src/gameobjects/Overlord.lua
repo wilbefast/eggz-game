@@ -531,23 +531,17 @@ function Overlord:draw_radial_menu(x, y)
     drawRadial(0, -self.radial_menu*64, 2)
     drawRadial(-self.radial_menu*64, 0, 3)
   end
-end
 
-function Overlord:draw_icon(x, y)
-	x, y = (x or self.x), (y or self.y)
-
-	player[self.player].bindTeamColour()
-		love.graphics.draw(Overlord.IDLE, x, y - self.h/2*self.z, 0, 1, 1, 42, 86)
-	love.graphics.setColor(255, 255, 255)
-		love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3, 
-																			y - (2.2 + 0.5*self.z)*self.h)
+  love.graphics.setColor(255, 255, 255)
 end
 
 function Overlord.draw_static(x, y, team)
+  x, y = (x or self.x), (y or self.y)
+
   player[team].bindTeamColour()
-    love.graphics.draw(Overlord.IDLE, x, y, 0, 1, 1, 47, 47)
+    scaled_draw(Overlord.IDLE, x, y, 0, 1, 1, 47, 47)
   love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3, 
+    scaled_draw(Overlord.EYES, x - Overlord.EYES:getWidth()/2 + 3, 
                                       y - 31)
 end
 

@@ -30,7 +30,6 @@ function state:reset_winning()
 end
 
 function state:enter()
-
   GameObject.INSTANCES = { }
   GameObject.NEW_INSTANCES = { }
 
@@ -45,6 +44,7 @@ function state:enter()
 
   -- point camera at centre of collision-grid
   self.camera = Camera(0, 0)
+  self.camera:zoomTo(SCALE_MIN)
   self.camera:lookAt(self.grid:centrePixel())
 
   -- not victory (yet)
@@ -55,7 +55,7 @@ function state:enter()
   self:reset_winning()
 	
   -- log percents
-  self.gamelog = { highest = 0, total_time = 0, time_till_next = 3, period = 3, animation = 0 }
+  self.gamelog = { highest = 0, total_time = 0, time_till_next = 10, period = 5*n_players, animation = 0 }
 
 	-- not pause (yet)
 	self.pause = false
@@ -109,7 +109,11 @@ function state:update(dt)
 
 		-- check for pause key
 		if input[i].cancel.trigger == 1 then
-			self.pause = (not self.pause)
+      if not self.pause then
+        self.pause = true
+      else
+        GameState.switch(player_select)
+      end
       break -- multiple player have the same cancel key 
 		end
 		
@@ -193,11 +197,13 @@ end
 
 function state:draw()
 
-	local gw, gh = love.graphics.getWidth(), love.graphics.getHeight()
-	local w, h = self.grid.w*self.grid.tilew, self.grid.h*self.grid.tileh
-	local x, y = (gw - w)/2, (gh - h)/2
+  -- cache
+  local tw, th = self.grid.tilew, self.grid.tileh
+	local w, h = self.grid.w*tw, self.grid.h*th
 
+  -- !!!
 	self.camera:attach()
+  -- !!!
 
     -- game objects
 		self.grid:draw()
@@ -227,7 +233,7 @@ function state:draw()
       -- dark overlay
       local r, g, b = love.graphics.getBackgroundColor()
       love.graphics.setColor(r, g, b, 200)
-        love.graphics.rectangle("fill", -self.grid.tilew, -self.grid.tileh, gw, gh)
+        love.graphics.rectangle("fill", -tw, -th, w+2*tw, h+2*th)
       love.graphics.setColor(255, 255, 255)
 
       -- PAUSED - draw 'paused' text
@@ -242,23 +248,27 @@ function state:draw()
 	self.camera:detach()
   --- !!!
 
-
   -- borders 
-  local tw, th = self.grid.tilew, self.grid.tileh
+  local gw, gh = love.graphics.getWidth(), love.graphics.getHeight() 
+  local stw, sth = tw*SCALE_MIN, th*SCALE_MIN
+  local sw, sh = w*SCALE_MIN, h*SCALE_MIN
+  local x, y = (gw - sw)*0.5, (gh - sh)*0.5
+
   love.graphics.setColor(getBackgroundColorWithAlpha(255))
     -- left
-    love.graphics.rectangle("fill", 0, 0, x-tw, gh)
-    love.graphics.draw(IMG_GRADIENT, x-tw, y-th, 0, tw, h+2*th)
+    love.graphics.rectangle("fill", 0, 0, x - stw, gh)
+    love.graphics.draw(IMG_GRADIENT, x - stw, y - sth, 0, stw, h + 2*sth)
     -- right
-    love.graphics.rectangle("fill", x+w+tw, 0, gw-x-w-tw, gh)
-    love.graphics.draw(IMG_GRADIENT, x+w+tw, y-th, 0, -tw, h+2*th)
+    love.graphics.rectangle("fill", x + sw + stw, 0, gw - x - sw - stw, gw)
+    love.graphics.draw(IMG_GRADIENT, x + sw + stw, y - sth, 0, -stw, sh + 2*sth)
     -- top
-    love.graphics.rectangle("fill", x-tw, 0, w+2*tw, y-th)
-    love.graphics.draw(IMG_GRADIENT, x-tw, y-th, math.pi/2, tw, -w-2*tw)
+    love.graphics.rectangle("fill", x - stw, 0, w + 2*stw, y - sth)
+    love.graphics.draw(IMG_GRADIENT, x - stw, y - sth, math.pi/2, stw, -w - 2*stw)
     -- bottom
-    love.graphics.rectangle("fill", x, y+h+th, w, gh-y-h-th)
-    love.graphics.draw(IMG_GRADIENT, x-tw, y+h+th,  -math.pi/2, tw, w+2*tw)
+    love.graphics.rectangle("fill", x, y + sh + sth, sw, gh - y - sh + sth)
+    love.graphics.draw(IMG_GRADIENT, x-stw, y + sh + sth,  -math.pi/2, stw, sw + 2*stw)
     
+  -- reset colour
   love.graphics.setColor(255, 255, 255, 255)
 
 
@@ -266,45 +276,15 @@ function state:draw()
   self.camera:attach()
   --- !!!
 
-  for _, overlord in ipairs(self.overlords) do
-
-    -- draw radial menu
-    if not self.winner then
-      overlord:draw_radial_menu()
+  -- draw radial menus
+  if not self.winner then
+    for _, overlord in ipairs(self.overlords) do
+        overlord:draw_radial_menu()
     end
 
-    -- draw percent conversion
-    local x, y = player[overlord.player].ui.x, player[overlord.player].ui.y
-    love.graphics.setFont(FONT_HUGE)
-    local total_conversion = math.floor(player[overlord.player].total_conversion*100)
-      love.graphics.setColor(210, 228, 210)
-        love.graphics.printf(tostring(total_conversion) .. "%", x+3, y+3, 0, 'center')
-      player[overlord.player].bindTeamColour()
-        love.graphics.printf(tostring(total_conversion) .. "%", x, y, 0, 'center')
-    love.graphics.setColor(255, 255, 255)
 
-    -- draw eggz in "storage" ready to be laid
-    -- if overlord.egg_ready > 0 then
-    --   player[overlord.player].bindTeamColour()
-    --   love.graphics.setFont(FONT_SMALL)
-    --     if overlord.egg_ready == 1 then
-    --       local flux = math.cos(overlord.wave)
-    --       love.graphics.draw(Egg.IMAGES.FILL, x, y+128, 0, 1.3+flux*0.1, 1.3+flux*0.1, 32, 40)
-    --       -- love.graphics.setColor(210, 228, 210)
-    --       -- love.graphics.printf("Egg!", x, y+108, 0, "center")
-    --     else
-    --       love.graphics.draw(Egg.IMAGES.OUTLINE, x, y+128, 0, 1.2, 1.2, 32, 40)
-    --       local seconds = tostring(math.floor((1 - overlord.egg_ready)/Overlord.EGG_PRODUCTION_SPEED) + 1)
-    --       love.graphics.printf(seconds, x, y+108, 0, "center")
-    --     end
-    --     love.graphics.setColor(255, 255, 255)
-    -- end
-
-  end
-
-
-
-  if self.winner then
+  -- if winner
+  else
 
     -- graph players' progression
     love.graphics.setLineWidth(3)
@@ -335,9 +315,9 @@ function state:draw()
     player[self.winner].bindTeamColour()
       love.graphics.setFont(FONT_HUGE)
       useful.printf(language[current_language].colour[self.winner] .. " " ..
-                    language[current_language].wins, w*0.5, 0)
+                    language[current_language].wins, DEFAULT_W*0.5, 0)
     love.graphics.setColor(255, 255, 255)
-end
+  end
 
   --- !!!
   self.camera:detach()

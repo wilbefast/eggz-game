@@ -33,7 +33,7 @@ local Cocoon = Class
 
   MATURATION_SPEED = 1,
 
-  ARMOUR = 3,
+  ARMOUR = 4,
 
   init = function(self, tile, player, evolvesTo, evolvesFrom)
     Plant.init(self, tile, player)

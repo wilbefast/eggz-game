@@ -95,12 +95,12 @@ Turret.IMAGES =
   {
     love.graphics.newImage("assets/yellow_tower_1.png"),
     love.graphics.newImage("assets/yellow_tower_2.png"),
-    projectile = love.graphics.newImage("assets/RED_attack.png")
+    projectile = love.graphics.newImage("assets/YELLOW_attack.png")
   },
   {
     love.graphics.newImage("assets/purple_tower_1.png"),
     love.graphics.newImage("assets/purple_tower_2.png"),
-    projectile = love.graphics.newImage("assets/RED_attack.png")
+    projectile = love.graphics.newImage("assets/PURPLE_attack.png")
   }
 }
 
@@ -114,12 +114,6 @@ for i = 1, 4 do
   Turret.ANIMATIONS[i].impact = Animation(Turret.IMAGES[i].projectile, 64, 64, 4, 384, 0)
 end
 
-Turret.LIGHTNING_IMG = love.graphics.newImage("assets/FX-attack-bolt.png")
-Turret.LIGHTNING_ANIM = Animation(Turret.LIGHTNING_IMG, 128, 64, 5, 0, 0)
-Turret.LAUNCH_IMG = love.graphics.newImage("assets/FX-attack-launch.png")
-Turret.LAUNCH_ANIM = Animation(Turret.LAUNCH_IMG, 64, 64, 3, 0, 0)
-
-
 --[[------------------------------------------------------------
 Take damage
 --]]--
@@ -129,9 +123,10 @@ function Turret:die()
   audio:play_sound("KNIGHT-destroyed")
 end
 
-function Turret:takeDamage(amount, attacker)
-  Plant.takeDamage(self, amount, attacker)
-  if not self.aggro then
+function Turret:takeDamage(amount, attacker, ignoreArmour)
+  Plant.takeDamage(self, amount, attacker, ignoreArmour)
+
+  if attacker and (not self.aggro) then
     self.aggro = attacker
   end
 end
@@ -251,8 +246,25 @@ end
 
 function Turret:draw_projectile()
   local projectNearness, projectileFarness = (1 - self.projectileProgress), self.projectileProgress
-  local x = self.tile.x*projectNearness + (self.targetTile.x)*projectileFarness
-  local y = self.tile.y*projectNearness + (self.targetTile.y)*projectileFarness - 20
+  local targetX, targetY = self.targetTile.x, self.targetTile.y
+
+  -- lap around X
+  if targetX < (self.tile.x - game.grid.tilew) then
+    targetX = targetX + (game.grid.tilew*game.grid.w)
+  elseif targetX > (self.tile.x + game.grid.tilew) then
+    targetX = targetX - (game.grid.tilew*game.grid.w)
+  end
+
+  -- lap around Y
+  if targetY < (self.tile.y - game.grid.tileh) then
+    targetY = targetY + (game.grid.tileh*game.grid.h)
+  elseif targetY > (self.tile.y + game.grid.tileh) then
+    targetY = targetY - (game.grid.tileh*game.grid.h)
+  end
+
+  -- draw projectile
+  local x = self.tile.x*projectNearness + targetX*projectileFarness
+  local y = self.tile.y*projectNearness + targetY*projectileFarness - 20
   Turret.ANIMATIONS[self.player].projectile:draw(x, y)
 end
 

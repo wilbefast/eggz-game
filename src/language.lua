@@ -24,7 +24,24 @@ language[1] =
 {
 	flag = love.graphics.newImage("assets/languages/australia.png"),
 	initials = "EN",
-	title = { "Versus", "Language", "Creggits", "Quit" },
+	title = { "Versus", "Controls", "How to play", "Language", "Creggits", "Quit" },
+	howtoplay = 
+	{
+		title = "How to play",
+		"Press to lay, pick and drop eggz.",
+		"Eggz mature faster on fertile land.",
+		"Hold to hatch mature eggz.",
+		"Statues attack nearby foes.",
+		"Shrines convert the area.",
+		"Hold to pour acid.",
+		"Convert 50% of the map to win!"
+	},
+	controls = 
+	{
+		title = "Controls",
+		movement = "movement",
+		action = "action"
+	},
 	credits = 
 	{ 
 		title = "Creggits", 
@@ -42,11 +59,12 @@ language[1] =
 	wins = "wins!",
 	tutorial =
 	{
-		lay = "tap to lay",
-		pick = "tap to grab",
-		grow = "blah",
-		evolve = "hold to evolve"
-	}
+		lay = "TODO",
+		pick = "TODO",
+		grow = "TODO",
+		evolve = "TODO"
+	},
+	keyboard_layout = "qwerty"
 }
 
 
@@ -58,7 +76,24 @@ language[2] =
 {
 	flag = love.graphics.newImage("assets/languages/france.png"),
 	initials = "FR",
-	title = { "Versus", "Langue", "Credits", "Quitter" },
+	title = { "Versus", "Contrôles", "Comment jouer", "Langue", "Credits", "Quitter" },
+	howtoplay = 
+	{
+		title = "Comment jouer",
+		"Appuyer pour pondre, prendre et déposer les oeufs.",
+		"Les oeufs grandissent plus vite sur du terrain fertile.",
+		"Maintenir enfoncé pour éclore un oeuf mature.",
+		"Les statues attaquent tout enemi proche.",
+		"Les lieux saints convertissent du terrain.",
+		"Maintenir enfoncé pour verser de l'acide.",
+		"Convertir 50% du terrain pour gagner !"
+	},
+	controls = 
+	{
+		title = "Contrôles",
+		movement = "mouvement",
+		action = "action"
+	},
 	credits = 
 	{ 
 		title = "Credits", 
@@ -73,7 +108,15 @@ language[2] =
 		coming_soon = "À venir ..."
 	},
 	colour = { "Rouge", "Bleu", "Jaune", "Violet" },
-	wins = "gagne!"
+	wins = "gagne!",
+	tutorial =
+	{
+		lay = "TODO",
+		pick = "TODO",
+		grow = "TODO",
+		evolve = "TODO"
+	},
+	keyboard_layout = "azerty"
 }
 
 return language
