@@ -34,6 +34,7 @@ local Egg = Class
   EVOLUTION = { Bomb, Turret, Convertor},
 
   maturationTime = 15, -- seconds - after being recycled
+  canBeUprooted = true,
 
   REGEN_EFFICIENCY = 1,
 

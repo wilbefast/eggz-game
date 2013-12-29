@@ -25,7 +25,6 @@ local Overlord = Class
   type = GameObject.TYPE.new("Overlord"),
       
   ACCELERATION = 1000,
-  ACCELERATION_BURDENED = 500,
 
   MAX_DX = 400,
   MAX_DY = 400,
@@ -118,7 +117,7 @@ function Overlord:canUproot()
     return false
   
   -- any other egg or bomb is fine to pick up
-  elseif ((self.tile.occupant:isType("Egg")) or (self.tile.occupant:isType("Bomb"))) then
+  elseif self.tile.occupant.canBeUprooted then
     return true
 
   else
@@ -169,10 +168,6 @@ function Overlord:canPlant()
   local tile, payload = self.tile, self.passenger
 
   if self.skip_next_grab then
-    return false
-
-  -- can't plant on rocks
-  elseif self.tile.isRock then
     return false
 
   -- can't plant on enemy territory
@@ -275,7 +270,12 @@ function Overlord:update(dt)
 
   -- Directional movement -----------------------------------------------------
   if self.z > 0 then
-    local acceleration = useful.tri(self.passenger, self.ACCELERATION_BURDENED, self.ACCELERATION)
+    local acceleration
+    if self.passenger then 
+      acceleration = self.ACCELERATION*self.passenger.ACCELERATION_MODIFIER
+    else
+      acceleration = self.ACCELERATION
+    end
     if (inp.x == 0) or (self.dx*inp.x < 0) then
     	self.FRICTION_X = 600
     else
@@ -357,8 +357,7 @@ function Overlord:update(dt)
 
     if self:canUproot() then
       -- pick up tile occupant
-      if (self.tile.occupant:isType("Egg") or (self.tile.occupant:isType("Bomb")))
-      and (self.radial_menu < 1) then
+      if (self.radial_menu < 1) then
         -- cache
         local swap, occ = self.passenger, self.tile.occupant
 

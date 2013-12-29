@@ -49,7 +49,7 @@ local Tile = Class
 		self.acidView = AnimationView(Tile.ANIM_ACID, 5, 1, 0, 20)
 
 		if math.random() < 1/(n_players*n_players) then
-			self.isRock = true
+			Rock(self)
 		end
 	end
 }
@@ -67,7 +67,13 @@ end
 Tile.IMG_ACID = love.graphics.newImage("assets/acid.png")
 Tile.ANIM_ACID = Animation(Tile.IMG_ACID, 64, 64, 5, 0, 0)
 
-Tile.IMG_ROCK = love.graphics.newImage("assets/tiles/rock.png")
+--[[------------------------------------------------------------
+Query
+--]]
+
+function Tile:isRock()
+	return (self.occupant and self.occupant:isType("Rock"))
+end
 
 --[[------------------------------------------------------------
 Conversion
@@ -116,17 +122,12 @@ function Tile:draw(x, y, forceDrawOccupant)
 
 	x, y = x or self.x, y or self.y
 
-	if not self.isRock then
-		-- draw grass on tile
-		local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
-		love.graphics.draw(Tile.IMAGES[subimage], x, y)
-	else
-		-- draw rock on tile
-		love.graphics.draw(Tile.IMG_ROCK, x, y - 32)
-	end
+	-- draw grass on tile
+	local subimage = math.min(#Tile.IMAGES, math.floor(#Tile.IMAGES * self.energy) + 1)
+	love.graphics.draw(Tile.IMAGES[subimage], x, y)
 
 	-- draw overlay if empty
-	if not self.occupant then
+	if (not self.occupant) then
 		self:drawOverlay(x, y)
 	end
 

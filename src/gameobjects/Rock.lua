@@ -13,125 +13,84 @@ Lesser General Public License for more details.
 --]]
 
 --[[------------------------------------------------------------
-BOMB GAMEOBJECT
+Rock GAMEOBJECT
 --]]------------------------------------------------------------
 
 --[[------------------------------------------------------------
 Initialisation
 --]]--
 
-local Bomb = Class
+local Rock = Class
 {
-  type = GameObject.TYPE.new("Bomb"),
+  type = GameObject.TYPE.new("Rock"),
 
   ENERGY_DRAW_SPEED = 0.0, 						-- per second
   ENERGY_CONSUME_SPEED = 0, 		      -- per second
   ENERGY_DRAW_EFFICIENCY = 0.0, 			-- percent
   ENERGY_START = 0,
+  ACCELERATION_MODIFIER = 0.1,
   MAX_W = 24,
   MAX_H = 24,
 
   invulnerable = true,
   canBeUprooted = true,
 
-  maturationTime = 16, -- seconds
-
-  uses = 3,
-
   init = function(self, tile)
     Plant.init(self, tile, 0)
     self.player = 0
   end,
 }
-Bomb:include(Plant)
+Rock:include(Plant)
 
 --[[------------------------------------------------------------
 Resources
 --]]--
 
-Bomb.IMAGES = 
+Rock.IMAGES = 
 {
-  love.graphics.newImage("assets/BOMB.png"),
-  love.graphics.newImage("assets/BOMB-carry.png")
+  love.graphics.newImage("assets/ROCK.png"),
+  love.graphics.newImage("assets/ROCK-carry.png")
 }
-
-Bomb.QUADS = 
-{
-  love.graphics.newQuad(0, 0, 64, 64, Bomb.IMAGES[1]:getWidth(), Bomb.IMAGES[1]:getHeight()),
-  love.graphics.newQuad(64, 0, 64, 64, Bomb.IMAGES[1]:getWidth(), Bomb.IMAGES[1]:getHeight()),
-  love.graphics.newQuad(128, 0, 64, 64, Bomb.IMAGES[1]:getWidth(), Bomb.IMAGES[1]:getHeight())
-}
-
-Bomb.EXPLODE_IMG = love.graphics.newImage("assets/FX-bomb.png")
-
-Bomb.EXPLODE_ANIM = Animation(Bomb.EXPLODE_IMG , 64, 64, 6)
 
 --[[------------------------------------------------------------
 Resources
 --]]--
 
-function Bomb:uproot(transport)
+function Rock:uproot(transport)
   Plant.uproot(self, transport)
   audio:play_sound("EGG-pick")
 end
 
-function applyStun(tile, t)
-	if tile.occupant then
-		tile.occupant:stun(t)
-	end
-end
-
-function Bomb:drop(tile)
-
-  if self.transport then --and tile.occupant then
-    
-    -- deduct one use
-    self.uses = self.uses - 1
-    if self.uses == 0 then
-      self.purge = true
-      self.transport.passenger = nil
-    end
-
-    -- visual queue
-    SpecialEffect(self.x, self.y+1, Bomb.EXPLODE_ANIM, 7, 0, 12)
-
-    -- audio queue
-    audio:play_sound("BOMB-dropped", 0.1)
-
-    -- apply effect to the tile
-    tile.acidity = 0.33
-
-  else
-    Plant.plant(self, tile)
-    audio:play_sound("EGG-drop") --FIXME
-  end
+function Rock:plant(tile)
+  Plant.plant(self, tile)
+  tile.conversion = 0
+  tile.owner = 0
+  audio:play_sound("EGG-drop") --FIXME
 end
 
 --[[------------------------------------------------------------
 Game loop
 --]]--
 
-function Bomb:draw(x, y)
+function Rock:draw(x, y)
   x, y = x or self.x, y or self.y
 
   if self.transport then
     return
   end
-  love.graphics.draw(Bomb.IMAGES[1], Bomb.QUADS[Bomb.uses - self.uses + 1], x, y,
-    0, 1, 1, 32, 40)
+  love.graphics.draw(Rock.IMAGES[1], x, y, 0, 1, 1, 32, 40)
 
   -- draw overlay
   Plant.draw(self)
 end
 
-function Bomb:drawTransported(x, y)
+function Rock:drawTransported(x, y)
   x, y = x or self.x, y or self.y
-  love.graphics.draw(Bomb.IMAGES[2], Bomb.QUADS[Bomb.uses - self.uses + 1], x, y,
-    0, 1, 1, 24, 64)
+  love.graphics.draw(Rock.IMAGES[2], x, y, 0, 1, 1, 24, 64)
 end
 
 --[[------------------------------------------------------------
 Export
 --]]--
 
-return Bomb
+return Rock

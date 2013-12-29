@@ -119,7 +119,7 @@ function CollisionGrid:update(dt)
   for x = 1, self.w do
     for y = 1, self.h do
       local t = self.tiles[x][y]
-      if not t.isRock then
+      if not t:isRock() then
 
         -- function to determine if two tiles are allied
         function allied(t1, t2)
