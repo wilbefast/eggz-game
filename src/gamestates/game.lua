@@ -49,7 +49,9 @@ function state:enter()
 
   -- not victory (yet)
   for _, p in ipairs(player) do
-    p.total_conversion = 0
+    p.percent_conversion = 0
+    p.total_conversion = 0.0
+    p.show_conversion = 0
     p.tutorial = 1
   end
   self:reset_winning()
@@ -137,7 +139,21 @@ function state:update(dt)
       local highest_conversion, highest_conversion_i = -1, -1
       local second_highest_conversion, second_highest_conversion_i = -1, -1
       for i = 1, n_players do
-        local conversion = player[i].total_conversion
+
+        -- cache conversion [0, 1] and player
+        local p = player[i]
+        local conversion = p.total_conversion
+
+        -- decrement 'show conversion indicator' timer
+        p.show_conversion = dt*0.5
+
+        -- change in percentile
+        local percent = math.floor(conversion*100)
+        if percent ~= p.percent_conversion then
+          p.percent_conversion = percent
+          p.show_conversion = 1
+        end
+
         -- new best ?
         if conversion > highest_conversion then
           -- YES - the new runner up is the old leader ...
@@ -148,8 +164,8 @@ function state:update(dt)
           highest_conversion_i = i
         else
           -- NOPE - and there are no prizes for second best :'(
-          player[i].winning = 0
-          player[i].win_warnings = 0 
+          p.winning = 0
+          p.win_warnings = 0 
 
           -- new second best ?
           if conversion > second_highest_conversion then
@@ -161,12 +177,12 @@ function state:update(dt)
       end
 			
 			-- check for victory
-      local p = player[highest_conversion_i]
-      --if (p.total_conversion > 0.05)
-      if (p.total_conversion > 1/n_players)
+      local highp = player[highest_conversion_i]
+      --if (highp.total_conversion > 0.05)
+      if (highp.total_conversion > 1/n_players)
       and (highest_conversion > second_highest_conversion + 0.01) then
       -- check if countdown to win has expired
-        if p.winning > DELAY_BEFORE_WIN then
+        if highp.winning > DELAY_BEFORE_WIN then
           -- we have a winner !
           self.winner = highest_conversion_i
           audio.music:stop()
@@ -175,15 +191,15 @@ function state:update(dt)
           
 
           -- warn other players with a "tick tock"!
-          if p.winning == 0 then
+          if highp.winning == 0 then
             audio:play_sound("tick")
-          elseif (math.floor(p.winning) > p.win_warnings)
-          and (p.winning < DELAY_BEFORE_WIN) then
-            p.win_warnings = p.win_warnings + 1
+          elseif (math.floor(highp.winning) > highp.win_warnings)
+          and (highp.winning < DELAY_BEFORE_WIN) then
+            highp.win_warnings = highp.win_warnings + 1
             audio:play_sound("tick")
           end 
           -- count down to win
-          p.winning = p.winning + dt
+          highp.winning = highp.winning + dt
 				end
 
       else -- nobody winning :'(
@@ -276,10 +292,18 @@ function state:draw()
   self.camera:attach()
   --- !!!
 
-  -- draw radial menus
+  -- if not winner
   if not self.winner then
+
+    
     for _, overlord in ipairs(self.overlords) do
+
+        -- draw radial menus
         overlord:draw_radial_menu()
+
+        -- draw percent conversion
+        love.graphics.print(tostring(player[overlord.player].percent_conversion)
+                             .. "%", overlord.x, overlord.y)
     end
 
 

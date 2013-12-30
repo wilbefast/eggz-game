@@ -138,12 +138,11 @@ function Overlord:canEvolve()
   elseif self.tile.occupant.player ~= self.player then
     return false
   
-  -- some plants can't evolve
-  elseif not self.tile.occupant:canEvolve() then
-    return false
-
   -- can't evolve your own plants if they're on enemy territory
   elseif self:enemyTerritory() then
+    return false
+  -- some plants can't evolve
+  elseif not self.tile.occupant:canEvolve() then
     return false
 
   -- all good otherwise
@@ -292,35 +291,40 @@ function Overlord:update(dt)
 
   -- Radial menu --------------------------------------------------------------
   else -- self.z == 0
-    self.dx, self.dx = 0, 0
 
-    self.desired_dx, self.desired_dy = 0, 0
+    if not self:canEvolve() then
 
-    local any_input = ((inp.x ~= 0) or (inp.y ~= 0))
-    self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, useful.tri(any_input, 7, 1)*dt)
-    self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, useful.tri(any_input, 7, 1)*dt)
-
-    if (math.abs(self.radial_menu_x) < 0.1) and (math.abs(self.radial_menu_y) < 0.1) then
-      self.radial_menu_choice = 0
     else
-      local bomb = self.radial_menu_x
-      local turret = -self.radial_menu_y
-      local converter = -self.radial_menu_x
+      self.dx, self.dx = 0, 0
 
-      -- evolve bomb
-      if (bomb > 0.1) and (bomb > 2*turret) and (bomb > 2*converter) then
-        self.radial_menu_choice = 1
+      self.desired_dx, self.desired_dy = 0, 0
 
-      -- evolve turret
-      elseif (turret > 0.1) and (turret > 2*bomb) and (turret > 2*converter) then
-        self.radial_menu_choice = 2
+      local any_input = ((inp.x ~= 0) or (inp.y ~= 0))
+      self.radial_menu_x = useful.lerp(self.radial_menu_x, inp.x, useful.tri(any_input, 7, 1)*dt)
+      self.radial_menu_y = useful.lerp(self.radial_menu_y, inp.y, useful.tri(any_input, 7, 1)*dt)
 
-      -- evolve converter
-      elseif (converter > 0.1) and (converter > 2*turret) and (converter > 2*bomb) then
-        self.radial_menu_choice = 3
-
-      else
+      if (math.abs(self.radial_menu_x) < 0.1) and (math.abs(self.radial_menu_y) < 0.1) then
         self.radial_menu_choice = 0
+      else
+        local bomb = self.radial_menu_x
+        local turret = -self.radial_menu_y
+        local converter = -self.radial_menu_x
+
+        -- evolve bomb
+        if (bomb > 0.1) and (bomb > 2*turret) and (bomb > 2*converter) then
+          self.radial_menu_choice = 1
+
+        -- evolve turret
+        elseif (turret > 0.1) and (turret > 2*bomb) and (turret > 2*converter) then
+          self.radial_menu_choice = 2
+
+        -- evolve converter
+        elseif (converter > 0.1) and (converter > 2*turret) and (converter > 2*bomb) then
+          self.radial_menu_choice = 3
+
+        else
+          self.radial_menu_choice = 0
+        end
       end
     end
   end

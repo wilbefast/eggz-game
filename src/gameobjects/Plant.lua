@@ -27,7 +27,7 @@ local Plant = Class
   -- defaults
   REGEN_SPEED = 0.1,
   REGEN_EFFICIENCY = 0.1,
-  ACID_DAMAGE = 0.4,
+  ACID_DAMAGE = 0.425,
   ACCELERATION_MODIFIER = 0.5,
   maturationTime = 1,
   time_since_last_damage = 999,
