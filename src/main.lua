@@ -278,7 +278,6 @@ end
 function love.quit()
   GameState.quit()
 end
-
 function love.keypressed(key, uni)
   GameState.keypressed(key, uni)
 

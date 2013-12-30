@@ -32,6 +32,7 @@ function input:reset()
 	  	confirm = { pressed = false, previous = true, trigger = 0 },
 	  	start = { pressed = false, previous = true, trigger = 0 },
 	  	cancel = { pressed = false, previous = true, trigger = 0 },
+	  	escape = { pressed = false, previous = true, trigger = 0 },
 
 	  	gamepad = love.joystick.getJoysticks()[i],
 
@@ -104,6 +105,7 @@ function input:reset()
 		inp.keyCancel = function () return inp.gamepad:isDown(2 - 1) end
 		inp.keyWest = function () return inp.gamepad:isDown(3 - 1) end
 		inp.keyNorth = function () return inp.gamepad:isDown(4 - 1) end
+		inp.keyEscape = function () return inp.gamepad:isDown(7 - 1) end
 		inp.keyStart = function () return inp.gamepad:isDown(8 - 1) end
 	end
 
@@ -168,6 +170,7 @@ function input:reset()
 		inp.keyConfirm = checkKey(inp.keyname.confirm, inp.keyname.altconfirm)
 		inp.keyStart = checkKey("return")
 		inp.keyCancel = checkKey("backspace")
+		inp.keyEscape = checkKey("escape")
 	end
 end
 
@@ -229,6 +232,9 @@ function input:update(dt, bink)
 
 		-- cancel
 		generateTrigger(p.cancel, p.keyCancel)
+
+		-- exit
+		generateTrigger(p.escape, p.keyEscape)
 
 	end -- for each p
 

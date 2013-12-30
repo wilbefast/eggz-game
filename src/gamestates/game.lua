@@ -110,14 +110,20 @@ function state:update(dt)
 
   -- input
   for i = 1, n_players do
-    if (input[i].cancel.trigger == 1) or (input[i].start.trigger == 1) then
+
+    if (input[i].escape.trigger == 1) then
+        if self.pause then
+          GameState.switch(player_select)
+        end
+        break -- multiple player have the same exit key 
+    elseif (input[i].cancel.trigger == 1) or (input[i].start.trigger == 1) then
       if (not self.winner) then
         -- check for pause/unpause key
         self.pause = not self.pause
       else
         -- return to 'versus' screen
         GameState.switch(player_select)
-        break -- multiple player have the same cancel key 
+        break -- multiple player have the same start/cancel key 
       end
     end
   end
