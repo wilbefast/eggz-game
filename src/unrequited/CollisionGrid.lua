@@ -31,6 +31,7 @@ local CollisionGrid = Class
 
     -- totals
     self.total_energy = 1
+    self.total_rocks = 0
   
     -- grab the size of the map
     if w and h then
@@ -112,9 +113,6 @@ function CollisionGrid:update(dt)
     player[i].total_conversion = 0
   end
 
-  -- count the number of non-rock tiles
-  local total_tiles = 0
-
   -- update tiles
   for x = 1, self.w do
     for y = 1, self.h do
@@ -123,11 +121,6 @@ function CollisionGrid:update(dt)
       -- function to determine if two tiles are allied
       function allied(t1, t2)
         return ((t1.owner == t2.owner) and (t1.conversion > 0.1) and (t2.conversion > 0.1))
-      end
-
-      -- don't count rocks
-      if not t:isRock() then
-        total_tiles = total_tiles + 1
       end
 
       -- wrap around
@@ -160,6 +153,7 @@ function CollisionGrid:update(dt)
   end
 
   -- normalise total conversion
+  local total_tiles = self.w*self.h - self.total_rocks
   for i = 1, MAX_PLAYERS do 
     player[i].total_conversion = player[i].total_conversion / total_tiles
   end

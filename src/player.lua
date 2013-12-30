@@ -49,19 +49,6 @@ player[2] =
 	-- blue
 	name = "Blue",
 	bindTeamColour = function (a) love.graphics.setColor(0, 120, 255, a or 255) end,
-	-- top left
-	startPosition = 
-  { 
-  	x = TILE_W*2.5, 					
-  	y = TILE_H*2.5
-	},
-
-	-- top left
-	ui =
-	{
-		x = -1.5*TILE_W, 
-		y = 0
-	}
 }
 
 
@@ -74,18 +61,6 @@ player[3] =
 	-- yellow
 	name = "Yellow",
 	bindTeamColour = function (a) love.graphics.setColor(255, 255, 0, a or 255) end,
-	-- bottom left
-	startPosition = 
-  { 
-  	x = TILE_W*2.5, 		
-  	y = TILE_H*(N_TILES_DOWN - 2.5)       	
-	},
-	-- bottom left
-	ui =
-	{
-		x = -1.5*TILE_W,
-		y = TILE_W*(N_TILES_DOWN - 1)
-	}
 }
 
 
@@ -98,19 +73,43 @@ player[4] =
 	-- purple
 	name = "Purple",
 	bindTeamColour = function (a) love.graphics.setColor(160, 0, 255, a or 255) end,
-	-- bottom right
-	startPosition =
-  { 
-  	x = TILE_W*(N_TILES_ACROSS - 2.5), 		
-  	y = TILE_H*(N_TILES_DOWN - 2.5) 	
-	},
-	-- bottom right
-	ui =
-	{
-		x = TILE_W*(N_TILES_ACROSS + 1.5), 
-		y = TILE_H*(N_TILES_DOWN - 1)
-	}
 }
+
+
+--[[---------------------------------------------------------------------------
+ALL PLAYER
+--]]
+
+for _, p in ipairs(player) do
+
+	p.pop_ups = { }
+
+	p.update = function(dt)
+		useful.map(p.pop_ups, function(pu, _, _) 
+			pu.life = pu.life - dt
+			if pu.life <= 0 then 
+				pu.life, pu.purge = 0, true 
+			elseif pu.life + dt >= 1 then
+				pu.message = tostring(math.floor(p.total_conversion*100)) .. "%"
+			end
+		end)
+	end
+
+	p.draw = function()
+		for i, pu in ipairs(p.pop_ups) do
+			if pu.life <= 1 then
+	      p.bindTeamColour(math.min(255, 2*pu.life*pu.life*255))
+	      love.graphics.setFont(FONT_HUGE)
+	      love.graphics.printf(pu.message, pu.x, pu.y - (1 - pu.life)*128, 0, "center")
+	      love.graphics.setColor(255, 255, 255)
+      end
+  	end
+	end
+
+	p.show_conversion = function(x, y, force_life)
+ 		table.insert(p.pop_ups, { x = x, y = y, life = (force_life or 2) }) 
+  end
+end
 
 --[[---------------------------------------------------------------------------
 EXPORT

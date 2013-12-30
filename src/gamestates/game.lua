@@ -34,8 +34,14 @@ function state:enter()
   GameObject.NEW_INSTANCES = { }
 
   self.overlords = {}
+  local angle_step = math.pi*2/n_players
+  local centerx, centery = TILE_W*N_TILES_ACROSS*0.5, TILE_H*N_TILES_DOWN*0.5
+  local radius = 64*n_players
   for i = 1, n_players do
-    self.overlords[i] = Overlord(player[i].startPosition.x, player[i].startPosition.y, i)
+    local angle = angle_step*(i-1)
+    local x, y = centerx + math.cos(angle)*radius, centery + math.sin(angle)*radius
+    self.overlords[i] = Overlord(useful.floor(x, TILE_W)+0.5*TILE_W, 
+                                  useful.floor(y, TILE_H)+0.5*TILE_W, i)
   end
 
   -- create grid
@@ -48,10 +54,8 @@ function state:enter()
   self.camera:lookAt(self.grid:centrePixel())
 
   -- not victory (yet)
-  for _, p in ipairs(player) do
-    p.percent_conversion = 0
+  for i, p in ipairs(player) do
     p.total_conversion = 0.0
-    p.show_conversion = 0
     p.tutorial = 1
   end
   self:reset_winning()
@@ -104,8 +108,6 @@ function state:update(dt)
     self.gamelog.animation = math.min(self.gamelog.animation + dt)
   end
 
-
-
 	-- input
 	for i = 1, n_players do
 
@@ -144,15 +146,8 @@ function state:update(dt)
         local p = player[i]
         local conversion = p.total_conversion
 
-        -- decrement 'show conversion indicator' timer
-        p.show_conversion = dt*0.5
-
-        -- change in percentile
-        local percent = math.floor(conversion*100)
-        if percent ~= p.percent_conversion then
-          p.percent_conversion = percent
-          p.show_conversion = 1
-        end
+        -- update pop-up messages
+        p.update(dt)
 
         -- new best ?
         if conversion > highest_conversion then
@@ -301,9 +296,8 @@ function state:draw()
         -- draw radial menus
         overlord:draw_radial_menu()
 
-        -- draw percent conversion
-        love.graphics.print(tostring(player[overlord.player].percent_conversion)
-                             .. "%", overlord.x, overlord.y)
+        -- draw messages
+        player[overlord.player]:draw()
     end
 
 

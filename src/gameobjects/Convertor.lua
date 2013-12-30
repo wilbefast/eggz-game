@@ -44,13 +44,16 @@ local Convertor = Class
     love.graphics.newImage("assets/purple_expand.png")
   },
 
-  init = function(self, tile, player)
-    Plant.init(self, tile, player)
+  init = function(self, tile, p)
+    Plant.init(self, tile, p)
 
     self.view = AnimationView(Convertor.ANIMS[self.player], 5, 1, 32, 32)
 
     -- set guard area
     self.convertArea = GameObject.COLLISIONGRID:getNeighbours4(tile) -- center
+
+    -- push message in player log
+    player[self.player].show_conversion(self.x, self.y - 32)
   end,
 }
 Convertor:include(Plant)
@@ -65,6 +68,14 @@ for i = 1, #Convertor.IMAGES do
   Convertor.ANIMS[i] = Animation(Convertor.IMAGES[i], 64, 64, 6)
 end
 
+--[[------------------------------------------------------------
+Evolve
+--]]--
+
+function Convertor:onEvolution()
+  player[self.player].show_conversion(self.x, self.y - 32, 3)
+end
+
 
 --[[------------------------------------------------------------
 Take damage
@@ -73,6 +84,8 @@ Take damage
 function Convertor:die()
   Plant.die(self)
   audio:play_sound("FOUNTAIN-destroyed")
+    -- push message in player log
+    player[self.player].show_conversion(self.x, self.y - 32, 3)
 end
 
 

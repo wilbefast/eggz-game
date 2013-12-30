@@ -403,19 +403,24 @@ function Overlord:update(dt)
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
     and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
+        -- remove the original plant
+        self.tile.occupant:onEvolution()
         self.tile.occupant.purge = true
-
+        -- what will it evolve to ?
         local evolution
         local original_hitpoints, original_energy = self.tile.occupant.hitpoints, self.tile.occupant.energy
         if self.tile.occupant:isType("Cocoon") then
-          -- cancel
+          -- cancel evolution (immediately return to original from)
           evolution = self.tile.occupant.evolvesFrom(self.tile, self.player)
         else
+          -- start new evolution
           evolution = Cocoon(self.tile, self.player, 
               self.tile.occupant.EVOLUTION[self.radial_menu_choice], self.tile.occupant.class)
           evolution.child_energy = original_hitpoints
         end
+        -- set hitpoints/energy based on original's hitpoints/energy
         evolution.hitpoints, evolution.energy = original_hitpoints, original_energy
+        -- close the menu
         self.radial_menu_x, self.radial_menu_y = 0, 0
     end
 

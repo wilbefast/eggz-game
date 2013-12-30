@@ -34,7 +34,7 @@ local Tile = Class
 
 	MAX_REGROWTH_PER_SECOND = 1,
 
-	ACID_DECAY = 0.9,
+	ACID_DECAY = 0.1,
 
 	acidity = 0,
 
@@ -53,6 +53,7 @@ local Tile = Class
 		local centeredness = math.sqrt(2)/4 - Vector.dist(0.5, 0.5, x, y) 
 		if math.random() < 2/(n_players*n_players) - 2*centeredness then
 			Rock(self)
+			grid.total_rocks = grid.total_rocks + 1
 		end
 	end
 }
@@ -243,9 +244,6 @@ function Tile:drawContours(x, y)
 														x + self.w + LINE_WIDTH, y + self.h - LINE_WIDTH)
 			end
 
-
-		
-
 		-- reset
 		love.graphics.setLineWidth(1)
 		love.graphics.setColor(255, 255, 255)
@@ -254,8 +252,24 @@ end
 
 function Tile:update(dt, total_energy)
 
-	if self.acidity == 0 then
+	if self.acidity > 0 then
+		-- acid - animate
+		self.acidView.speed = 5 + 5*self.acidity
+		self.acidView:update(dt)
 
+		-- acid - unconvert
+		self.conversion = math.max(0, self.conversion - dt)
+
+		-- acid - burn grass
+		self.energy = math.max(0, self.energy - self.acidity*dt)
+
+		-- acid - decay
+		self.acidity = self.acidity - self.ACID_DECAY*dt--self.acidity*math.pow(self.ACID_DECAY, dt)
+		if self.acidity < 0.1 then
+			self.acidity = 0
+		end
+
+	elseif not self:isRock() then
 		-- regrowth
 		local regrowth_speed = math.min(Tile.MAX_REGROWTH_PER_SECOND, 
 			Tile.REGROWTH_SPEED/(self.energy*total_energy)*(1 + 4*self.conversion))
@@ -268,25 +282,6 @@ function Tile:update(dt, total_energy)
 				self.owner = 0
 			end
 		end
-
-	else
-
-		-- acid - animate
-		self.acidView.speed = 5 + 5*self.acidity
-		self.acidView:update(dt)
-
-		-- acid - unconvert
-		self.conversion = math.max(0, self.conversion - dt)
-
-		-- acid - burn grass
-		self.energy = math.max(0, self.energy - self.acidity*dt)
-
-		-- acid - decay
-		self.acidity = self.acidity*math.pow(self.ACID_DECAY, dt)
-		if self.acidity < 0.1 then
-			self.acidity = 0
-		end
-
 	end
 
 	-- reset
