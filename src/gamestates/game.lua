@@ -108,15 +108,19 @@ function state:update(dt)
     self.gamelog.animation = math.min(self.gamelog.animation + dt)
   end
 
-	-- input
-	for i = 1, n_players do
-
-		-- check for unpause key
-		if (input[i].cancel.trigger == 1) or (input[i].start.trigger == 1) then
-      self.pause = not self.pause
-      break -- multiple player have the same cancel key 
-		end
-	end
+  -- input
+  for i = 1, n_players do
+    if (input[i].cancel.trigger == 1) or (input[i].start.trigger == 1) then
+      if (not self.winner) then
+        -- check for pause/unpause key
+        self.pause = not self.pause
+      else
+        -- return to 'versus' screen
+        GameState.switch(player_select)
+        break -- multiple player have the same cancel key 
+      end
+    end
+  end
 
   -- no winner yet
   if (not self.winner) then
@@ -170,6 +174,7 @@ function state:update(dt)
       -- check if countdown to win has expired
         if highp.winning > DELAY_BEFORE_WIN then
           -- we have a winner !
+          self.pause = false
           self.winner = highest_conversion_i
           audio.music:stop()
           audio:play_sound("intro")
