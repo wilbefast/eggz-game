@@ -38,7 +38,7 @@ local Tile = Class
 
 	acidity = 0,
 
-	init = function(self, i, j, w, h)
+	init = function(self, i, j, w, h, grid)
 		self.i, self.j = i, j
 		self.x, self.y, self.w, self.h = (i-1)*w, (j-1)*h, w, h
 		self.energy = math.random()
@@ -48,7 +48,10 @@ local Tile = Class
 		self.non_mans_land = true
 		self.acidView = AnimationView(Tile.ANIM_ACID, 5, 1, 0, 20)
 
-		if math.random() < 1/(n_players*n_players) then
+		-- set to rock ?
+		local x, y = (i-0.5)/grid.w, (j-0.5)/grid.h
+		local centeredness = math.sqrt(2)/4 - Vector.dist(0.5, 0.5, x, y) 
+		if math.random() < 2/(n_players*n_players) - 2*centeredness then
 			Rock(self)
 		end
 	end
@@ -146,16 +149,19 @@ function Tile:draw(x, y, forceDrawOccupant)
     -- draw acid icon if bomb is ready
     if self.overlord:canBomb() then
     	local bulge = math.cos(self.overlord.wave*0.3)
-    	love.graphics.draw(Plant.ICON_ACID, self.x+32, self.y+32, 0, 0.1*bulge+0.7, 0.1*bulge+0.7, 32, 32)
+    	love.graphics.draw(Plant.ICON_ACID, self.x+32, self.y+32, 
+    		0, 0.1*bulge+0.7, 0.1*bulge+0.7, 32, 32)
 
     -- draw cross if invalid
     elseif (not self.overlord:canLand()) then
-   		love.graphics.draw(Plant.ICON_INVALID, self.x+32, self.y+32, 0, 0.5*radius/24, 0.5*radius/24, 32, 32)
+   		love.graphics.draw(Plant.ICON_INVALID, self.x+32, self.y+32, 
+   			0, 0.5*radius/24, 0.5*radius/24, 32, 32)
 
    	-- draw down-arrow if egg ready
     elseif self.overlord:canPlant() then
     	local offy = math.cos(self.overlord.wave*0.3)*4
-   		love.graphics.draw(Plant.ICON_DROP, self.x+32, self.y+32+offy, 0, 0.5*radius/24, 0.5*radius/24, 32, 32)
+   		love.graphics.draw(Plant.ICON_DROP, self.x+32, self.y+32+offy, 
+   			0, 0.5*radius/24, 0.5*radius/24, 32, 32)
    	end
 	  -- reset
     love.graphics.setColor(255, 255, 255)
@@ -225,15 +231,20 @@ function Tile:drawContours(x, y)
 				love.graphics.line(x - LINE_WIDTH, y + LINE_WIDTH, x + LINE_WIDTH, y - LINE_WIDTH)
 			end
 			if self.leftContiguous and self.belowContiguous and (not self.swContiguous) then -- SW
-				love.graphics.line(x - LINE_WIDTH, y + self.h - LINE_WIDTH, x + LINE_WIDTH, y + self.h + LINE_WIDTH)
+				love.graphics.line(x - LINE_WIDTH, y + self.h - LINE_WIDTH, 
+														x + LINE_WIDTH, y + self.h + LINE_WIDTH)
 			end
 			if self.rightContiguous and self.aboveContiguous and (not self.neContiguous) then -- NE
-				love.graphics.line(x + self.w - LINE_WIDTH, y - LINE_WIDTH, x + self.w + LINE_WIDTH, y + LINE_WIDTH)
+				love.graphics.line(x + self.w - LINE_WIDTH, y - LINE_WIDTH, 
+														x + self.w + LINE_WIDTH, y + LINE_WIDTH)
 			end
 			if self.rightContiguous and self.belowContiguous and (not self.seContiguous) then -- SE
-				love.graphics.line(x + self.w - LINE_WIDTH, y + self.h + LINE_WIDTH, x + self.w + LINE_WIDTH, y + self.h - LINE_WIDTH)
+				love.graphics.line(x + self.w - LINE_WIDTH, y + self.h + LINE_WIDTH, 
+														x + self.w + LINE_WIDTH, y + self.h - LINE_WIDTH)
 			end
 
+
+		
 
 		-- reset
 		love.graphics.setLineWidth(1)

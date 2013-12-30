@@ -45,7 +45,7 @@ local CollisionGrid = Class
     for x = 1, self.w do
       self.tiles[x] = {}
       for y = 1, self.h do
-        self.tiles[x][y] = Tile(x, y, self.tilew, self.tileh)
+        self.tiles[x][y] = Tile(x, y, self.tilew, self.tileh, self)
       end
     end
   end
@@ -119,42 +119,42 @@ function CollisionGrid:update(dt)
   for x = 1, self.w do
     for y = 1, self.h do
       local t = self.tiles[x][y]
+
+      -- function to determine if two tiles are allied
+      function allied(t1, t2)
+        return ((t1.owner == t2.owner) and (t1.conversion > 0.1) and (t2.conversion > 0.1))
+      end
+
+      -- don't count rocks
       if not t:isRock() then
-
-        -- function to determine if two tiles are allied
-        function allied(t1, t2)
-          return ((t1.owner == t2.owner) and (t1.conversion > 0.1) and (t2.conversion > 0.1))
-        end
-
-        -- don't count rocks
         total_tiles = total_tiles + 1
+      end
 
-        -- wrap around
-        local left = useful.tri(x > 1, x-1, self.w)
-        local right = useful.tri(x < self.w, x+1, 1)
-        local above = useful.tri(y > 1, y-1, self.h)
-        local below = useful.tri(y < self.h, y+1, 1)
+      -- wrap around
+      local left = useful.tri(x > 1, x-1, self.w)
+      local right = useful.tri(x < self.w, x+1, 1)
+      local above = useful.tri(y > 1, y-1, self.h)
+      local below = useful.tri(y < self.h, y+1, 1)
 
-        -- check tile neighbours for territory contour drawing
-        t.leftContiguous = allied(self.tiles[left][y], t)
-        t.nwContiguous = allied(self.tiles[left][above], t)
-        t.swContiguous = allied(self.tiles[left][below], t)
-        t.rightContiguous = allied(self.tiles[right][y], t)
-        t.neContiguous = allied(self.tiles[right][above], t)
-        t.seContiguous = allied(self.tiles[right][below], t)
-        t.aboveContiguous = allied(self.tiles[x][above], t)
-        t.belowContiguous = allied(self.tiles[x][below], t)
-      
-        -- update the tile
-        t:update(dt, self.total_energy)
+      -- check tile neighbours for territory contour drawing
+      t.leftContiguous = allied(self.tiles[left][y], t)
+      t.nwContiguous = allied(self.tiles[left][above], t)
+      t.swContiguous = allied(self.tiles[left][below], t)
+      t.rightContiguous = allied(self.tiles[right][y], t)
+      t.neContiguous = allied(self.tiles[right][above], t)
+      t.seContiguous = allied(self.tiles[right][below], t)
+      t.aboveContiguous = allied(self.tiles[x][above], t)
+      t.belowContiguous = allied(self.tiles[x][below], t)
 
-        -- add energy to total (to determine growth next turn)
-        new_total_energy = new_total_energy + t.energy
+      -- update the tile
+      t:update(dt, self.total_energy)
 
-        -- award the "point" to the owner if control is over 0.5
-        if t.conversion > 0.5 then
-          player[t.owner].total_conversion = player[t.owner].total_conversion + 1
-        end
+      -- add energy to total (to determine growth next turn)
+      new_total_energy = new_total_energy + t.energy
+
+      -- award the "point" to the owner if control is over 0.5
+      if t.conversion > 0.5 then
+        player[t.owner].total_conversion = player[t.owner].total_conversion + 1
       end
     end
   end
