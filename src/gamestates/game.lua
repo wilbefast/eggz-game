@@ -111,19 +111,10 @@ function state:update(dt)
 	-- input
 	for i = 1, n_players do
 
-		-- check for pause key
-		if input[i].cancel.trigger == 1 then
-      if not self.pause then
-        self.pause = true
-      else
-        GameState.switch(player_select)
-      end
-      break -- multiple player have the same cancel key 
-		end
-		
 		-- check for unpause key
-		if (input[i].confirm.trigger == 1) or (input[i].start.trigger == 1) then
-			self.pause = false
+		if (input[i].cancel.trigger == 1) or (input[i].start.trigger == 1) then
+      self.pause = not self.pause
+      break -- multiple player have the same cancel key 
 		end
 	end
 

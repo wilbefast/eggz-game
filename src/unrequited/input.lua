@@ -104,7 +104,7 @@ function input:reset()
 		inp.keyCancel = function () return inp.gamepad:isDown(2 - 1) end
 		inp.keyWest = function () return inp.gamepad:isDown(3 - 1) end
 		inp.keyNorth = function () return inp.gamepad:isDown(4 - 1) end
-		inp.keyStart = function () return inp.gamepad:isDown(1 - 1) end -- FIXME
+		inp.keyStart = function () return inp.gamepad:isDown(8 - 1) end
 	end
 
 	-- keyboard 1
