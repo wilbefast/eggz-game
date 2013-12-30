@@ -69,6 +69,9 @@ local Turret = Class
 	
     -- progression of projectile from 0 to 1
     self.projectileProgress = 0
+
+    -- menace arrow indicators
+    self.menace = {}
     
   end,
 }
@@ -242,6 +245,42 @@ function Turret:update(dt)
       end
     end
   end
+
+  -- update menace
+  function addMenace(t)
+    local forth = { x = (t.x + TILE_W*0.5 - self.x) * 0.5, 
+                    y = (t.y + TILE_H*0.5 - self.y) * 0.5}
+    forth.x, forth.y = Vector.normalize(forth.x, forth.y)
+    forth.x, forth.y = forth.x*TILE_W*0.4, forth.y*TILE_H*0.4
+    local arrow_base = 
+    { 
+      x = self.x + forth.x*(1.5 - self.menace.smooth*0.3), 
+      y = self.y + forth.y*(1.5 - self.menace.smooth*0.3)
+    }
+    local arrow = 
+    {
+      arrow_base.x + forth.x, arrow_base.y + forth.y,
+      arrow_base.x - forth.y*0.3, arrow_base.y + forth.x*0.3,
+      arrow_base.x + forth.y*0.3, arrow_base.y - forth.x*0.3
+    }
+    table.insert(self.menace, arrow)
+  end
+  self.menace = { smooth = math.cos(game.overlords[self.player].wave*0.2) }
+  if self.aggro then
+    addMenace(self.aggro.tile)
+  elseif #self.enemies > 0 then
+    for _, e in ipairs(self.enemies) do
+      addMenace(e.tile)
+    end
+  else
+    for _, t in pairs(self.guardArea) do
+      if (t.owner ~= self.player) 
+      and ((not t.occupant) or (t.occupant.player ~= self.player and t.occupant.player ~= 0)) 
+      then
+        addMenace(t)
+      end
+    end
+  end
 end
 
 function Turret:draw_projectile()
@@ -272,11 +311,13 @@ function Turret:draw(x, y)
 
   x, y = x or self.x, y or self.y
 	
-	-- if (not self.stunned) and self.targetTile and (self.targetTile.y < y) and self.lightning.visible then
-	-- 	
-	-- end
-
-
+  -- draw menace
+  for _, triangle in ipairs(self.menace) do
+    player[self.player].bindTeamColour(192 + self.menace.smooth*64)
+      love.graphics.polygon("fill", triangle)
+    love.graphics.setColor(255, 255, 255)
+  end
+  
   -- draw sprite
   if self.energy < self.ATTACK_ENERGY_COST then
     love.graphics.setColor(128, 128, 128)
@@ -293,7 +334,6 @@ function Turret:draw(x, y)
   if self.projectileProgress > 0 then
     self:draw_projectile()
   end
-  
   -- draw overlay
   Plant.draw(self)
 
