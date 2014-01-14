@@ -33,6 +33,11 @@ function state:enter()
   GameObject.INSTANCES = { }
   GameObject.NEW_INSTANCES = { }
 
+  -- create grid
+  self.grid = CollisionGrid(TILE_W, TILE_H, N_TILES_ACROSS, N_TILES_DOWN)
+  GameObject.COLLISIONGRID = self.grid
+
+  -- create player avatars
   self.overlords = {}
   local angle_step = math.pi*2/n_players
   local centerx, centery = TILE_W*N_TILES_ACROSS*0.5, TILE_H*N_TILES_DOWN*0.5
@@ -43,10 +48,6 @@ function state:enter()
     self.overlords[i] = Overlord(useful.floor(x, TILE_W)+0.5*TILE_W, 
                                   useful.floor(y, TILE_H)+0.5*TILE_W, i)
   end
-
-  -- create grid
-  self.grid = CollisionGrid(TILE_W, TILE_H, N_TILES_ACROSS, N_TILES_DOWN)
-  GameObject.COLLISIONGRID = self.grid
 
   -- point camera at centre of collision-grid
   self.camera = Camera(0, 0)

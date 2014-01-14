@@ -87,7 +87,7 @@ local function normalize(x,y)
 	if l > 0 then
 		return x/l, y/l
 	end
-	return x,y
+	return x,y,l
 end
 
 local function rotate(phi, x,y)

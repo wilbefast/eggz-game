@@ -222,8 +222,14 @@ function Overlord:update(dt)
     self.y = self.y + world_h
   end
   
-  -- Get input
-  local inp = useful.tri(self.ai, self.ai, input[self.player])
+  -- Get input / ai
+  local inp
+  if self.ai then
+    inp = self.ai
+    inp:update(dt)
+  else
+    inp = input[self.player]
+  end
 
   -- Snap to position ---------------------------------------------------------
   if self.tile then self.tile.overlord = nil end
@@ -521,7 +527,12 @@ function Overlord:draw(x, y)
   -- reset colours
 	love.graphics.setColor(255, 255, 255)
 
+  -- ai
+  if DEBUG and self.ai then
+    self.ai:draw()
+  end
 
+  -- tutorial
   -- useful.printf("tutorial " .. tostring(player[self.player].tutorial) .. tostring(tutorial.getMessage(self.player)), 
   --   self.x, self.y + 20)
 end
@@ -561,7 +572,6 @@ end
 
 function Overlord.draw_static(x, y, team)
   x, y = (x or self.x), (y or self.y)
-
   player[team].bindTeamColour()
     scaled_draw(Overlord.IDLE, x, y, 0, 1, 1, 47, 47)
   love.graphics.setColor(255, 255, 255)

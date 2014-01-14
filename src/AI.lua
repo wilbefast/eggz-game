@@ -23,14 +23,75 @@ Initialisation
 local AI = Class
 {
   init = function(self, overlord)
-  	self.x, self.y = 1, 1
+
+  	-- mind-body split
+  	self.body = overlord
+
+  	-- fake input
+  	self.x, self.y = 0, 0
   	self.confirm =
   	{
   		pressed = false,
   		trigger = 0
   	}
+
+  	-- plan, a list of instructions
+  	self.plan = {}
+  	self:planGoto(game.grid:gridToTile(6, 3))
+  	self:planGoto(game.grid:gridToTile(7, 11))
+  	self:planGoto(game.grid:gridToTile(2, 9))
 	end
 }
+
+--[[------------------------------------------------------------
+Navigation
+--]]--
+
+function AI:planGoto(tile)
+	table.insert(self.plan, { method = self.doGoto, target = tile })
+end
+
+function AI:doGoto(tile)
+	self.x, self.y = Vector.normalize(
+		tile.x + 0.5*TILE_W - self.body.x, 
+		tile.y + 0.5*TILE_H - self.body.y)
+
+	-- are we there yet?
+	return (self.body.tile == tile)
+end
+
+function AI:doStop()
+	self.x, self.y = 0, 0
+	self.confirm.pressed = false
+	self.confirm.trigger = 0
+end
+
+--[[------------------------------------------------------------
+Game loop
+--]]--
+
+function AI:update(dt)
+	-- any previous plans ?
+	if #(self.plan) > 0 then
+		local step = self.plan[1]
+		local finished = step.method(self, step.target)
+		if finished then
+			table.remove(self.plan, 1) -- yes, I know, this is slow
+			self:doStop()
+		end
+	end
+
+	-- formulate new plans ?
+end
+
+function AI:draw()
+	-- draw all plans
+	for i, step in ipairs(self.plan) do
+		love.graphics.line(self.body.x, self.body.y, step.target.x, step.target.y)
+	end
+end
+
+	
 
 --[[---------------------------------------------------------------------------
 Export
