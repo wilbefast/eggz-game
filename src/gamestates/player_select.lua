@@ -19,12 +19,32 @@ SELECT GAMESTATE
 
 local state = GameState.new()
 
-state.previous_n_players = n_players
-state.current_n_players = n_players
-state.desired_n_players = n_players
+state.freeze_mode = false
+
+local PLAYER_TYPES = {}
+useful.bind(PLAYER_TYPES, "human", 1)
+useful.bind(PLAYER_TYPES, "ai", 2)
+
+state.players = {}
+state.players[PLAYER_TYPES["human"]] =
+{
+  previous_number = n_players,
+  current_number = n_players,
+  desired_number = n_players,
+  direction = 1
+}
+
+state.players[PLAYER_TYPES["ai"]] =
+{
+  previous_number = n_bots,
+  current_number = n_bots,
+  desired_number = n_bots,
+  direction = -1
+}
 
 function state:enter()
   audio:play_music("loop_menu", 0.06)
+  self.player_type = PLAYER_TYPES["human"]
 end
 
 local angle, cos, sin = 0, 0, 0
@@ -39,6 +59,10 @@ function state:update(dt)
 
   -- if there is no horizontal input from anyone, stop !
   local h_input = false
+  local v_input = false
+
+  -- bots or humans ?
+  local p_type = self.players[self.player_type]
 
   -- does any player ...
   for i = 1, MAX_PLAYERS do
@@ -53,41 +77,86 @@ function state:update(dt)
       GameState.switch(title)
     end
 
-    -- ... request a change in the number of players ?
+    -- ... request a change from bots to player or vice-versa
+    if (input[i].y ~= 0) and (not v_input) then
+      v_input = true
+      if not self.freeze_mode then
+        self.player_type = (self.player_type + 1)
+        if self.player_type > #PLAYER_TYPES then
+          self.player_type = 1
+          -- refresh "bots or humans ?"
+          p_type = self.players[self.player_type]
+        end
+        self.freeze_mode = true
+      end
+    end
+
+    -- ... request a change in the number of players/bots ?
     if (input[i].x ~= 0) then
+      h_input = true
 
-      local new_desired_n_players = useful.clamp(useful.round(self.current_n_players) 
-        + useful.sign(input[i].x), 2, MAX_PLAYERS)
+      local new_desired_number = useful.round(p_type.current_number) 
+        + p_type.direction*useful.sign(input[i].x)
+      if new_desired_number < 0 then
+        self.player_type = self.player_type%2 + 1
+        return 
+      end
+      new_desired_number = useful.clamp(new_desired_number, 0, MAX_PLAYERS)
 
-      if (self.desired_n_players == self.current_n_players) 
-      and (new_desired_n_players ~= self.current_n_players) then
+      if (p_type.desired_number == p_type.current_number) 
+      and (new_desired_number ~= p_type.current_number) then
         audio:play_sound("EGG-pick")
       end
 
-      self.desired_n_players = new_desired_n_players
-      h_input = true
+      p_type.desired_number = new_desired_number
     end
   end
 
   -- apply horizontal input
-  self.current_n_players 
-    = useful.lerp(self.current_n_players, self.desired_n_players, dt*5)
+  p_type.current_number 
+    = useful.lerp(p_type.current_number, p_type.desired_number, dt*5)
+
+  -- make sure there are always between 2 and 4 players of all types combined
+  if not self.freeze_mode then
+    p_other_type = self.players[self.player_type%2 + 1]
+    local n1, n2 = useful.round(p_type.current_number), useful.round(p_other_type.current_number)
+    if n1 + n2 > MAX_PLAYERS then
+      p_other_type.current_number = MAX_PLAYERS - n1
+      p_other_type.previous_number = p_other_type.current_number 
+      p_other_type.desired_number = p_other_type.current_number 
+    elseif n1 + n2 < MIN_PLAYERS then
+      p_other_type.current_number = MIN_PLAYERS - n1
+      p_other_type.previous_number = p_other_type.current_number 
+      p_other_type.desired_number = p_other_type.current_number 
+      if n1 == 0 then
+        self.player_type = self.player_type%2 + 1
+      end
+    end
+  end
+
   
   -- has horizontal input ceased ?
   if not h_input then
 
-    local p = useful.round(self.current_n_players)
+    local p = useful.round(p_type.current_number)
     
     -- snap forwards ?
-    if p == self.previous_n_players then
-      self.current_n_players = self.desired_n_players
+    if p == p_type.previous_number then
+      p_type.current_number = p_type.desired_number
     -- snap backwards ?
     else
-      self.desired_n_players = p
+      p_type.desired_number = p
     end
  
-    self.previous_n_players = p 
+    p_type.previous_number = p 
   end
+
+
+  -- has vertical input ceased ?
+  if self.freeze_mode and (not v_input) then
+    self.freeze_mode = false
+  end
+
 end
 
 function state:keypressed(key, uni)
@@ -97,7 +166,8 @@ function state:keypressed(key, uni)
 end
 
 function state:leave()
-  n_players = math.floor(state.current_n_players)
+  n_players = useful.round(state.players[PLAYER_TYPES.human].current_number)
+  n_bots = useful.round(state.players[PLAYER_TYPES.ai].current_number)
   audio:play_sound("EGG-drop")
 end
 
@@ -119,18 +189,24 @@ function state:draw()
 
   -- 1. number of human players
   useful.printf(language[current_language].player_select.humans, w*0.2, h*0.4)
-  for i = 1, useful.round(self.current_n_players) do
+  for i = 1, useful.round(self.players[PLAYER_TYPES.human].current_number) do
     Overlord.draw_static(w*0.45 + i*w*0.065, h*0.42 + math.cos(angle + i*math.pi*1.618)*6, i)
   end
 
   -- 2. number of robot players
   useful.printf(language[current_language].player_select.robots, w*0.2, h*0.7)
-  love.graphics.setFont(FONT_SMALL)
-  scaled_print(language[current_language].player_select.coming_soon, w*0.5, h*0.73)
+  for i = 1, useful.round(self.players[PLAYER_TYPES.ai].current_number)  do
+    Overlord.draw_static(w*0.775 - i*w*0.065, h*0.68 + math.cos(angle + i*math.pi*1.618)*6, 
+      MAX_PLAYERS - i + 1)
+  end
+  --love.graphics.setFont(FONT_SMALL)
+  --scaled_print(language[current_language].player_select.coming_soon, w*0.5, h*0.73)
 
   -- 3. arrows
+  local arrow_y = useful.tri(self.player_type == PLAYER_TYPES["human"],
+                    h*0.37, h*0.7)
   love.graphics.setColor(255, 255, 255, 255 - (sin+2)*32)
-    scaled_draw(ARROWS_IMG, w*0.61, h*0.37, 0, 
+    scaled_draw(ARROWS_IMG, w*0.61, arrow_y, 0, 
       1 + 0.05*sin, 
       1 + 0.05*sin, 
       ARROWS_IMG:getWidth()/2, ARROWS_IMG:getHeight()/2)
