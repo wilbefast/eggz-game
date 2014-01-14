@@ -36,10 +36,10 @@ local Overlord = Class
 	CONVERT_SPEED = 0,--1,
   EGG_PRODUCTION_SPEED = 0.2,
 
-  init = function(self, x, y, player)
+  init = function(self, x, y, p)
     GameObject.init(self, x, y, 32, 32)
 
-    self.player = player
+    self.player = p
     self.egg_ready = 0.7
     self.z = 1
 
@@ -55,6 +55,11 @@ local Overlord = Class
     self.wave = 0
 
     self.blink = math.random()*self.BLINK_PERIOD
+
+    -- create AI controller if needed
+    if player[p].ai_controlled then
+      self.ai = AI(self)
+    end
   end,
 }
 Overlord:include(GameObject)
@@ -218,10 +223,7 @@ function Overlord:update(dt)
   end
   
   -- Get input
-  local inp = input[self.player]
-  if player[self.player].ai_controlled then
-    inp = { x = 1, y = 0, confirm = { } }
-  end
+  local inp = useful.tri(self.ai, self.ai, input[self.player])
 
   -- Snap to position ---------------------------------------------------------
   if self.tile then self.tile.overlord = nil end

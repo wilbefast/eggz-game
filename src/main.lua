@@ -115,6 +115,7 @@ Egg = require("gameobjects/Egg")
   Convertor.EVOLUTION = { nil, Egg, nil}
 Cocoon = require("gameobjects/Cocoon")
   Cocoon.EVOLUTION = { nil, Egg, nil }
+AI = require("AI")
 Overlord = require("gameobjects/Overlord")
 
 Egg.ICON = Plant.EVOLUTION_ICONS[2][1]
