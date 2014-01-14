@@ -24,19 +24,6 @@ player[1] =
 	-- red
 	name = "Red",
 	bindTeamColour = function (a) love.graphics.setColor(255, 0, 0, a or 255) end,
-	-- top right
-	startPosition = 
-	{ 
-		x = TILE_W*(N_TILES_ACROSS - 2.5),  	
-		y = TILE_W*2.5
-	},
-	-- top right
-	ui =
-	{
-		x = TILE_W*(N_TILES_ACROSS + 1.5), 
-		y = 0
-	}
-
 }
 
 
@@ -81,6 +68,8 @@ ALL PLAYER
 --]]
 
 for _, p in ipairs(player) do
+
+	p.ai_controlled = false -- by default
 
 	p.pop_ups = { }
 

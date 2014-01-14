@@ -39,7 +39,7 @@ state.players[PLAYER_TYPES["ai"]] =
   previous_number = n_bots,
   current_number = n_bots,
   desired_number = n_bots,
-  direction = -1
+  direction = 1
 }
 
 function state:enter()
@@ -98,8 +98,8 @@ function state:update(dt)
       local new_desired_number = useful.round(p_type.current_number) 
         + p_type.direction*useful.sign(input[i].x)
       if new_desired_number < 0 then
-        self.player_type = self.player_type%2 + 1
-        return 
+        -- self.player_type = self.player_type%2 + 1
+        -- return 
       end
       new_desired_number = useful.clamp(new_desired_number, 0, MAX_PLAYERS)
 
@@ -128,9 +128,9 @@ function state:update(dt)
       p_other_type.current_number = MIN_PLAYERS - n1
       p_other_type.previous_number = p_other_type.current_number 
       p_other_type.desired_number = p_other_type.current_number 
-      if n1 == 0 then
-        self.player_type = self.player_type%2 + 1
-      end
+      -- if n1 == 0 then
+      --   self.player_type = self.player_type%2 + 1
+      -- end
     end
   end
 
@@ -166,8 +166,17 @@ function state:keypressed(key, uni)
 end
 
 function state:leave()
-  n_players = useful.round(state.players[PLAYER_TYPES.human].current_number)
-  n_bots = useful.round(state.players[PLAYER_TYPES.ai].current_number)
+  -- save number of players
+  local humans = useful.round(state.players[PLAYER_TYPES.human].current_number)
+  local bots = useful.round(state.players[PLAYER_TYPES.ai].current_number)
+  n_players = humans + bots
+
+  -- set ai control of appropriate players
+  for i = 1, n_players do
+    player[i].ai_controlled = (i > humans)
+  end
+
+  -- mark state chage
   audio:play_sound("EGG-drop")
 end
 
@@ -188,16 +197,18 @@ function state:draw()
   love.graphics.setFont(FONT_BIG)
 
   -- 1. number of human players
+  local n_humans = useful.round(self.players[PLAYER_TYPES.human].current_number)
   useful.printf(language[current_language].player_select.humans, w*0.2, h*0.4)
-  for i = 1, useful.round(self.players[PLAYER_TYPES.human].current_number) do
+  for i = 1, n_humans  do
     Overlord.draw_static(w*0.45 + i*w*0.065, h*0.42 + math.cos(angle + i*math.pi*1.618)*6, i)
   end
 
   -- 2. number of robot players
+  local n_bots = useful.round(self.players[PLAYER_TYPES.ai].current_number)
   useful.printf(language[current_language].player_select.robots, w*0.2, h*0.7)
-  for i = 1, useful.round(self.players[PLAYER_TYPES.ai].current_number)  do
-    Overlord.draw_static(w*0.775 - i*w*0.065, h*0.68 + math.cos(angle + i*math.pi*1.618)*6, 
-      MAX_PLAYERS - i + 1)
+  for i = 1, n_bots  do
+    Overlord.draw_static(w*0.45 + (n_humans + i)*w*0.065, h*0.68 + math.cos(angle + i*math.pi*1.618)*6, 
+      n_humans + i)
   end
   --love.graphics.setFont(FONT_SMALL)
   --scaled_print(language[current_language].player_select.coming_soon, w*0.5, h*0.73)

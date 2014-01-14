@@ -219,6 +219,9 @@ function Overlord:update(dt)
   
   -- Get input
   local inp = input[self.player]
+  if player[self.player].ai_controlled then
+    inp = { x = 1, y = 0, confirm = { } }
+  end
 
   -- Snap to position ---------------------------------------------------------
   if self.tile then self.tile.overlord = nil end
