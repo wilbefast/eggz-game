@@ -86,9 +86,14 @@ end
 
 function AI:draw()
 	-- draw all plans
+	local stepx, stepy = self.body.x, self.body.y
+	local n_steps = #(self.plan)
 	for i, step in ipairs(self.plan) do
-		love.graphics.line(self.body.x, self.body.y, step.target.x, step.target.y)
+		player[self.body.player].bindTeamColour(255/n_steps*(n_steps - i + 1))
+		love.graphics.line(stepx, stepy, step.target.x, step.target.y)
+		stepx, stepy = step.target.x, step.target.y
 	end
+	love.graphics.setColor(255, 255, 255)
 end
 
 	
