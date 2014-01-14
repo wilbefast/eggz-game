@@ -34,8 +34,6 @@ local Convertor = Class
   maturationTime = 10, -- seconds
   child_energy = 1,
 
-  ARMOUR = 0,
-
   IMAGES = 
   {
     love.graphics.newImage("assets/red_expand.png"),

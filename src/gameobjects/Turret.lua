@@ -312,10 +312,12 @@ function Turret:draw(x, y)
   x, y = x or self.x, y or self.y
 	
   -- draw menace
-  for _, triangle in ipairs(self.menace) do
-    player[self.player].bindTeamColour(192 + self.menace.smooth*64)
-      love.graphics.polygon("fill", triangle)
-    love.graphics.setColor(255, 255, 255)
+  if not self.stunned then 
+    for _, triangle in ipairs(self.menace) do
+      player[self.player].bindTeamColour(192 + self.menace.smooth*64)
+        love.graphics.polygon("fill", triangle)
+      love.graphics.setColor(255, 255, 255)
+    end
   end
   
   -- draw sprite

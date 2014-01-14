@@ -38,8 +38,6 @@ local Egg = Class
 
   REGEN_EFFICIENCY = 1,
 
-  ARMOUR = 0,
-
   wobble = 0,
   wobble_time = 0,
 

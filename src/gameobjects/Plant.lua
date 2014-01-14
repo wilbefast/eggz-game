@@ -31,6 +31,7 @@ local Plant = Class
   ACCELERATION_MODIFIER = 0.5,
   maturationTime = 1,
   time_since_last_damage = 999,
+  ARMOUR = 0,
 
   init = function(self, tile, player)
     GameObject.init(self, tile.x + tile.w/2, tile.y + tile.h/2, 
@@ -55,7 +56,7 @@ Plant.class = Plant
 Resources
 --]]--
 
--- Plant.IMG_STUN = love.graphics.newImage("assets/FX-chains.png")
+Plant.IMG_STUN = love.graphics.newImage("assets/FX-chains.png")
 Plant.IMG_EAT = love.graphics.newImage("assets/FX-eat.png")
 Plant.ANIM_EAT = Animation(Plant.IMG_EAT, 64, 64, 8, 0, 0)
 
@@ -253,7 +254,8 @@ function Plant:update(dt)
  
 			  -- -- Regenerate ------------------------------------------------------
 			  if self.time_since_last_damage > 3 then
-			  	self.hitpoints = math.min(1, self.hitpoints + self.REGEN_SPEED*dt)
+			  	local regen_amount = self.REGEN_SPEED/useful.tri(self.ARMOUR > 0, self.ARMOUR, 1)*dt
+			  	self.hitpoints = math.min(1, self.hitpoints + regen_amount)
 			  else
 		  		self.time_since_last_damage = self.time_since_last_damage + dt
 			  end

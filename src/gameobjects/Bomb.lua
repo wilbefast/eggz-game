@@ -36,7 +36,7 @@ local Bomb = Class
 
   maturationTime = 16, -- seconds
 
-  uses = 3,
+  uses = 1,--3,
 
   init = function(self, tile)
     Plant.init(self, tile, 0)
@@ -99,7 +99,11 @@ function Bomb:drop(tile)
     audio:play_sound("BOMB-dropped", 0.1)
 
     -- apply effect to the tile
-    tile.acidity = 0.33
+    --tile.acidity = 0.33
+    if tile.occupant then
+      tile.occupant:stun(5)
+      tile.occupant:takeDamage(0.9, nil, true) -- no attacker, ignore armour
+    end
 
   else
     Plant.plant(self, tile)
@@ -117,7 +121,9 @@ function Bomb:draw(x, y)
   if self.transport then
     return
   end
-  love.graphics.draw(Bomb.IMAGES[1], Bomb.QUADS[Bomb.uses - self.uses + 1], x, y,
+  love.graphics.draw(Bomb.IMAGES[1], 
+    Bomb.QUADS[Bomb.uses - self.uses + 1], 
+    x, y,
     0, 1, 1, 32, 40)
 
   -- draw overlay
