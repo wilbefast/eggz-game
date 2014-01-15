@@ -45,15 +45,6 @@ local AI = Class
 Utility
 --]]--
 
-function AI:planRecalculateUtility()
-	table.insert(self.plan, { method = self.doRecalculateUtility, target = self })
-end
-
-function AI:doRecalculateUtility()
-	self:recalculateUtility()
-	return true
-end
-
 function AI:updateUtility(best, new_utility, new_target)
 	if new_utility > best.utility then
 		best.utility = new_utility
@@ -204,7 +195,10 @@ function AI:doGoPickup(egg)
 
 	-- go to the tile
 	if (not self.body.passenger) and self:doGoto(egg.tile) then
+		-- grab the egg
 		self:doLay()
+		-- refresh utility to choose destination
+		self:recalculateUtility()
 	end
 
 	-- have we picked-up yet ?
@@ -238,9 +232,12 @@ Game loop
 function AI:update(dt)
 	-- any previous plans ?
 	if #(self.plan) > 0 then
+		-- what is the next step in the plan ?
 		local step = self.plan[1]
+		-- is this step finished ?
 		local finished = step.method(self, step.target)
 		if finished then
+			-- pop the now finished step
 			table.remove(self.plan, 1) -- yes, I know, this is slow
 			self:doStop()
 		end
@@ -251,14 +248,18 @@ function AI:update(dt)
 		-- recalculate utility map to base choices on
 		self:recalculateUtility()
 
+		-- are we carrying an egg ?
+		if (self.body.passenger) and (self.laying.utility > 0) then
+			self:planGoDropoff(self.laying.target)
+
 		-- do we have an egg ready ?
-		if (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
+		elseif (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
 			self:planGoLay(self.laying.target)
 		
 		-- are any of our eggz hungry ?
 		elseif self.feeding.utility > 0 then
 			self:planGoPickup(self.feeding.target)
-			self:planGoDropoff(self.laying.target)
+
 		end
 	end
 
