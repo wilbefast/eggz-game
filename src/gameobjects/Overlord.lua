@@ -204,7 +204,21 @@ function Overlord:canLand(tile)
   return (self:canUproot(tile) or self:canPlant(tile) or self:canEvolve(tile) or self:canBomb(tile))
 end
 
-
+function Overlord:doPlant()
+  local egg
+  -- put down passenger
+  if self.passenger then
+    egg = self.passenger
+    self.passenger:plant(self.tile)
+    self.skip_next_grab = true
+  -- lay egg
+  elseif (self.egg_ready == 1) then
+    egg = Egg(self.tile, self.player)
+    self.egg_ready = 0
+    self.skip_next_grab = true
+  end
+  return egg
+end
 
 --[[---------------------------------------------------------------------------
 Game loop
@@ -366,16 +380,7 @@ function Overlord:update(dt)
 
 
     if self:canPlant() then
-      -- put down passenger
-      if self.passenger then
-        self.passenger:plant(self.tile)
-        self.skip_next_grab = true
-      -- lay egg
-      elseif (self.egg_ready == 1) then
-        Egg(self.tile, self.player)
-        self.egg_ready = 0
-        self.skip_next_grab = true
-      end
+      self:doPlant()
     end
 
     if self:canUproot() then
@@ -422,23 +427,8 @@ function Overlord:update(dt)
     -- Select option from radial menu
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
     and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
-        -- remove the original plant
-        self.tile.occupant:onEvolution()
-        self.tile.occupant.purge = true
-        -- what will it evolve to ?
-        local evolution
-        local original_hitpoints, original_energy = self.tile.occupant.hitpoints, self.tile.occupant.energy
-        if self.tile.occupant:isType("Cocoon") then
-          -- cancel evolution (immediately return to original from)
-          evolution = self.tile.occupant.evolvesFrom(self.tile, self.player)
-        else
-          -- start new evolution
-          evolution = Cocoon(self.tile, self.player, 
-              self.tile.occupant.EVOLUTION[self.radial_menu_choice], self.tile.occupant.class)
-          evolution.child_energy = original_hitpoints
-        end
-        -- set hitpoints/energy based on original's hitpoints/energy
-        evolution.hitpoints, evolution.energy = original_hitpoints, original_energy
+        -- start evolution
+        self.tile.occupant:evolveInto(self.tile.occupant.EVOLUTION[self.radial_menu_choice])
         -- close the menu
         self.radial_menu_x, self.radial_menu_y = 0, 0
     end

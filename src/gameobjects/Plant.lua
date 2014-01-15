@@ -85,6 +85,26 @@ Plant.EVOLUTION_ICONS =
 Evolve
 --]]--
 
+function Plant:evolveInto(target)
+  -- remove the original plant
+  self:onEvolution()
+  self.purge = true
+
+  -- what will it evolve to ?
+  local evolution
+  local original_hitpoints, original_energy = self.hitpoints, self.energy
+  if self:isType("Cocoon") then
+    -- cancel evolution (immediately return to original from)
+    evolution = self.evolvesFrom(self.tile, self.player)
+  else
+    -- start new evolution
+    evolution = Cocoon(self.tile, self.player, target, self.class)
+    evolution.child_energy = original_hitpoints
+  end
+  -- set hitpoints/energy based on original's hitpoints/energy
+  evolution.hitpoints, evolution.energy = original_hitpoints, original_energy
+end
+
 function Plant:canEvolve()
 	return (self.EVOLUTION and (not self.stunned)) -- override me!
 end

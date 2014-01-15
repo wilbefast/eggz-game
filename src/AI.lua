@@ -72,7 +72,7 @@ function AI:recalculateLayingUtility(tile, distance)
 	-- subtract utility for each defender
 	for i = 1, n_players do
 		if i ~= self.player then
-			utility = utility - tile.defenders[1]*4
+			utility = utility - tile.defenders[i]*4
 		end
 	end
 
@@ -80,20 +80,68 @@ function AI:recalculateLayingUtility(tile, distance)
 	self:updateUtility(self.laying, utility, tile)
 end
 
-function AI:recalculateFeedingUtility(tile, distance)
-	-- only consider friendly eggz which are not completely evolved
-	if (not tile.occupant) 
-		or (tile.occupant.player ~= self.player) 
-		or (not tile.occupant:isType("Egg")) 
-		or (tile.occupant:canEvolve()) then
+function AI:recalculateFeedingUtility(plant, distance)
+	-- only consider friendly eggz which are not ready to evolve
+	if (plant.player ~= self.player) 
+		or (not plant:isType("Egg")) 
+		or (plant:canEvolve()) then
 		return
 	end
 
-	-- subtract the tile and egg energy
-	local utility = 2 - 4*tile.energy - tile.occupant.energy
+	-- subtract the distance and tile and egg energy
+	local utility = 2 - 4*plant.tile.energy - plant.energy - distance
 
 	-- best utility ?
-	self:updateUtility(self.feeding, utility, tile.occupant)
+	self:updateUtility(self.feeding, utility, plant)
+end
+
+function AI:recalculateEvolvingUtility(plant, distance)
+
+	-- only consider friendly eggz which are not ready to evolve
+	if (plant.player ~= self.player) 
+		or (not plant:isType("Egg")) 
+		or (not plant:canEvolve()) then
+		return
+	end
+
+	-- subtract distance 
+	local utility = 1 - distance
+
+	-- best utility ?
+	self:updateUtility(self.evolving, utility, plant)
+end
+
+function AI:recalculateConvertorUtility(tile, distance)
+
+	-- subtract distance 
+	local utility = 1 - distance
+
+	-- don't put convertors next to eachother or rocks
+	for _, t in ipairs(game.grid:getNeighbours4(tile), true) do
+		-- two convertors working on the same territory is pointless
+		if t.owner == self.player then
+			utility = utility - t.conversion*2
+		end
+
+		-- a convertor next to a rock or turret is pointless
+		if t.occupant then
+			if t.occupant:isType("Turret") then
+				utility = utility - 0.75
+			elseif t.occupant:isType("Rock") then
+				utility = utility - 0.5
+			end
+		end
+	end
+
+	-- subtract utility for each defender
+	for i = 1, n_players do
+		if i ~= self.player then
+			utility = utility - tile.defenders[i]*4
+		end
+	end
+
+	-- best utility ?
+	self:updateUtility(self.convertor, utility, tile)
 end
 
 function AI:recalculateUtility()
@@ -101,6 +149,8 @@ function AI:recalculateUtility()
 		-- reset utility
 		self.laying = { utility = -math.huge, target = nil }
 		self.feeding = { utility = -math.huge, target = nil }
+		self.evolving = { utility = -math.huge, target = nil }
+		self.convertor = { utility = -math.huge, target = nil }
 
 		game.grid:map(function(tile, x, y)
 
@@ -111,9 +161,20 @@ function AI:recalculateUtility()
 			-- how good is this tile for laying ?
 			self:recalculateLayingUtility(tile, distance)
 
-			-- how good is this tile for feeding ?
-			self:recalculateFeedingUtility(tile, distance)
-			
+			-- how good is this tile for building a convertor on ?
+			self:recalculateConvertorUtility(tile, distance)
+
+			-- anybody home ?
+			if tile.occupant then
+
+				-- does this egg need to be fed ?
+				self:recalculateFeedingUtility(tile.occupant, distance)
+
+				-- can this egg be evolved ?
+				self:recalculateEvolvingUtility(tile.occupant, distance)
+
+			end
+
 		end)
 
 		-- return the best tile
@@ -205,11 +266,11 @@ function AI:doGoPickup(egg)
 	return (self.body.passenger ~= nil)
 end
 
-function AI:planGoDropoff(tile)
-	table.insert(self.plan, { method = self.doGoDropoff, target = tile })
+function AI:planGoReplant(tile)
+	table.insert(self.plan, { method = self.doGoReplant, target = tile })
 end
 
-function AI:doGoDropoff(tile)
+function AI:doGoReplant(tile)
 	-- can't lay in occupied tiles
 	if not self.body:canPlant(tile) then
 		-- rage quit >:'(
@@ -219,6 +280,32 @@ function AI:doGoDropoff(tile)
 	-- go to the tile
 	if self:doGoto(tile) then
 		self:doLay()
+	end
+
+	-- have we dropped-off yet ?
+	return (self.body.passenger == nil)
+end
+
+--[[------------------------------------------------------------
+Building advanced structures : convertors, turrets and bombs
+--]]--
+
+function AI:planMakeConvertor(tile)
+	table.insert(self.plan, { method = self.doMakeConvertor, target = tile })
+end
+
+function AI:doMakeConvertor(tile)
+
+	-- can't lay in occupied tiles
+	if not self.body:canPlant(tile) then
+		-- rage quit >:'(
+		return true
+	end
+
+	-- go to the tile
+	if self:doGoto(tile) then
+		-- evolve the egg into a convertor
+		self.body:doPlant():evolveInto(Convertor)
 	end
 
 	-- have we dropped-off yet ?
@@ -249,33 +336,45 @@ function AI:update(dt)
 		self:recalculateUtility()
 
 		-- are we carrying an egg ?
-		if (self.body.passenger) and (self.laying.utility > 0) then
-			self:planGoDropoff(self.laying.target)
+		if (self.body.passenger) then 
+			-- is the egg mature ?
+			local egg = self.body.passenger
+			if egg:canEvolve() then
+				-- make a convertor ?
+				if self.convertor.utility > 0 then
+					self:planMakeConvertor(self.convertor.target)
+				end
+			
+			-- replant immature egg if possible
+			elseif (self.laying.utility > 0) then
+				self:planGoReplant(self.laying.target)
+			end
 
-		-- do we have an egg ready ?
+		-- do we have an egg ready to lay ?
 		elseif (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
 			self:planGoLay(self.laying.target)
+
+		-- are any on-map eggz ready to evolve ?
+		elseif self.evolving.utility > 0 then
+			self:planGoPickup(self.evolving.target)
 		
 		-- are any of our eggz hungry ?
 		elseif self.feeding.utility > 0 then
 			self:planGoPickup(self.feeding.target)
-
 		end
-	end
-
-	
+	end	
 end
 
 function AI:draw()
 	-- draw all plans
-	local stepx, stepy = self.body.x, self.body.y
+	--[[local stepx, stepy = self.body.x, self.body.y
 	local n_steps = #(self.plan)
 	for i, step in ipairs(self.plan) do
 		player[self.player].bindTeamColour(255/n_steps*(n_steps - i + 1))
 		love.graphics.line(stepx, stepy, step.target.x, step.target.y)
 		stepx, stepy = step.target.x, step.target.y
 	end
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(255, 255, 255)--]]
 end
 
 	
