@@ -38,19 +38,6 @@ local AI = Class
 
   	-- plan, a list of instructions
   	self.plan = {}
-
-    -- -- create the collision map
-    -- for x = 1, game.grid.w do
-    --   for y = 1, game.grid.h do
-    --   	local t = game.grid.tiles[x][y]
-    --   	if not t.utility then t.utility = {} end
-    --   	t.utility[self] = 
-    --   	{
-    --   		predators = 0,
-    --   		prey = 0
-    --   	}
-    --   end
-    -- end
 	end
 }
 
@@ -58,8 +45,89 @@ local AI = Class
 Utility
 --]]--
 
--- function AI:calculateUtility()
--- end
+function AI:planRecalculateUtility()
+	table.insert(self.plan, { method = self.doRecalculateUtility, target = self })
+end
+
+function AI:doRecalculateUtility()
+	self:recalculateUtility()
+	return true
+end
+
+function AI:updateUtility(best, new_utility, new_target)
+	if new_utility > best.utility then
+		best.utility = new_utility
+		best.target = new_target
+	end
+end
+
+function AI:recalculateLayingUtility(tile, distance)
+	-- ignore occupied tiles
+	if tile.occupant then
+		return
+	end
+
+	-- add the tile energy
+	local utility = tile.energy
+
+	-- subtract the tile distance
+	utility = utility - distance
+
+	-- bonus if the tile is our colour
+	if tile.owner == self.player then
+		utility = utility + tile.conversion*2
+	end
+
+	-- subtract utility for each defender
+	for i = 1, n_players do
+		if i ~= self.player then
+			utility = utility - tile.defenders[1]*4
+		end
+	end
+
+	-- best utility ?
+	self:updateUtility(self.laying, utility, tile)
+end
+
+function AI:recalculateFeedingUtility(tile, distance)
+	-- only consider friendly eggz which are not completely evolved
+	if (not tile.occupant) 
+		or (tile.occupant.player ~= self.player) 
+		or (not tile.occupant:isType("Egg")) 
+		or (tile.occupant:canEvolve()) then
+		return
+	end
+
+	-- subtract the tile and egg energy
+	local utility = 2 - 4*tile.energy - tile.occupant.energy
+
+	-- best utility ?
+	self:updateUtility(self.feeding, utility, tile.occupant)
+end
+
+function AI:recalculateUtility()
+
+		-- reset utility
+		self.laying = { utility = -math.huge, target = nil }
+		self.feeding = { utility = -math.huge, target = nil }
+
+		game.grid:map(function(tile, x, y)
+
+			-- generally prefer closer tiles
+			local distance =
+				Vector.len(self.body.x - tile.x, self.body.y - tile.y) / MAP_SIZE
+
+			-- how good is this tile for laying ?
+			self:recalculateLayingUtility(tile, distance)
+
+			-- how good is this tile for feeding ?
+			self:recalculateFeedingUtility(tile, distance)
+			
+		end)
+
+		-- return the best tile
+		return best_tile, best_utility
+end
 
 --[[------------------------------------------------------------
 Navigation
@@ -85,52 +153,8 @@ function AI:doStop()
 end
 
 --[[------------------------------------------------------------
-Take-off and landing
---]]--
-
---[[------------------------------------------------------------
 Laying
 --]]--
-
-function AI:getBestLayingTile()
-		local best_tile, best_utility = nil, -math.huge
-
-		game.grid:map(function(tile, x, y)
-
-			-- ignore occupied tiles
-			if tile.occupant then
-				return
-			end
-
-			-- add the tile energy
-			local utility = tile.energy
-
-			-- bonus if the tile is our colour
-			if tile.owner == self.player then
-				utility = utility + tile.conversion*2
-			end
-
-			-- subtract utility for each defender
-			for i = 1, n_players do
-				if i ~= self.player then
-					utility = utility - tile.defenders[1]*4
-				end
-			end
-
-			-- prefer closer tiles
-			utility = utility - 
-				Vector.len(self.body.x - tile.x, self.body.y - tile.y) / MAP_SIZE
-
-			-- best utility ?
-			if utility > best_utility then
-				best_utility = utility
-				best_tile = tile
-			end
-		end)
-
-		-- return the best tile
-		return best_tile, best_utility
-end
 
 function AI:planGoLay(tile)
 	table.insert(self.plan, { method = self.doGoLay, target = tile })
@@ -164,6 +188,50 @@ function AI:doLay()
 end
 
 --[[------------------------------------------------------------
+Feeding, ie. picking up and dropping off
+--]]--
+
+function AI:planGoPickup(egg)
+	table.insert(self.plan, { method = self.doGoPickup, target = egg })
+end
+
+function AI:doGoPickup(egg)
+	-- if the egg still there ?
+	if egg.purge or ((egg.transport and egg.transport ~= self.body)) then
+		-- rage quit >:'(
+		return true
+	end
+
+	-- go to the tile
+	if (not self.body.passenger) and self:doGoto(egg.tile) then
+		self:doLay()
+	end
+
+	-- have we picked-up yet ?
+	return (self.body.passenger ~= nil)
+end
+
+function AI:planGoDropoff(tile)
+	table.insert(self.plan, { method = self.doGoDropoff, target = tile })
+end
+
+function AI:doGoDropoff(tile)
+	-- can't lay in occupied tiles
+	if not self.body:canPlant(tile) then
+		-- rage quit >:'(
+		return true
+	end
+
+	-- go to the tile
+	if self:doGoto(tile) then
+		self:doLay()
+	end
+
+	-- have we dropped-off yet ?
+	return (self.body.passenger == nil)
+end
+
+--[[------------------------------------------------------------
 Game loop
 --]]--
 
@@ -179,12 +247,18 @@ function AI:update(dt)
 
 	-- formulate new plans ?
 	else
+
+		-- recalculate utility map to base choices on
+		self:recalculateUtility()
+
 		-- do we have an egg ready ?
-		if self.body.egg_ready >= 1 then
-			local tile, utility = self:getBestLayingTile()
-			if utility > 0 then
-				self:planGoLay(tile)
-			end
+		if (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
+			self:planGoLay(self.laying.target)
+		
+		-- are any of our eggz hungry ?
+		elseif self.feeding.utility > 0 then
+			self:planGoPickup(self.feeding.target)
+			self:planGoDropoff(self.laying.target)
 		end
 	end
 
