@@ -60,8 +60,16 @@ function CollisionGrid:mapRectangle(startx, starty, w, h, f)
   for x = startx, startx + w - 1 do
     for y = starty, starty + h - 1 do
       if self:validGridPos(x, y) then
-        f(self.tiles[x][y])
+        f(self.tiles[x][y], x, y)
       end
+    end
+  end
+end
+
+function CollisionGrid:map(f)
+  for x = 1, self.w do
+    for y = 1, self.h do
+      f(self.tiles[x][y], x, y)
     end
   end
 end

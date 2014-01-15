@@ -48,6 +48,8 @@ local Tile = Class
 		self.non_mans_land = true
 		self.acidView = AnimationView(Tile.ANIM_ACID, 5, 1, 0, 20)
 
+		self.defenders = { 0, 0, 0, 0 }
+
 		-- set to rock ?
 		local x, y = (i-0.5)/grid.w, (j-0.5)/grid.h
 		local centeredness = math.sqrt(2)/4 - Vector.dist(0.5, 0.5, x, y) 

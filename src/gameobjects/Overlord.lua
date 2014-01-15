@@ -95,34 +95,39 @@ function Overlord:eventCollision(other, dt)
   end
 end
 
-function Overlord:enemyTerritory()
+function Overlord:enemyTerritory(tile)
+
+  tile = (tile or self.tile)
+
   -- can't land in enemy territory
-  if (self.tile.owner ~= 0) and (self.tile.owner ~= self.player) and (self.tile.conversion > 0.5) then
+  if (tile.owner ~= 0) and (tile.owner ~= self.player) and (tile.conversion > 0.5) then
     return true
   else
     return false
   end
 end
 
-function Overlord:canUproot()
+function Overlord:canUproot(tile)
+
+  tile = (tile or self.tile)
 
   if self.skip_next_grab then
     return false
 
   -- can't uproot if nothing to uproot
-  elseif not self.tile.occupant then
+  elseif not tile.occupant then
     return false
 
   -- stunned plants are locked down
-  elseif self.tile.occupant.stunned then
+  elseif tile.occupant.stunned then
     return false
 
   -- can't uproot enemy's plants from their territory
-  elseif (self.tile.occupant.player ~= self.player) and self:enemyTerritory() then
+  elseif (tile.occupant.player ~= self.player) and self:enemyTerritory(tile) then
     return false
   
   -- any other egg or bomb is fine to pick up
-  elseif self.tile.occupant.canBeUprooted then
+  elseif tile.occupant.canBeUprooted then
     return true
 
   else
@@ -130,24 +135,27 @@ function Overlord:canUproot()
   end
 end
 
-function Overlord:canEvolve()
+function Overlord:canEvolve(tile)
+
+  tile = (tile or self.tile)
+
   -- can't evolve if nothing to evolve
-  if not self.tile.occupant then
+  if not tile.occupant then
     return false
 
   -- stunned plants are locked down
-  elseif self.tile.occupant.stunned then
+  elseif tile.occupant.stunned then
     return false
 
   -- can't uproot enemy's plants from their territory
-  elseif self.tile.occupant.player ~= self.player then
+  elseif tile.occupant.player ~= self.player then
     return false
   
   -- can't evolve your own plants if they're on enemy territory
-  elseif self:enemyTerritory() then
+  elseif self:enemyTerritory(tile) then
     return false
   -- some plants can't evolve
-  elseif not self.tile.occupant:canEvolve() then
+  elseif not tile.occupant:canEvolve() then
     return false
 
   -- all good otherwise
@@ -156,20 +164,20 @@ function Overlord:canEvolve()
   end
 end
 
-function Overlord:canSwap()
+function Overlord:canSwap(tile)
   return
-    (self:canUproot() and self.passenger)--((self.egg_ready >= 1) or (self.passenger)))
+    (self:canUproot(tile) and self.passenger)--((self.egg_ready >= 1) or (self.passenger)))
 end
 
-function Overlord:canBomb()
+function Overlord:canBomb(tile)
   -- bombs can be planted on anywhere
   return ((not self.skip_next_grab) and self.passenger and self.passenger:isType("Bomb"))
 end
 
 
-function Overlord:canPlant()
+function Overlord:canPlant(tile)
 
-  local tile, payload = self.tile, self.passenger
+  local tile, payload = (tile or self.tile), self.passenger
 
   if self.skip_next_grab then
     return false
@@ -192,8 +200,8 @@ function Overlord:canPlant()
   end
 end
 
-function Overlord:canLand()
-  return (self:canUproot() or self:canPlant() or self:canEvolve() or self:canBomb())
+function Overlord:canLand(tile)
+  return (self:canUproot(tile) or self:canPlant(tile) or self:canEvolve(tile) or self:canBomb(tile))
 end
 
 
