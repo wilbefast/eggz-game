@@ -122,6 +122,43 @@ function AI:recalculateEvolvingUtility(plant, distance)
 	self:updateUtility(self.evolving, utility, plant)
 end
 
+function AI:recalculateDerockingUtility(rock, distance)
+	local tile = rock.tile
+
+	-- stop juggling rocks doofus
+	if tile == self.body.tile then
+		return
+	end
+
+	-- only consider rocks
+	if not rock:isType("Rock") then
+		return
+	end
+
+	-- prefer close rocks with a lot of energy under them
+	local utility = 0.5*tile.energy - distance - 1
+
+	for i = 1, n_players do
+		if i == self.player then
+			utility = utility + tile.convertors[i]*8
+			utility = utility + tile.defenders[i]*3
+			utility = utility - tile.vulnerabilities[i]*5
+		else
+			utility = utility - tile.convertors[i]*4
+			utility = utility - tile.defenders[i]*2
+			utility = utility + tile.vulnerabilities[i]*0.5
+		end
+	end
+
+	-- move eggz which are already on friendly territory less often
+	if tile.owner == self.player then
+		utility = utility - tile.convertors[self.player]*0.6
+	end
+
+	-- best utility ?
+	self:updateUtility(self.derocking, utility, rock)
+end
+
 function AI:recalculateConvertorUtility(tile, distance)
 
 	-- subtract distance 
@@ -139,31 +176,23 @@ function AI:recalculateConvertorUtility(tile, distance)
 		for i = 1, n_players do
 			if i == self.player then
 				-- penalty if the tile is our colour
-				utility = utility - 4*tile.convertors[i]
+				utility = utility - 10*tile.convertors[i]
 			else
 				-- penalty if the tile is not our colour
-				utility = utility - 0.5*tile.convertors[i]
+				utility = utility - 2*tile.convertors[i]
 			end
 		end
 
 		if (t ~= tile) and (t.convertors[self.player] == 0) then
-			utility = utility + 3*t.vulnerabilities[self.player]
+			utility = utility + 4*t.vulnerabilities[self.player]
 		end
-
-
-		-- if t.owner == self.player then
-		-- 	utility = utility - t.conversion*4
-		-- -- protect other convertors' vulnerabilities
-		-- elseif (t ~= tile) and (tile.owner ~= self.player) then
-		-- 	utility = utility + 4*t.vulnerabilities[self.player]
-		-- end
 
 		-- a convertor next to a rock or turret is pointless
 		if t.occupant then
 			if t.occupant:isType("Turret") then
-				utility = utility - 0.75
+				utility = utility - 2
 			elseif t.occupant:isType("Rock") then
-				utility = utility - 0.5
+				utility = utility - 1
 			end
 		end
 	end
@@ -179,18 +208,42 @@ function AI:recalculateConvertorUtility(tile, distance)
 	self:updateUtility(self.convertor, utility, tile)
 end
 
+function AI:recalculateTurretUtility(tile, distance)
+
+	-- subtract distance 
+	local utility = 1 - distance
+
+	-- ignore tiles that can't be planted in or cleared
+	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
+		return
+	end
+
+	-- turrets should be placed in vulnerable areas
+	for i = 1, n_players do
+		if i == self.player then
+			utility = utility - tile.defenders[i]
+			utility = utility + 2*tile.vulnerabilities[i]
+		else
+			utility = utility - tile.defenders[i]
+			utility = utility + 5*tile.vulnerabilities[i]
+		end
+	end
+
+	-- best utility ?
+	self:updateUtility(self.turret, utility, tile)
+end
+
 function AI:recalculateRockUtility(tile, distance)
-	
 	-- ignore tiles that can't be planted in for whatever reason
 	if (not self.body:canPlant(tile)) then
 		return
 	end
 
 	-- subtract distance 
-	local utility = 5 - 2*distance - tile.energy
+	local utility = 7 - 4*distance - tile.energy
 
 	-- don't place in own territory
-	utility = utility - tile.convertors[self.player]
+	utility = utility - 4*tile.convertors[self.player]
 
 	-- protect own vulnerabilities, not enemy ones
 	for i = 1, n_players do
@@ -211,7 +264,10 @@ function AI:recalculateUtility()
 		self.laying = { utility = -math.huge, target = nil }
 		self.feeding = { utility = -math.huge, target = nil }
 		self.evolving = { utility = -math.huge, target = nil }
+		self.derocking = { utility = -math.huge, target = nil }
+
 		self.convertor = { utility = -math.huge, target = nil }
+		self.turret = { utility = -math.huge, target = nil }
 		self.rock = { utility = -math.huge, target = nil }
 
 		game.grid:map(function(tile, x, y)
@@ -226,17 +282,23 @@ function AI:recalculateUtility()
 			-- how good is this tile for building a convertor on ?
 			self:recalculateConvertorUtility(tile, distance)
 
+			-- how good is this tile building a turret on ?
+			self:recalculateTurretUtility(tile, distance)
+
 			-- how good is this tile for dropping a rock on ?
 			self:recalculateRockUtility(tile, distance)
 
 			-- anybody home ?
 			if tile.occupant then
 
-				-- does this egg need to be fed ?
+				-- does this plant need to be fed ?
 				self:recalculateFeedingUtility(tile.occupant, distance)
 
-				-- can this egg be evolved ?
+				-- can this plant be evolved ?
 				self:recalculateEvolvingUtility(tile.occupant, distance)
+
+				-- is this plant a rock that should be moved ?
+				self:recalculateDerockingUtility(tile.occupant, distance)
 
 			end
 
@@ -317,11 +379,7 @@ end
 Building advanced structures : convertors, turrets and bombs
 --]]--
 
-function AI:planMakeConvertor(tile)
-	table.insert(self.plan, { method = self.doMakeConvertor, target = tile })
-end
-
-function AI:doMakeConvertor(tile)
+function AI:doMake(tile, evolution)
 	-- go to target location and plant the carried egg
 	local arrived = false
 	if self.body:canPlant(tile) then
@@ -336,12 +394,26 @@ function AI:doMakeConvertor(tile)
 	-- evolve the placed egg
 	if arrived then
 		if self.body:canEvolve() then
-			self.body:doEvolve(Convertor)
+			self.body:doEvolve(evolution)
 		end
 		return true
 	else
 		return false
 	end
+end
+
+function AI:planMakeConvertor(tile)
+	table.insert(self.plan, { method = self.doMakeConvertor, target = tile })
+end
+function AI:doMakeConvertor(tile)
+	return self:doMake(tile, Convertor)
+end
+
+function AI:planMakeTurret(tile)
+	table.insert(self.plan, { method = self.doMakeTurret, target = tile })
+end
+function AI:doMakeTurret(tile)
+	return self:doMake(tile, Turret)
 end
 
 --[[------------------------------------------------------------
@@ -380,8 +452,11 @@ function AI:update(dt)
 				local plant = self.body.passenger
 				if plant:canEvolve() then
 					-- make a convertor ?
-					if self.convertor.utility > 0 then
+					if (self.convertor.utility > 0) 
+					and (self.convertor.utility > self.turret.utility) then
 						self:planMakeConvertor(self.convertor.target)
+					elseif (self.turret.utility > 0) then
+						self:planMakeTurret(self.turret.target)
 					end
 				-- replant immature egg if possible
 				elseif (self.laying.utility > 0) then
@@ -390,14 +465,16 @@ function AI:update(dt)
 			elseif plant:isType("Rock") then
 				if (self.rock.utility > 0) then
 					self:planGoPlant(self.rock.target)
-				else
-					log:write(self.rock.utility)
 				end
 			end
 
 		-- do we have an egg ready to lay ?
 		elseif (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
 			self:planGoPlant(self.laying.target)
+
+		-- are there any rocks which need to be moved ?
+		elseif self.derocking.utility > 0 then
+			self:planGoPickup(self.derocking.target)
 
 		-- are any on-map eggz ready to evolve ?
 		elseif self.evolving.utility > 0 then

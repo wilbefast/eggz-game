@@ -215,6 +215,7 @@ function Turret:update(dt)
     end
 
     -- check for enemies
+    self.guardArea = game.grid:getNeighbours8(self.tile)
     self.enemies = {}
     for _, t in pairs(self.guardArea) do
       if t.occupant and (t.occupant.player ~= self.player) and (t.occupant.player ~= 0) then
