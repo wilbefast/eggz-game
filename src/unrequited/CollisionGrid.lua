@@ -108,6 +108,19 @@ function CollisionGrid:getNeighbours4(t, centre)
   return result
 end
 
+function CollisionGrid:getNeighboursX(t, centre)
+  local result = {}
+  function insertIfNotNil(t, x) if x then table.insert(t, x) end end
+  insertIfNotNil(result, self:gridToTile(t.i-1, t.j-1, true))    -- NW
+  insertIfNotNil(result, self:gridToTile(t.i+1, t.j-1, true))    -- NE
+  insertIfNotNil(result, self:gridToTile(t.i-1, t.j+1, true))    -- SW
+  insertIfNotNil(result, self:gridToTile(t.i+1, t.j+1, true))    -- SE
+  if centre then
+    insertIfNotNil(result, self:gridToTile(t.i, t.j, true))
+  end
+  return result
+end
+
 --[[------------------------------------------------------------
 Game loop
 --]]--

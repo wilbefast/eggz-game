@@ -178,12 +178,12 @@ end
 function Overlord:canPlant(tile)
 
   local tile, payload = (tile or self.tile), self.passenger
-
+  
   if self.skip_next_grab then
     return false
 
   -- can't plant on enemy territory
-  elseif self:enemyTerritory() then
+  elseif self:enemyTerritory(tile) then
     return false
 
   -- can't plant nothing

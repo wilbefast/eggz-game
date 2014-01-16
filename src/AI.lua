@@ -53,26 +53,27 @@ function AI:updateUtility(best, new_utility, new_target)
 end
 
 function AI:recalculateLayingUtility(tile, distance)
-	-- ignore occupied tiles
-	if tile.occupant then
+	-- ignore tiles that can't be planted in for whatever reason
+	if (not self.body:canPlant(tile)) then
 		return
 	end
 
 	-- add the tile energy
-	local utility = tile.energy
+	local utility = tile.energy*2
 
 	-- subtract the tile distance
 	utility = utility - distance
 
-	-- bonus if the tile is our colour
-	if tile.owner == self.player then
-		utility = utility + tile.conversion*2
-	end
-
-	-- subtract utility for each defender
 	for i = 1, n_players do
 		if i ~= self.player then
+			-- subtract utility for each defender
 			utility = utility - tile.defenders[i]*4
+
+			-- penalty if the tile is not our colour
+			utility = utility - tile.convertors[i]
+		else
+			-- bonus if the tile is our colour
+			utility = utility + tile.convertors[i]*0.5
 		end
 	end
 
@@ -81,6 +82,11 @@ function AI:recalculateLayingUtility(tile, distance)
 end
 
 function AI:recalculateFeedingUtility(plant, distance)
+	-- stop juggling eggz doofus
+	if plant.tile == self.body.tile then
+		return
+	end
+
 	-- only consider friendly eggz which are not ready to evolve
 	if (plant.player ~= self.player) 
 		or (not plant:isType("Egg")) 
@@ -89,11 +95,11 @@ function AI:recalculateFeedingUtility(plant, distance)
 	end
 
 	-- subtract the distance and tile and egg energy
-	local utility = 2 - 4*plant.tile.energy - plant.energy - distance
+	local utility = 2 - 4*plant.tile.energy - plant.energy - 0.3*distance
 
-	-- move eggz on friendly territory less often
+	-- move eggz which are already on friendly territory less often
 	if plant.tile.owner == self.player then
-		utility = utility - plant.tile.conversion*0.5
+		utility = utility - plant.tile.convertors[self.player]*0.6
 	end
 
 	-- best utility ?
@@ -121,17 +127,36 @@ function AI:recalculateConvertorUtility(tile, distance)
 	-- subtract distance 
 	local utility = 1 - distance
 
-	-- don't pick occupied tiles that can't easily be cleared
-	if tile.occupant and (not self.body:canUproot(tile)) then
+	-- ignore tiles that can't be planted in or cleared
+	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
 		return
 	end
 
 	-- conversion areas should not overlap, should not lie on turrets and rocks
 	for _, t in ipairs(game.grid:getNeighbours4(tile), true) do
 		-- two convertors working on the same territory is pointless
-		if t.owner == self.player then
-			utility = utility - t.conversion*2
+
+		for i = 1, n_players do
+			if i == self.player then
+				-- penalty if the tile is our colour
+				utility = utility - 4*tile.convertors[i]
+			else
+				-- penalty if the tile is not our colour
+				utility = utility - 0.5*tile.convertors[i]
+			end
 		end
+
+		if (t ~= tile) and (t.convertors[self.player] == 0) then
+			utility = utility + 3*t.vulnerabilities[self.player]
+		end
+
+
+		-- if t.owner == self.player then
+		-- 	utility = utility - t.conversion*4
+		-- -- protect other convertors' vulnerabilities
+		-- elseif (t ~= tile) and (tile.owner ~= self.player) then
+		-- 	utility = utility + 4*t.vulnerabilities[self.player]
+		-- end
 
 		-- a convertor next to a rock or turret is pointless
 		if t.occupant then
@@ -154,6 +179,32 @@ function AI:recalculateConvertorUtility(tile, distance)
 	self:updateUtility(self.convertor, utility, tile)
 end
 
+function AI:recalculateRockUtility(tile, distance)
+	
+	-- ignore tiles that can't be planted in for whatever reason
+	if (not self.body:canPlant(tile)) then
+		return
+	end
+
+	-- subtract distance 
+	local utility = 5 - 2*distance - tile.energy
+
+	-- don't place in own territory
+	utility = utility - tile.convertors[self.player]
+
+	-- protect own vulnerabilities, not enemy ones
+	for i = 1, n_players do
+		if i == self.player then
+			utility = utility + tile.vulnerabilities[i]
+		else
+			utility = utility - tile.vulnerabilities[i]
+		end
+	end
+
+	-- best utility ?
+	self:updateUtility(self.rock, utility, tile)
+end
+
 function AI:recalculateUtility()
 
 		-- reset utility
@@ -161,6 +212,7 @@ function AI:recalculateUtility()
 		self.feeding = { utility = -math.huge, target = nil }
 		self.evolving = { utility = -math.huge, target = nil }
 		self.convertor = { utility = -math.huge, target = nil }
+		self.rock = { utility = -math.huge, target = nil }
 
 		game.grid:map(function(tile, x, y)
 
@@ -173,6 +225,9 @@ function AI:recalculateUtility()
 
 			-- how good is this tile for building a convertor on ?
 			self:recalculateConvertorUtility(tile, distance)
+
+			-- how good is this tile for dropping a rock on ?
+			self:recalculateRockUtility(tile, distance)
 
 			-- anybody home ?
 			if tile.occupant then
@@ -316,19 +371,28 @@ function AI:update(dt)
 		-- recalculate utility map to base choices on
 		self:recalculateUtility()
 
-		-- are we carrying an egg ?
+		-- are we carrying a plant ?
 		if (self.body.passenger) then 
-			-- is the egg mature ?
-			local egg = self.body.passenger
-			if egg:canEvolve() then
-				-- make a convertor ?
-				if self.convertor.utility > 0 then
-					self:planMakeConvertor(self.convertor.target)
+			local plant = self.body.passenger
+			-- are we carrying an egg ?
+			if plant:isType("Egg") then
+				-- is the egg mature ?
+				local plant = self.body.passenger
+				if plant:canEvolve() then
+					-- make a convertor ?
+					if self.convertor.utility > 0 then
+						self:planMakeConvertor(self.convertor.target)
+					end
+				-- replant immature egg if possible
+				elseif (self.laying.utility > 0) then
+					self:planGoPlant(self.laying.target)
 				end
-			
-			-- replant immature egg if possible
-			elseif (self.laying.utility > 0) then
-				self:planGoPlant(self.laying.target)
+			elseif plant:isType("Rock") then
+				if (self.rock.utility > 0) then
+					self:planGoPlant(self.rock.target)
+				else
+					log:write(self.rock.utility)
+				end
 			end
 
 		-- do we have an egg ready to lay ?

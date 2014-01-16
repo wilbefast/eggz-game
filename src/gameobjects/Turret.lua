@@ -60,12 +60,6 @@ local Turret = Class
 
     -- animation
     self.subimage = 1
-
-    -- set guard area
-    self.guardArea = GameObject.COLLISIONGRID:getNeighbours8(tile)
-    for i, tile in pairs(self.guardArea) do
-      tile.defenders[player] = tile.defenders[player] + 1
-    end
 		
 		-- target tile whose occupant will be damaged
 		self.targetTile = nil
@@ -127,13 +121,6 @@ Take damage
 function Turret:die()
   Plant.die(self)
   audio:play_sound("KNIGHT-destroyed")
-  for i, tile in pairs(self.guardArea) do
-    tile.defenders[self.player] = tile.defenders[self.player] - 1
-  end
-end
-
-
-function Turret:onEvolution()
   for i, tile in pairs(self.guardArea) do
     tile.defenders[self.player] = tile.defenders[self.player] - 1
   end

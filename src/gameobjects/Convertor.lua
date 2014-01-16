@@ -25,7 +25,7 @@ local Convertor = Class
   type = GameObject.TYPE.new("Convertor"),
 
   ENERGY_DRAW_SPEED = 0,            -- per second
-  ENERGY_CONSUME_SPEED = 0,           -- per second
+  ENERGY_CONSUME_SPEED = 0,         -- per second
   ENERGY_DRAW_EFFICIENCY = 0,       -- percent
   ENERGY_START = 1,
   MAX_W = 24,
@@ -47,7 +47,7 @@ local Convertor = Class
 
     self.view = AnimationView(Convertor.ANIMS[self.player], 5, 1, 32, 32)
 
-    -- set guard area
+    -- set conversion area
     self.convertArea = GameObject.COLLISIONGRID:getNeighbours4(tile) -- center
 
     -- push message in player log
@@ -82,10 +82,17 @@ Take damage
 function Convertor:die()
   Plant.die(self)
   audio:play_sound("FOUNTAIN-destroyed")
-    -- push message in player log
-    player[self.player].show_conversion(self.x, self.y - 32, 3)
+  -- push message in player log
+  player[self.player].show_conversion(self.x, self.y - 32, 3)
+  -- remove vulnerability markers
+  for i, t in pairs(GameObject.COLLISIONGRID:getNeighboursX(self.tile)) do
+    t.vulnerabilities[self.player] = t.vulnerabilities[self.player] - 1
+  end
+  -- remove converison markers
+  for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(self.tile, true)) do
+    t.convertors[self.player] = t.convertors[self.player] - 1
+  end
 end
-
 
 --[[------------------------------------------------------------
 Game loop

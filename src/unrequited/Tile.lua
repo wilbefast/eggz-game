@@ -49,6 +49,8 @@ local Tile = Class
 		self.acidView = AnimationView(Tile.ANIM_ACID, 5, 1, 0, 20)
 
 		self.defenders = { 0, 0, 0, 0 }
+		self.vulnerabilities = { 0, 0, 0, 0 }
+		self.convertors = { 0, 0, 0, 0 }
 
 		-- set to rock ?
 		local x, y = (i-0.5)/grid.w, (j-0.5)/grid.h
@@ -175,6 +177,7 @@ function Tile:draw(x, y, forceDrawOccupant)
 	if forceDrawOccupant and self.occupant then
 		self.occupant:draw(x + self.w/2, y + self.h/2)
 	end
+
 end
 
 function Tile:drawContours(x, y)

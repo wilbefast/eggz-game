@@ -38,12 +38,45 @@ local Cocoon = Class
   init = function(self, tile, player, evolvesTo, evolvesFrom)
     Plant.init(self, tile, player)
     self.maturity = 0
+
+    -- EVOLVING TOWARDS
     self.evolvesTo = evolvesTo
+    -- evolving to Convertor set vulnerable area
+    if self.evolvesTo == Convertor then
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighboursX(tile)) do
+        t.vulnerabilities[player] = t.vulnerabilities[player] + 1
+      end
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(tile), true) do
+        t.convertors[player] = t.convertors[player] + 1
+      end
+    -- evolving to Turret set defended area
+    elseif self.evolvesTo == Turret then
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours8(tile)) do
+        t.defenders[player] = t.defenders[player] + 1
+      end
+    end
+
+    -- EVOLVING AWAY FROM
     self.evolvesFrom = (evolvesFrom or Egg)
+    -- evolving to Convertor set vulnerable area
+    if self.evolvesFrom == Convertor then
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighboursX(tile)) do
+        t.vulnerabilities[player] = t.vulnerabilities[player] - 1
+      end
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(tile), true) do
+        t.convertors[player] = t.convertors[player] - 1
+      end
+    -- evolving to Turret set defended area
+    elseif self.evolvesFrom == Turret then
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours8(tile)) do
+        t.defenders[player] = t.defenders[player] - 1
+      end
+    end
+
     self.maturationTime = evolvesTo.maturationTime
     self.soundIsStarted = false
 
-    self.view = AnimationView(Cocoon.ANIMS[self.player], 6, 1, 32, 50)
+    self.view = AnimationView(Cocoon.ANIMS[player], 6, 1, 32, 50)
   end,
 }
 Cocoon:include(Plant)
