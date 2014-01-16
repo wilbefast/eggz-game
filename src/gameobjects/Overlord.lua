@@ -220,6 +220,30 @@ function Overlord:doPlant()
   return egg
 end
 
+function Overlord:doUproot()
+-- pick up tile occupant
+  if (self.radial_menu < 1) then
+    -- cache
+    local swap, occ = self.passenger, self.tile.occupant
+
+    -- in any case uproot
+    occ:uproot(self)
+
+    -- swap if applicable
+    if swap or (self.egg_ready >= 1) then
+      -- swap for passenger
+      if swap then
+        swap:plant(self.tile)
+      end
+      self.passenger = occ
+    end
+
+    -- slow momentum when picking up
+    self.dx = self.dx * 0.5
+    self.dy = self.dy * 0.5
+  end
+end
+
 --[[---------------------------------------------------------------------------
 Game loop
 --]]--
@@ -384,27 +408,7 @@ function Overlord:update(dt)
     end
 
     if self:canUproot() then
-      -- pick up tile occupant
-      if (self.radial_menu < 1) then
-        -- cache
-        local swap, occ = self.passenger, self.tile.occupant
-
-        -- in any case uproot
-        occ:uproot(self)
-
-        -- swap if applicable
-        if swap or (self.egg_ready >= 1) then
-          -- swap for passenger
-          if swap then
-            swap:plant(self.tile)
-          end
-          self.passenger = occ
-        end
-
-        -- slow momentum when picking up
-        self.dx = self.dx * 0.5
-        self.dy = self.dy * 0.5
-      end
+      self:doUproot()
     end 
 
     self.skip_next_grab = false

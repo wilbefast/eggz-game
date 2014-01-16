@@ -200,47 +200,11 @@ end
 
 function AI:doStop()
 	self.x, self.y = 0, 0
-	self.confirm.pressed = false
-	self.confirm.trigger = 0
 end
+
 
 --[[------------------------------------------------------------
-Laying
---]]--
-
-function AI:planGoLay(tile)
-	table.insert(self.plan, { method = self.doGoLay, target = tile })
-end
-
-function AI:doGoLay(tile)
-	-- can't lay in occupied tiles
-	if not self.body:canPlant(tile) then
-		-- rage quit >:'(
-		return true
-	end
-
-	-- go to the tile
-	if self:doGoto(tile) then
-		self:doLay()
-	end
-
-	-- have we laid yet ?
-	return (self.body.egg_ready < 1)
-end
-
-function AI:doLay()
-	self.x, self.y = 0, 0
-	if self.confirm.pressed then
-		self.confirm.pressed = true
-		self.confirm.trigger = 1
-	else
-		self.confirm.pressed = false
-		self.confirm.trigger = -1
-	end
-end
-
---[[------------------------------------------------------------
-Feeding, ie. picking up and dropping off
+Picking up and putting down
 --]]--
 
 function AI:planGoPickup(egg)
@@ -257,7 +221,7 @@ function AI:doGoPickup(egg)
 	-- go to the tile
 	if (not self.body.passenger) and self:doGoto(egg.tile) then
 		-- grab the egg
-		self:doLay()
+		self.body:doUproot()
 		-- refresh utility to choose destination
 		self:recalculateUtility()
 	end
@@ -266,24 +230,25 @@ function AI:doGoPickup(egg)
 	return (self.body.passenger ~= nil)
 end
 
-function AI:planGoReplant(tile)
-	table.insert(self.plan, { method = self.doGoReplant, target = tile })
+function AI:planGoPlant(tile)
+	table.insert(self.plan, { method = self.doGoPlant, target = tile })
 end
 
-function AI:doGoReplant(tile)
+function AI:doGoPlant(tile)
 	-- can't lay in occupied tiles
 	if not self.body:canPlant(tile) then
+		log:write("I can't plan there :'(")
 		-- rage quit >:'(
 		return true
 	end
 
 	-- go to the tile
 	if self:doGoto(tile) then
-		self:doLay()
+		self.body:doPlant()
+		return true
+	else
+		return false
 	end
-
-	-- have we dropped-off yet ?
-	return (self.body.passenger == nil)
 end
 
 --[[------------------------------------------------------------
@@ -306,10 +271,12 @@ function AI:doMakeConvertor(tile)
 	if self:doGoto(tile) then
 		-- evolve the egg into a convertor
 		self.body:doPlant():evolveInto(Convertor)
+		return true
+	else
+		return false
 	end
 
-	-- have we dropped-off yet ?
-	return (self.body.passenger == nil)
+	
 end
 
 --[[------------------------------------------------------------
@@ -317,6 +284,10 @@ Game loop
 --]]--
 
 function AI:update(dt)
+
+	-- AI never skips grabs
+	self.body.skip_next_grab = false
+
 	-- any previous plans ?
 	if #(self.plan) > 0 then
 		-- what is the next step in the plan ?
@@ -325,6 +296,7 @@ function AI:update(dt)
 		local finished = step.method(self, step.target)
 		if finished then
 			-- pop the now finished step
+			log:write("finish this step, planning next one")
 			table.remove(self.plan, 1) -- yes, I know, this is slow
 			self:doStop()
 		end
@@ -343,18 +315,17 @@ function AI:update(dt)
 				-- make a convertor ?
 				if self.convertor.utility > 0 then
 					self:planMakeConvertor(self.convertor.target)
-				else
-					print("dis can evolve but I dunno where to put it :'(")
 				end
 			
 			-- replant immature egg if possible
 			elseif (self.laying.utility > 0) then
-				self:planGoReplant(self.laying.target)
+				self:planGoPlant(self.laying.target)
 			end
 
 		-- do we have an egg ready to lay ?
 		elseif (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
-			self:planGoLay(self.laying.target)
+			log:write("let's lay an egg :D")
+			self:planGoPlant(self.laying.target)
 
 		-- are any on-map eggz ready to evolve ?
 		elseif self.evolving.utility > 0 then

@@ -23,7 +23,6 @@ local log = { "", "", "", "", "", "", "", "", "", "" }
 log.font = love.graphics.newFont(14)
 
 function log:write(message)
-
 	if type(message) ~= "string" then
 		message = tostring(message)
 	end
@@ -39,7 +38,7 @@ end
 function log:draw()
 	love.graphics.rectangle("line", 16, 16, 256, 32*#self + 16)
 	love.graphics.setFont(self.font)
-	for i = 1, #self do
+	for i = #self, 1, -1  do
 		love.graphics.printf(self[i], 32, 32*i, 256)
 	end
 end
