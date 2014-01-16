@@ -204,6 +204,10 @@ function Overlord:canLand(tile)
   return (self:canUproot(tile) or self:canPlant(tile) or self:canEvolve(tile) or self:canBomb(tile))
 end
 
+--[[------------------------------------------------------------
+AI commands
+--]]--
+
 function Overlord:doPlant()
   local egg
   -- put down passenger
@@ -242,6 +246,10 @@ function Overlord:doUproot()
     self.dx = self.dx * 0.5
     self.dy = self.dy * 0.5
   end
+end
+
+function Overlord:doEvolve(target)
+  self.tile.occupant:evolveInto(target)
 end
 
 --[[---------------------------------------------------------------------------
@@ -432,7 +440,7 @@ function Overlord:update(dt)
     if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
     and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
         -- start evolution
-        self.tile.occupant:evolveInto(self.tile.occupant.EVOLUTION[self.radial_menu_choice])
+        self:doEvolve(self.tile.occupant.EVOLUTION[self.radial_menu_choice])
         -- close the menu
         self.radial_menu_x, self.radial_menu_y = 0, 0
     end

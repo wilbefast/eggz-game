@@ -91,6 +91,11 @@ function AI:recalculateFeedingUtility(plant, distance)
 	-- subtract the distance and tile and egg energy
 	local utility = 2 - 4*plant.tile.energy - plant.energy - distance
 
+	-- move eggz on friendly territory less often
+	if plant.tile.owner == self.player then
+		utility = utility - plant.tile.conversion*0.5
+	end
+
 	-- best utility ?
 	self:updateUtility(self.feeding, utility, plant)
 end
@@ -116,7 +121,12 @@ function AI:recalculateConvertorUtility(tile, distance)
 	-- subtract distance 
 	local utility = 1 - distance
 
-	-- don't put convertors next to eachother or rocks
+	-- don't pick occupied tiles that can't easily be cleared
+	if tile.occupant and (not self.body:canUproot(tile)) then
+		return
+	end
+
+	-- conversion areas should not overlap, should not lie on turrets and rocks
 	for _, t in ipairs(game.grid:getNeighbours4(tile), true) do
 		-- two convertors working on the same territory is pointless
 		if t.owner == self.player then
@@ -207,27 +217,25 @@ end
 Picking up and putting down
 --]]--
 
-function AI:planGoPickup(egg)
-	table.insert(self.plan, { method = self.doGoPickup, target = egg })
+function AI:planGoPickup(plant)
+	table.insert(self.plan, { method = self.doGoPickup, target = plant })
 end
 
-function AI:doGoPickup(egg)
-	-- if the egg still there ?
-	if egg.purge or ((egg.transport and egg.transport ~= self.body)) then
+function AI:doGoPickup(plant)
+	-- if the plant still there ?
+	if plant.purge or ((plant.transport and plant.transport ~= self.body)) then
 		-- rage quit >:'(
 		return true
 	end
 
 	-- go to the tile
-	if (not self.body.passenger) and self:doGoto(egg.tile) then
-		-- grab the egg
+	if self:doGoto(plant.tile) and self.body:canUproot() then
+		-- grab the plant
 		self.body:doUproot()
-		-- refresh utility to choose destination
-		self:recalculateUtility()
+		return true
+	else
+		return false
 	end
-
-	-- have we picked-up yet ?
-	return (self.body.passenger ~= nil)
 end
 
 function AI:planGoPlant(tile)
@@ -237,7 +245,6 @@ end
 function AI:doGoPlant(tile)
 	-- can't lay in occupied tiles
 	if not self.body:canPlant(tile) then
-		log:write("I can't plan there :'(")
 		-- rage quit >:'(
 		return true
 	end
@@ -260,23 +267,26 @@ function AI:planMakeConvertor(tile)
 end
 
 function AI:doMakeConvertor(tile)
-
-	-- can't lay in occupied tiles
-	if not self.body:canPlant(tile) then
-		-- rage quit >:'(
+	-- go to target location and plant the carried egg
+	local arrived = false
+	if self.body:canPlant(tile) then
+		-- plant the carried egg if the tile is free
+		arrived = self:doGoPlant(tile)
+	elseif self.body:canUproot(tile) then
+		-- swap the carried egg for the tile contents if not
+		arrived = self:doGoPickup(tile.occupant)
+	else
 		return true
 	end
-
-	-- go to the tile
-	if self:doGoto(tile) then
-		-- evolve the egg into a convertor
-		self.body:doPlant():evolveInto(Convertor)
+	-- evolve the placed egg
+	if arrived then
+		if self.body:canEvolve() then
+			self.body:doEvolve(Convertor)
+		end
 		return true
 	else
 		return false
 	end
-
-	
 end
 
 --[[------------------------------------------------------------
@@ -296,7 +306,6 @@ function AI:update(dt)
 		local finished = step.method(self, step.target)
 		if finished then
 			-- pop the now finished step
-			log:write("finish this step, planning next one")
 			table.remove(self.plan, 1) -- yes, I know, this is slow
 			self:doStop()
 		end
@@ -324,7 +333,6 @@ function AI:update(dt)
 
 		-- do we have an egg ready to lay ?
 		elseif (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
-			log:write("let's lay an egg :D")
 			self:planGoPlant(self.laying.target)
 
 		-- are any on-map eggz ready to evolve ?
@@ -332,7 +340,7 @@ function AI:update(dt)
 			self:planGoPickup(self.evolving.target)
 		
 		-- are any of our eggz hungry ?
-		elseif self.feeding.utility > 0 then
+		elseif self.feeding.utility > 0 and (self.feeding.target ~= self.laying.target) then
 			self:planGoPickup(self.feeding.target)
 		end
 	end	
