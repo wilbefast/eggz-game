@@ -343,6 +343,8 @@ function AI:update(dt)
 				-- make a convertor ?
 				if self.convertor.utility > 0 then
 					self:planMakeConvertor(self.convertor.target)
+				else
+					print("dis can evolve but I dunno where to put it :'(")
 				end
 			
 			-- replant immature egg if possible
@@ -367,14 +369,14 @@ end
 
 function AI:draw()
 	-- draw all plans
-	--[[local stepx, stepy = self.body.x, self.body.y
+	local stepx, stepy = self.body.x, self.body.y
 	local n_steps = #(self.plan)
 	for i, step in ipairs(self.plan) do
 		player[self.player].bindTeamColour(255/n_steps*(n_steps - i + 1))
 		love.graphics.line(stepx, stepy, step.target.x, step.target.y)
 		stepx, stepy = step.target.x, step.target.y
 	end
-	love.graphics.setColor(255, 255, 255)--]]
+	love.graphics.setColor(255, 255, 255)
 end
 
 	

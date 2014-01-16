@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 
 CHEATS = DEBUG
 MIN_PLAYERS = 2
@@ -195,12 +195,12 @@ local function setBestResolution()
   -- get and sort the available screen modes from best to worst
   local modes = love.window.getFullscreenModes()
   table.sort(modes, function(a, b) 
-    return ((a.width*a.height > b.width*b.height) 
+    return ((a.width*a.height > b.width*b.height)
           and (a.width <= DEFAULT_W) and a.height <= DEFAULT_H) end)
        
   -- try each mode from best to worst
   for i, m in ipairs(modes) do
-    
+
     if DEBUG then
       if #modes > 1 then
         m = modes[#modes - 1]
