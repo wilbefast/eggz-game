@@ -55,6 +55,7 @@ function state:enter()
   self.camera:lookAt(self.grid:centrePixel())
 
   -- not victory (yet)
+  self.total_conversion = 0
   for i, p in ipairs(player) do
     p.total_conversion = 0.0
     p.tutorial = 1
@@ -81,7 +82,6 @@ function state:keypressed(key, uni)
 end
 
 function state:update(dt)
-
 
   -- log conversion amount
   if (not self.winner) and (not self.pause) then
@@ -124,8 +124,8 @@ function state:update(dt)
       else
         -- return to 'versus' screen
         GameState.switch(player_select)
-        break -- multiple player have the same start/cancel key 
       end
+      break -- multiple player have the same start/cancel key 
     end
   end
 
@@ -140,6 +140,7 @@ function state:update(dt)
 			self.grid:update(dt)
 
       -- find player with highest conversion
+      self.total_conversion = 0
       local highest_conversion, highest_conversion_i = -1, -1
       local second_highest_conversion, second_highest_conversion_i = -1, -1
       for i = 1, n_players do
@@ -147,6 +148,7 @@ function state:update(dt)
         -- cache conversion [0, 1] and player
         local p = player[i]
         local conversion = p.total_conversion
+        self.total_conversion = self.total_conversion + conversion
 
         -- update pop-up messages
         p.update(dt)

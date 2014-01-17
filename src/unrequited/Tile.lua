@@ -178,6 +178,13 @@ function Tile:draw(x, y, forceDrawOccupant)
 		self.occupant:draw(x + self.w/2, y + self.h/2)
 	end
 
+
+
+
+
+
+
+
 end
 
 function Tile:drawContours(x, y)

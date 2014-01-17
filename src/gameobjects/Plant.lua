@@ -113,6 +113,11 @@ function Plant:onEvolution()
 	-- override me
 end
 
+function Plant:isPlantType(t)
+	-- override me
+	return GameObject.isType(self, t)
+end
+
 --[[------------------------------------------------------------
 Take damage
 --]]--

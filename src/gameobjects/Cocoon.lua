@@ -46,7 +46,7 @@ local Cocoon = Class
       for i, t in pairs(GameObject.COLLISIONGRID:getNeighboursX(tile)) do
         t.vulnerabilities[player] = t.vulnerabilities[player] + 1
       end
-      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(tile), true) do
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(tile, true)) do
         t.convertors[player] = t.convertors[player] + 1
       end
     -- evolving to Turret set defended area
@@ -63,7 +63,7 @@ local Cocoon = Class
       for i, t in pairs(GameObject.COLLISIONGRID:getNeighboursX(tile)) do
         t.vulnerabilities[player] = t.vulnerabilities[player] - 1
       end
-      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(tile), true) do
+      for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(tile, true)) do
         t.convertors[player] = t.convertors[player] - 1
       end
     -- evolving to Turret set defended area
@@ -81,6 +81,13 @@ local Cocoon = Class
 }
 Cocoon:include(Plant)
 Cocoon.class = Cocoon
+
+function Cocoon:isPlantType(t)
+  -- override me
+  return (GameObject.isType(self, t) 
+    or self.evolvesTo:isType(t) 
+    or self.evolvesFrom:isType(t))
+end
 
 --[[------------------------------------------------------------
 Resources

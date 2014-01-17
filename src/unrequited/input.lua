@@ -187,9 +187,7 @@ local generateTrigger = function(key, key_accessor)
 	end
 end
 
-function input:update(dt, bink)
-
-	if not bink then print(a.b) end
+function input:update(dt)
 
 	for i = 1, MAX_PLAYERS do
 		local p = self[i]

@@ -140,13 +140,13 @@ function AI:recalculateDerockingUtility(rock, distance)
 
 	for i = 1, n_players do
 		if i == self.player then
-			utility = utility + tile.convertors[i]*8
-			utility = utility + tile.defenders[i]*3
-			utility = utility - tile.vulnerabilities[i]*5
+			utility = utility + tile.convertors[i]*6
+												+ tile.defenders[i]*0.5
+												- tile.vulnerabilities[i]*5
 		else
 			utility = utility - tile.convertors[i]*4
-			utility = utility - tile.defenders[i]*2
-			utility = utility + tile.vulnerabilities[i]*0.5
+												- tile.defenders[i]*2
+												+ tile.vulnerabilities[i]*0.5
 		end
 	end
 
@@ -162,7 +162,7 @@ end
 function AI:recalculateConvertorUtility(tile, distance)
 
 	-- subtract distance 
-	local utility = 1 - distance
+	local utility = 2 - 0.5*distance - 4*self.conversion
 
 	-- ignore tiles that can't be planted in or cleared
 	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
@@ -172,7 +172,6 @@ function AI:recalculateConvertorUtility(tile, distance)
 	-- conversion areas should not overlap, should not lie on turrets and rocks
 	for _, t in ipairs(game.grid:getNeighbours4(tile), true) do
 		-- two convertors working on the same territory is pointless
-
 		for i = 1, n_players do
 			if i == self.player then
 				-- penalty if the tile is our colour
@@ -183,14 +182,15 @@ function AI:recalculateConvertorUtility(tile, distance)
 			end
 		end
 
+		-- bonus if a convertor here would 'cover' another convertor's weak points
 		if (t ~= tile) and (t.convertors[self.player] == 0) then
 			utility = utility + 4*t.vulnerabilities[self.player]
 		end
 
 		-- a convertor next to a rock or turret is pointless
 		if t.occupant then
-			if t.occupant:isType("Turret") then
-				utility = utility - 2
+			if t.occupant:isPlantType("Turret") then
+				utility = utility - 3
 			elseif t.occupant:isType("Rock") then
 				utility = utility - 1
 			end
@@ -200,7 +200,7 @@ function AI:recalculateConvertorUtility(tile, distance)
 	-- subtract utility for each defender
 	for i = 1, n_players do
 		if i ~= self.player then
-			utility = utility - tile.defenders[i]*4
+			utility = utility - tile.defenders[i]*16
 		end
 	end
 
@@ -211,7 +211,7 @@ end
 function AI:recalculateTurretUtility(tile, distance)
 
 	-- subtract distance 
-	local utility = 1 - distance
+	local utility = 2*self.conversion - 0.5*distance - 1
 
 	-- ignore tiles that can't be planted in or cleared
 	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
@@ -221,11 +221,24 @@ function AI:recalculateTurretUtility(tile, distance)
 	-- turrets should be placed in vulnerable areas
 	for i = 1, n_players do
 		if i == self.player then
-			utility = utility - tile.defenders[i]
-			utility = utility + 2*tile.vulnerabilities[i]
+			-- friend
+			utility = utility + 1.2*tile.vulnerabilities[i]
 		else
-			utility = utility - tile.defenders[i]
-			utility = utility + 5*tile.vulnerabilities[i]
+			-- foe
+			utility = utility + 0.5*tile.vulnerabilities[i] - 2*tile.defenders[i] 
+		end
+	end
+
+	-- turrets should cover as little friendly territory as possible
+	for i, t in ipairs(game.grid:getNeighbours8(tile, true)) do
+		for i = 1, n_players do
+			if i == self.player then
+				-- friend
+				utility = utility - tile.defenders[i] - 0.5*tile.convertors[i]
+			else
+				-- foe
+				utility = utility + 0.3*tile.convertors[i]
+			end
 		end
 	end
 
@@ -240,17 +253,19 @@ function AI:recalculateRockUtility(tile, distance)
 	end
 
 	-- subtract distance 
-	local utility = 7 - 4*distance - tile.energy
+	local utility = 8 - 5*distance - tile.energy
 
 	-- don't place in own territory
-	utility = utility - 4*tile.convertors[self.player]
+	utility = utility - 6*tile.convertors[self.player]
+	utility = utility - 2*tile.defenders[self.player]
 
 	-- protect own vulnerabilities, not enemy ones
 	for i = 1, n_players do
 		if i == self.player then
-			utility = utility + tile.vulnerabilities[i]
+			utility = utility + 2*tile.vulnerabilities[i]
 		else
 			utility = utility - tile.vulnerabilities[i]
+			utility = utility + 0.5*tile.defenders[i]
 		end
 	end
 
@@ -422,6 +437,13 @@ Game loop
 
 function AI:update(dt)
 
+	-- normalised conversion amount
+	if game.total_conversion == 0 then
+		self.conversion = 0
+	else 
+		self.conversion = player[self.player].total_conversion / game.total_conversion
+	end
+
 	-- AI never skips grabs
 	self.body.skip_next_grab = false
 
@@ -497,6 +519,16 @@ function AI:draw()
 		stepx, stepy = step.target.x, step.target.y
 	end
 	love.graphics.setColor(255, 255, 255)
+
+	-- draw utilities
+	if self.convertor and self.turret then
+	love.graphics.print("convert: " .. tostring(math.floor(self.convertor.utility*100)), 
+		self.body.x, self.body.y)
+	love.graphics.print("turret: " .. tostring(math.floor(self.turret.utility*100)), 
+		self.body.x, self.body.y+16)
+	love.graphics.print("conversion: " .. tostring(math.floor(self.conversion*100)), 
+		self.body.x, self.body.y+32)
+end
 end
 
 	

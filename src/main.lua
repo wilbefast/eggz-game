@@ -16,7 +16,7 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 
 CHEATS = DEBUG
 MIN_PLAYERS = 2
@@ -141,7 +141,7 @@ tutorial = require("tutorial")
 SINGLETON SETTINGS
 --]]------------------------------------------------------------
 
-audio.mute = DEBUG
+audio.mute = true --DEBUG
 
 --[[------------------------------------------------------------
 DEAL WITH DIFFERENT RESOLUTIONS (scale images)
