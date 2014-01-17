@@ -197,7 +197,19 @@ function AI:recalculateConvertorUtility(tile, distance)
 		end
 	end
 
-	-- subtract utility for each defender
+	-- conversion areas should not overlap, should not lie on turrets and rocks
+	for _, t in ipairs(game.grid:getNeighboursX(tile)) do
+		-- a convertor with a corner to a rock or turret is well defended
+		if t.occupant then
+			if t.occupant:isPlantType("Turret") and (t.occupant.player == self.player) then
+				utility = utility + 1
+			elseif t.occupant:isType("Rock") then
+				utility = utility + 0.5
+			end
+		end
+	end
+
+	-- subtract utility for each enemy defender
 	for i = 1, n_players do
 		if i ~= self.player then
 			utility = utility - tile.defenders[i]*16
@@ -222,10 +234,12 @@ function AI:recalculateTurretUtility(tile, distance)
 	for i = 1, n_players do
 		if i == self.player then
 			-- friend
-			utility = utility + 1.2*tile.vulnerabilities[i]
+			utility = utility + 2*tile.vulnerabilities[i]
 		else
 			-- foe
-			utility = utility + 0.5*tile.vulnerabilities[i] - 2*tile.defenders[i] 
+			utility = utility 
+								+ 2*tile.vulnerabilities[i]*player[i].total_conversion 
+								- tile.defenders[i] 
 		end
 	end
 
@@ -235,9 +249,6 @@ function AI:recalculateTurretUtility(tile, distance)
 			if i == self.player then
 				-- friend
 				utility = utility - tile.defenders[i] - 0.5*tile.convertors[i]
-			else
-				-- foe
-				utility = utility + 0.3*tile.convertors[i]
 			end
 		end
 	end
@@ -494,13 +505,13 @@ function AI:update(dt)
 		elseif (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
 			self:planGoPlant(self.laying.target)
 
-		-- are there any rocks which need to be moved ?
-		elseif self.derocking.utility > 0 then
-			self:planGoPickup(self.derocking.target)
-
 		-- are any on-map eggz ready to evolve ?
 		elseif self.evolving.utility > 0 then
 			self:planGoPickup(self.evolving.target)
+
+		-- are there any rocks which need to be moved ?
+		elseif self.derocking.utility > 0 then
+			self:planGoPickup(self.derocking.target)
 		
 		-- are any of our eggz hungry ?
 		elseif self.feeding.utility > 0 and (self.feeding.target ~= self.laying.target) then
