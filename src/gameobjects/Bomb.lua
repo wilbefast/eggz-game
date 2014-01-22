@@ -132,7 +132,9 @@ end
 
 function Bomb:drawTransported(x, y)
   x, y = x or self.x, y or self.y
-  love.graphics.draw(Bomb.IMAGES[2], Bomb.QUADS[Bomb.uses - self.uses + 1], x, y,
+  love.graphics.draw(Bomb.IMAGES[2], 
+	Bomb.QUADS[Bomb.uses - self.uses + 1], 
+	x, y,
     0, 1, 1, 24, 64)
 end
 

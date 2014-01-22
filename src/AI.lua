@@ -38,6 +38,68 @@ local AI = Class
 
   	-- plan, a list of instructions
   	self.plan = {}
+
+  	-- options
+  	self.options = 
+  	{
+  		{
+  			-- place carried or 'head' egg in the richest, safest location
+  			name = "laying",
+  			precond = function() 
+  				return ((self.body.egg_ready >= 1)
+  					or (self.body.passenger 
+  						and (self.body.passenger.player == self.player)
+  						and (not self.body.passenger:canEvolve()))) end,
+  			execute = AI.planGoPlant,
+  			recalculateUtility = AI.recalculateLayingUtility
+  		},
+  		{
+  			name = "feeding",
+  			precond = function() 
+  				return (self.options.feeding.target ~= self.options.laying.target) end,
+				execute = AI.planGoPickup,
+				recalculateUtility = AI.recalculateFeedingUtility
+  		},
+  		{
+  			name = "evolving",
+  			execute = AI.planGoPickup,
+  			recalculateUtility = AI.recalculateEvolvingUtility
+  		},
+  		{
+  			name = "derocking",
+  			execute = AI.planGoPickup,
+  			recalculateUtility = AI.recalculateDerockingUtility
+  		},
+  		{
+  			name = "convertor",
+				precond = function() 
+		  				return (self.body.passenger 
+		  						and (self.body.passenger.player == self.player)
+		  						and (self.body.passenger:canEvolve())) end,
+  			execute = AI.planMakeConvertor,
+  			recalculateUtility = AI.recalculateConvertorUtility
+  		},
+  		{
+  			name = "turret",
+				precond = function() 
+  				return (self.body.passenger 
+  						and (self.body.passenger.player == self.player)
+  						and (self.body.passenger:canEvolve())) end,
+  			execute = AI.planMakeTurret,
+  			recalculateUtility = AI.recalculateTurretUtility
+  		},
+  		{
+  			name = "rock",
+  			precond = function() 
+  				return (self.body.passenger and self.body.passenger:isType("Rock")) end,
+  			execute = AI.planGoPlant,
+  			recalculateUtility = AI.recalculateRockUtility
+  		}
+  	}
+
+  	for i, option in ipairs(self.options) do
+  		self.options[option.name] = option
+  	end
 	end
 }
 
@@ -78,10 +140,14 @@ function AI:recalculateLayingUtility(tile, distance)
 	end
 
 	-- best utility ?
-	self:updateUtility(self.laying, utility, tile)
+	self:updateUtility(self.options.laying, utility, tile)
 end
 
-function AI:recalculateFeedingUtility(plant, distance)
+function AI:recalculateFeedingUtility(tile, distance)
+	-- only interested in the contents of the tile
+	if not tile.plant then return end
+	local plant = tile.plant
+
 	-- stop juggling eggz doofus
 	if plant.tile == self.body.tile then
 		return
@@ -103,10 +169,13 @@ function AI:recalculateFeedingUtility(plant, distance)
 	end
 
 	-- best utility ?
-	self:updateUtility(self.feeding, utility, plant)
+	self:updateUtility(self.options.feeding, utility, plant)
 end
 
-function AI:recalculateEvolvingUtility(plant, distance)
+function AI:recalculateEvolvingUtility(tile, distance)
+	-- only interested in the contents of the tile
+	if not tile.plant then return end
+	local plant = tile.plant
 
 	-- only consider friendly eggz which are not ready to evolve
 	if (plant.player ~= self.player) 
@@ -119,11 +188,13 @@ function AI:recalculateEvolvingUtility(plant, distance)
 	local utility = 1 - distance
 
 	-- best utility ?
-	self:updateUtility(self.evolving, utility, plant)
+	self:updateUtility(self.options.evolving, utility, plant)
 end
 
-function AI:recalculateDerockingUtility(rock, distance)
-	local tile = rock.tile
+function AI:recalculateDerockingUtility(tile, distance)
+	-- only interested in the contents of the tile
+	if not tile.plant then return end
+	local plant = tile.plant
 
 	-- stop juggling rocks doofus
 	if tile == self.body.tile then
@@ -131,7 +202,7 @@ function AI:recalculateDerockingUtility(rock, distance)
 	end
 
 	-- only consider rocks
-	if not rock:isType("Rock") then
+	if not plant:isType("Rock") then
 		return
 	end
 
@@ -156,7 +227,7 @@ function AI:recalculateDerockingUtility(rock, distance)
 	end
 
 	-- best utility ?
-	self:updateUtility(self.derocking, utility, rock)
+	self:updateUtility(self.options.derocking, utility, plant)
 end
 
 function AI:recalculateConvertorUtility(tile, distance)
@@ -217,7 +288,7 @@ function AI:recalculateConvertorUtility(tile, distance)
 	end
 
 	-- best utility ?
-	self:updateUtility(self.convertor, utility, tile)
+	self:updateUtility(self.options.convertor, utility, tile)
 end
 
 function AI:recalculateTurretUtility(tile, distance)
@@ -254,7 +325,7 @@ function AI:recalculateTurretUtility(tile, distance)
 	end
 
 	-- best utility ?
-	self:updateUtility(self.turret, utility, tile)
+	self:updateUtility(self.options.turret, utility, tile)
 end
 
 function AI:recalculateRockUtility(tile, distance)
@@ -281,57 +352,7 @@ function AI:recalculateRockUtility(tile, distance)
 	end
 
 	-- best utility ?
-	self:updateUtility(self.rock, utility, tile)
-end
-
-function AI:recalculateUtility()
-
-		-- reset utility
-		self.laying = { utility = -math.huge, target = nil }
-		self.feeding = { utility = -math.huge, target = nil }
-		self.evolving = { utility = -math.huge, target = nil }
-		self.derocking = { utility = -math.huge, target = nil }
-
-		self.convertor = { utility = -math.huge, target = nil }
-		self.turret = { utility = -math.huge, target = nil }
-		self.rock = { utility = -math.huge, target = nil }
-
-		game.grid:map(function(tile, x, y)
-
-			-- generally prefer closer tiles
-			local distance =
-				Vector.len(self.body.x - tile.x, self.body.y - tile.y) / MAP_SIZE
-
-			-- how good is this tile for laying ?
-			self:recalculateLayingUtility(tile, distance)
-
-			-- how good is this tile for building a convertor on ?
-			self:recalculateConvertorUtility(tile, distance)
-
-			-- how good is this tile building a turret on ?
-			self:recalculateTurretUtility(tile, distance)
-
-			-- how good is this tile for dropping a rock on ?
-			self:recalculateRockUtility(tile, distance)
-
-			-- anybody home ?
-			if tile.occupant then
-
-				-- does this plant need to be fed ?
-				self:recalculateFeedingUtility(tile.occupant, distance)
-
-				-- can this plant be evolved ?
-				self:recalculateEvolvingUtility(tile.occupant, distance)
-
-				-- is this plant a rock that should be moved ?
-				self:recalculateDerockingUtility(tile.occupant, distance)
-
-			end
-
-		end)
-
-		-- return the best tile
-		return best_tile, best_utility
+	self:updateUtility(self.options.rock, utility, tile)
 end
 
 --[[------------------------------------------------------------
@@ -474,72 +495,54 @@ function AI:update(dt)
 	else
 
 		-- recalculate utility map to base choices on
-		self:recalculateUtility()
-
-		-- are we carrying a plant ?
-		if (self.body.passenger) then 
-			local plant = self.body.passenger
-			-- are we carrying an egg ?
-			if plant:isType("Egg") then
-				-- is the egg mature ?
-				local plant = self.body.passenger
-				if plant:canEvolve() then
-					-- make a convertor ?
-					if (self.convertor.utility > 0) 
-					and (self.convertor.utility > self.turret.utility) then
-						self:planMakeConvertor(self.convertor.target)
-					elseif (self.turret.utility > 0) then
-						self:planMakeTurret(self.turret.target)
-					end
-				-- replant immature egg if possible
-				elseif (self.laying.utility > 0) then
-					self:planGoPlant(self.laying.target)
-				end
-			elseif plant:isType("Rock") then
-				if (self.rock.utility > 0) then
-					self:planGoPlant(self.rock.target)
-				end
+		for _, option in ipairs(self.options) do
+			option.utility = -math.huge
+			option.target = nil
+		end
+		game.grid:map(function(tile, x, y)
+			-- generally options will 'prefer' closer tiles
+			local distance =
+				Vector.len(self.body.x - tile.x, self.body.y - tile.y) / MAP_SIZE
+			-- otherwise each option 'prefers' different tiles
+			for _, option in ipairs(self.options) do
+				option.recalculateUtility(self, tile, distance)
 			end
+		end)
 
-		-- do we have an egg ready to lay ?
-		elseif (self.body.egg_ready >= 1) and (self.laying.utility > 0) then
-			self:planGoPlant(self.laying.target)
+		-- sort options by their utility
+		table.sort(self.options, function(a, b) 
+			return ((not a.precond) or a.precond()) and (a.utility > b.utility) end)
 
-		-- are any on-map eggz ready to evolve ?
-		elseif self.evolving.utility > 0 then
-			self:planGoPickup(self.evolving.target)
-
-		-- are there any rocks which need to be moved ?
-		elseif self.derocking.utility > 0 then
-			self:planGoPickup(self.derocking.target)
-		
-		-- are any of our eggz hungry ?
-		elseif self.feeding.utility > 0 and (self.feeding.target ~= self.laying.target) then
-			self:planGoPickup(self.feeding.target)
+		-- pick out the best option
+		local best_option = self.options[1]
+		if best_option.precond() then
+			print("executing " .. best_option.name)
+			best_option.execute(self, best_option.target)
 		end
 	end	
 end
 
 function AI:draw()
-	-- draw all plans
-	local stepx, stepy = self.body.x, self.body.y
-	local n_steps = #(self.plan)
-	for i, step in ipairs(self.plan) do
-		player[self.player].bindTeamColour(255/n_steps*(n_steps - i + 1))
-		love.graphics.line(stepx, stepy, step.target.x, step.target.y)
-		stepx, stepy = step.target.x, step.target.y
-	end
-	love.graphics.setColor(255, 255, 255)
+
+	-- -- draw all plans
+	-- local stepx, stepy = self.body.x, self.body.y
+	-- local n_steps = #(self.plan)
+	-- for i, step in ipairs(self.plan) do
+	-- 	player[self.player].bindTeamColour(255/n_steps*(n_steps - i + 1))
+	-- 	love.graphics.line(stepx, stepy, step.target.x, step.target.y)
+	-- 	stepx, stepy = step.target.x, step.target.y
+	-- end
+	-- love.graphics.setColor(255, 255, 255)
 
 	-- draw utilities
-	if self.convertor and self.turret then
-	love.graphics.print("convert: " .. tostring(math.floor(self.convertor.utility*100)), 
-		self.body.x, self.body.y)
-	love.graphics.print("turret: " .. tostring(math.floor(self.turret.utility*100)), 
-		self.body.x, self.body.y+16)
-	love.graphics.print("conversion: " .. tostring(math.floor(self.conversion*100)), 
-		self.body.x, self.body.y+32)
-end
+	--[[if self.options.convertor and self.options.turret then
+		love.graphics.print("convert: " .. tostring(math.floor(self.options.convertor.utility*100)), 
+			self.body.x, self.body.y)
+		love.graphics.print("turret: " .. tostring(math.floor(self.options.turret.utility*100)), 
+			self.body.x, self.body.y+16)
+		love.graphics.print("conversion: " .. tostring(math.floor(self.conversion*100)), 
+			self.body.x, self.body.y+32)
+	end--]]
 end
 
 	
