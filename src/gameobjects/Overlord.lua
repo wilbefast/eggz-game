@@ -436,13 +436,15 @@ function Overlord:update(dt)
     end
 
   elseif not inp.confirm.pressed then
-    -- Select option from radial menu
-    if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
-    and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
-        -- start evolution
-        self:doEvolve(self.tile.occupant.EVOLUTION[self.radial_menu_choice])
-        -- close the menu
-        self.radial_menu_x, self.radial_menu_y = 0, 0
+    if self:canEvolve() then
+      -- Select option from radial menu
+      if (self.radial_menu == 1) and (self.radial_menu_choice ~= 0) 
+      and (self.tile.occupant) and (self.tile.occupant.EVOLUTION[self.radial_menu_choice]) then
+          -- start evolution
+          self:doEvolve(self.tile.occupant.EVOLUTION[self.radial_menu_choice])
+          -- close the menu
+          self.radial_menu_x, self.radial_menu_y = 0, 0
+      end
     end
 
     -- Close radial menu

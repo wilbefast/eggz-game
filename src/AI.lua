@@ -46,29 +46,43 @@ local AI = Class
   			-- place carried or 'head' egg in the richest, safest location
   			name = "laying",
   			precond = function() 
-  				return ((self.body.egg_ready >= 1)
-  					or ((self.body.passenger ~= nil)
-  						and (self.body.passenger.player == self.player)
-  						and (not self.body.passenger:canEvolve()))) end,
+  				return (
+												(
+														(self.body.egg_ready >= 1)
+														and (self.body.passenger == nil)
+												)
+
+				  					or (
+						  								(self.body.passenger ~= nil)
+						  						and (self.body.passenger.player == self.player)
+						  						and (not self.body.passenger:canEvolve())
+				  							)
+  								) end,
   			execute = AI.planGoPlant,
-  			recalculateUtility = AI.recalculateLayingUtility
+  			recalculateUtility = AI.recalculateLayingUtility,
+  			priority = 1.4 -- higher is better
   		},
   		{
   			name = "feeding",
   			precond = function() 
-  				return (self.options.feeding.target ~= self.options.laying.target) end,
+  				return ((self.options.feeding.target ~= self.options.laying.target)) end,
 				execute = AI.planGoPickup,
-				recalculateUtility = AI.recalculateFeedingUtility
+				recalculateUtility = AI.recalculateFeedingUtility,
+				priority = 1.2 -- higher is better
   		},
   		{
   			name = "evolving",
+  			precond = function() 
+  				return ((not self.body.passenger) or (not self.body.passenger:canEvolve())) end,
   			execute = AI.planGoPickup,
-  			recalculateUtility = AI.recalculateEvolvingUtility
+  			recalculateUtility = AI.recalculateEvolvingUtility,
+  			priority = 1.8 -- higher is better
   		},
   		{
   			name = "derocking",
   			execute = AI.planGoPickup,
-  			recalculateUtility = AI.recalculateDerockingUtility
+  			recalculateUtility = AI.recalculateDerockingUtility,
+  			priority = 0.1 -- higher is better
   		},
   		{
   			name = "convertor",
@@ -77,7 +91,8 @@ local AI = Class
 		  						and (self.body.passenger.player == self.player)
 		  						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeConvertor,
-  			recalculateUtility = AI.recalculateConvertorUtility
+  			recalculateUtility = AI.recalculateConvertorUtility,
+  			priority = 1 -- higher is better
   		},
   		{
   			name = "turret",
@@ -86,27 +101,46 @@ local AI = Class
   						and (self.body.passenger.player == self.player)
   						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeTurret,
-  			recalculateUtility = AI.recalculateTurretUtility
+  			recalculateUtility = AI.recalculateTurretUtility,
+  			priority = 0.5 -- higher is better
   		},
   		{
   			name = "rock",
   			precond = function() 
   				return ((self.body.passenger ~= nil) and self.body.passenger:isType("Rock")) end,
   			execute = AI.planGoPlant,
-  			recalculateUtility = AI.recalculateRockUtility
+  			recalculateUtility = AI.recalculateRockUtility,
+  			priority = 0.3 -- higher is better
   		}
   	}
 
   	-- we need to remember the order for debugging
   	self.option_names = {}
-
+  	-- copy options from associative array to ordered array
   	for i, option in ipairs(self.options) do
   		option.utility = -math.huge
   		self.options[option.name] = option
   		self.option_names[i] = option.name
   	end
+
+  	-- remember grudges
+  	self.foes = {}
+  	for i = 1, n_players do
+  		if i ~= self.player then
+  			self.foes[i] = { grudge = 0 } -- should be between 0 and 1
+  		end
+  	end
 	end
 }
+
+--[[------------------------------------------------------------
+Grudges !
+--]]--
+
+function AI:attackedBy(attackingPlayer)
+	local foe = self.foes[attackingPlayer]
+	foe.grudge = math.min(1, foe.grudge + 0.1)
+end
 
 --[[------------------------------------------------------------
 Utility
@@ -238,8 +272,8 @@ end
 
 function AI:recalculateConvertorUtility(tile, distance)
 
-	-- subtract distance 
-	local utility = 2 - 0.5*distance - 4*self.conversion
+	-- subtract distance and percent conversion
+	local utility = 0.5*distance - self.conversion
 
 	-- ignore tiles that can't be planted in or cleared
 	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
@@ -300,7 +334,7 @@ end
 function AI:recalculateTurretUtility(tile, distance)
 
 	-- subtract distance 
-	local utility = 2*self.conversion - 0.5*distance - 1
+	local utility = game.total_conversion - player[self.player].total_conversion - 0.5*distance
 
 	-- ignore tiles that can't be planted in or cleared
 	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
@@ -315,17 +349,20 @@ function AI:recalculateTurretUtility(tile, distance)
 		else
 			-- foe
 			utility = utility 
-								+ 2*tile.vulnerabilities[i]*player[i].total_conversion 
+								+ 2*tile.vulnerabilities[i]
+										* (1 + 2*player[i].total_conversion)
+										* (1 + 5*self.foes[i].grudge)
 								- tile.defenders[i] 
 		end
 	end
 
 	-- turrets should cover as little friendly territory as possible
 	for i, t in ipairs(game.grid:getNeighbours8(tile, true)) do
+		-- semantic markers
 		for i = 1, n_players do
 			if i == self.player then
 				-- friend
-				utility = utility - tile.defenders[i] - 0.5*tile.convertors[i]
+				utility = utility - tile.defenders[i] - 0.5*tile.convertors[i] 
 			end
 		end
 	end
@@ -341,7 +378,7 @@ function AI:recalculateRockUtility(tile, distance)
 	end
 
 	-- subtract distance 
-	local utility = 8 - 5*distance - tile.energy
+	local utility = 8 - 7*distance - tile.energy
 
 	-- don't place in own territory
 	utility = utility - 6*tile.convertors[self.player]
@@ -482,6 +519,18 @@ function AI:update(dt)
 		self.conversion = player[self.player].total_conversion / game.total_conversion
 	end
 
+	-- grudges against various players
+	self.danger = 0
+	for i, foe in ipairs(self.foes) do
+		if player[i].winning > 0 then
+			foe.grudge = 1
+		else
+			foe.grudge = math.max(0, foe.grudge - 0.05*dt)
+		end
+		self.danger = self.danger + foe.grudge
+	end
+	self.danger = self.danger / n_players
+
 	-- AI never skips grabs
 	self.body.skip_next_grab = false
 
@@ -516,7 +565,7 @@ function AI:update(dt)
 
 		-- sort options by their utility
 		table.sort(self.options, function(a, b) 
-			return (a.utility > b.utility) end)
+			return (a.utility + a.priority > b.utility + b.priority) end)
 
 		-- pick out the best option that is possible
 		for i, best_option in ipairs(self.options) do
@@ -542,7 +591,7 @@ function AI:draw()
 	love.graphics.setColor(255, 255, 255)
 
 	-- draw utilities
-	local x, y = 280, 32 --self.body.x, self.body.y
+	local x, y = self.body.x, self.body.y
 	love.graphics.print("ROUTINE", x, y)
 	love.graphics.print("UTILITY", x + 128, y)
 	love.graphics.print("PREDICATE", x + 256, y)
@@ -550,7 +599,7 @@ function AI:draw()
 		y = y + 16
 		local option = self.options[name]
 		love.graphics.print(option.name, x, y)
-		local utility = tostring(math.floor(option.utility*100))
+		local utility = tostring(math.floor((option.utility + option.priority)*100))
 		love.graphics.print(utility, x + 128, y)
 		if option.precond then
 			love.graphics.print(tostring(option.precond()), x + 256, y)

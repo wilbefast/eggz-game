@@ -67,7 +67,7 @@ player[4] =
 ALL PLAYER
 --]]
 
-for _, p in ipairs(player) do
+for i, p in ipairs(player) do
 
 	p.ai_controlled = false -- by default
 
@@ -85,7 +85,7 @@ for _, p in ipairs(player) do
 	end
 
 	p.draw = function()
-		for i, pu in ipairs(p.pop_ups) do
+		for _, pu in ipairs(p.pop_ups) do
 			if pu.life <= 1 then
 	      p.bindTeamColour(math.min(255, 2*pu.life*pu.life*255))
 	      love.graphics.setFont(FONT_HUGE)
@@ -98,6 +98,12 @@ for _, p in ipairs(player) do
 	p.show_conversion = function(x, y, force_life)
  		table.insert(p.pop_ups, { x = x, y = y, life = (force_life or 2) }) 
   end
+
+  p.report_damage = function(attacker, defender)
+  	if p.ai_controlled then
+  		game.overlords[i].ai:attackedBy(attacker.player)
+  	end
+	end
 end
 
 --[[---------------------------------------------------------------------------

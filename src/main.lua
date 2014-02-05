@@ -201,13 +201,13 @@ local function setBestResolution()
   -- try each mode from best to worst
   for i, m in ipairs(modes) do
 
-    if DEBUG then
-      if #modes > 1 then
-        m = modes[#modes - 1]
-      else
-        m = { width = 640, height = 480 }
-      end
-    end
+    -- if DEBUG then
+    --   if #modes > 1 then
+    --     m = modes[#modes - 1]
+    --   else
+    --     m = { width = 640, height = 480 }
+    --   end
+    -- end
     
     -- try to set the resolution
     local success = love.window.setMode(m.width, m.height, { fullscreen = (not DEBUG) })

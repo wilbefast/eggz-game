@@ -146,6 +146,10 @@ function Plant:takeDamage(amount, attacker, ignoreArmour)
 		self.tile.occupant = nil
 		self:die()
 	end
+
+	if attacker then
+		player[self.player].report_damage(attacker, self)
+	end
 end
 
 function Plant:stun(n_seconds)

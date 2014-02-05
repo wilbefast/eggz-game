@@ -84,6 +84,8 @@ end
 function Bomb:drop(tile)
 
   if self.transport then --and tile.occupant then
+
+    local dropper = self.transport
     
     -- deduct one use
     self.uses = self.uses - 1
@@ -102,7 +104,7 @@ function Bomb:drop(tile)
     --tile.acidity = 0.33
     if tile.occupant then
       tile.occupant:stun(5)
-      tile.occupant:takeDamage(0.9, nil, true) -- no attacker, ignore armour
+      tile.occupant:takeDamage(0.99, dropper, true) -- no attacker, ignore armour
     end
 
   else

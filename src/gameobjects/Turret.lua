@@ -129,7 +129,7 @@ end
 function Turret:takeDamage(amount, attacker, ignoreArmour)
   Plant.takeDamage(self, amount, attacker, ignoreArmour)
 
-  if attacker and (not self.aggro) then
+  if attacker and (not attacker.purge) and (not self.aggro) then
     self.aggro = attacker
   end
 end
