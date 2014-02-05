@@ -47,7 +47,7 @@ local AI = Class
   			name = "laying",
   			precond = function() 
   				return ((self.body.egg_ready >= 1)
-  					or (self.body.passenger 
+  					or ((self.body.passenger ~= nil)
   						and (self.body.passenger.player == self.player)
   						and (not self.body.passenger:canEvolve()))) end,
   			execute = AI.planGoPlant,
@@ -73,7 +73,7 @@ local AI = Class
   		{
   			name = "convertor",
 				precond = function() 
-		  				return (self.body.passenger 
+		  				return ((self.body.passenger ~= nil)
 		  						and (self.body.passenger.player == self.player)
 		  						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeConvertor,
@@ -82,7 +82,7 @@ local AI = Class
   		{
   			name = "turret",
 				precond = function() 
-  				return (self.body.passenger 
+  				return ((self.body.passenger ~= nil)
   						and (self.body.passenger.player == self.player)
   						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeTurret,
@@ -91,14 +91,19 @@ local AI = Class
   		{
   			name = "rock",
   			precond = function() 
-  				return (self.body.passenger and self.body.passenger:isType("Rock")) end,
+  				return ((self.body.passenger ~= nil) and self.body.passenger:isType("Rock")) end,
   			execute = AI.planGoPlant,
   			recalculateUtility = AI.recalculateRockUtility
   		}
   	}
 
+  	-- we need to remember the order for debugging
+  	self.option_names = {}
+
   	for i, option in ipairs(self.options) do
+  		option.utility = -math.huge
   		self.options[option.name] = option
+  		self.option_names[i] = option.name
   	end
 	end
 }
@@ -144,9 +149,10 @@ function AI:recalculateLayingUtility(tile, distance)
 end
 
 function AI:recalculateFeedingUtility(tile, distance)
+
 	-- only interested in the contents of the tile
-	if not tile.plant then return end
-	local plant = tile.plant
+	if not tile.occupant then return end
+	local plant = tile.occupant
 
 	-- stop juggling eggz doofus
 	if plant.tile == self.body.tile then
@@ -174,8 +180,8 @@ end
 
 function AI:recalculateEvolvingUtility(tile, distance)
 	-- only interested in the contents of the tile
-	if not tile.plant then return end
-	local plant = tile.plant
+	if not tile.occupant then return end
+	local plant = tile.occupant
 
 	-- only consider friendly eggz which are not ready to evolve
 	if (plant.player ~= self.player) 
@@ -193,8 +199,8 @@ end
 
 function AI:recalculateDerockingUtility(tile, distance)
 	-- only interested in the contents of the tile
-	if not tile.plant then return end
-	local plant = tile.plant
+	if not tile.occupant then return end
+	local plant = tile.occupant
 
 	-- stop juggling rocks doofus
 	if tile == self.body.tile then
@@ -493,7 +499,6 @@ function AI:update(dt)
 
 	-- formulate new plans ?
 	else
-
 		-- recalculate utility map to base choices on
 		for _, option in ipairs(self.options) do
 			option.utility = -math.huge
@@ -511,38 +516,46 @@ function AI:update(dt)
 
 		-- sort options by their utility
 		table.sort(self.options, function(a, b) 
-			return ((not a.precond) or a.precond()) and (a.utility > b.utility) end)
+			return (a.utility > b.utility) end)
 
-		-- pick out the best option
-		local best_option = self.options[1]
-		if best_option.precond() then
-			print("executing " .. best_option.name)
-			best_option.execute(self, best_option.target)
+		-- pick out the best option that is possible
+		for i, best_option in ipairs(self.options) do
+			if (not best_option.precond) or best_option.precond() then
+				best_option.execute(self, best_option.target)
+				log:write("executing routine '" .. best_option.name .. "'")
+				break
+			end
 		end
 	end	
 end
 
 function AI:draw()
 
-	-- -- draw all plans
-	-- local stepx, stepy = self.body.x, self.body.y
-	-- local n_steps = #(self.plan)
-	-- for i, step in ipairs(self.plan) do
-	-- 	player[self.player].bindTeamColour(255/n_steps*(n_steps - i + 1))
-	-- 	love.graphics.line(stepx, stepy, step.target.x, step.target.y)
-	-- 	stepx, stepy = step.target.x, step.target.y
-	-- end
-	-- love.graphics.setColor(255, 255, 255)
+	-- draw all plans
+	local stepx, stepy = self.body.x, self.body.y
+	local n_steps = #(self.plan)
+	for i, step in ipairs(self.plan) do
+		player[self.player].bindTeamColour(255/n_steps*(n_steps - i + 1))
+		love.graphics.line(stepx, stepy, step.target.x, step.target.y)
+		stepx, stepy = step.target.x, step.target.y
+	end
+	love.graphics.setColor(255, 255, 255)
 
 	-- draw utilities
-	--[[if self.options.convertor and self.options.turret then
-		love.graphics.print("convert: " .. tostring(math.floor(self.options.convertor.utility*100)), 
-			self.body.x, self.body.y)
-		love.graphics.print("turret: " .. tostring(math.floor(self.options.turret.utility*100)), 
-			self.body.x, self.body.y+16)
-		love.graphics.print("conversion: " .. tostring(math.floor(self.conversion*100)), 
-			self.body.x, self.body.y+32)
-	end--]]
+	local x, y = 280, 32 --self.body.x, self.body.y
+	love.graphics.print("ROUTINE", x, y)
+	love.graphics.print("UTILITY", x + 128, y)
+	love.graphics.print("PREDICATE", x + 256, y)
+	for i, name in ipairs(self.option_names) do
+		y = y + 16
+		local option = self.options[name]
+		love.graphics.print(option.name, x, y)
+		local utility = tostring(math.floor(option.utility*100))
+		love.graphics.print(utility, x + 128, y)
+		if option.precond then
+			love.graphics.print(tostring(option.precond()), x + 256, y)
+		end
+	end
 end
 
 	
