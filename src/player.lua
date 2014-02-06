@@ -101,7 +101,7 @@ for i, p in ipairs(player) do
 
   p.report_damage = function(attacker, defender)
   	if p.ai_controlled then
-  		game.overlords[i].ai:attackedBy(attacker.player)
+  		game.overlords[i].ai:attackedBy(attacker.player, defender)
   	end
 	end
 end

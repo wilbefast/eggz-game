@@ -82,7 +82,7 @@ local AI = Class
   			name = "derocking",
   			execute = AI.planGoPickup,
   			recalculateUtility = AI.recalculateDerockingUtility,
-  			priority = 0.1 -- higher is better
+  			priority = 0.0 -- higher is better
   		},
   		{
   			name = "convertor",
@@ -137,9 +137,28 @@ local AI = Class
 Grudges !
 --]]--
 
-function AI:attackedBy(attackingPlayer)
+local plantGrudge = 
+{
+	Turret = 0.02,
+	Egg = 0.04,
+	Cocoon = 0.08,
+	Convertor = 0.16
+}
+
+function AI:attackedBy(attackingPlayer, attackedPlant)
 	local foe = self.foes[attackingPlayer]
-	foe.grudge = math.min(1, foe.grudge + 0.1)
+	
+
+
+	if plantGrudge[attackedPlant:typename()] then
+		foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
+	else
+		print("INVALID!!! " .. attackedPlant:typename())
+	end
+	
+
+
+	--foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
 end
 
 --[[------------------------------------------------------------
@@ -253,7 +272,9 @@ function AI:recalculateDerockingUtility(tile, distance)
 		if i == self.player then
 			utility = utility + tile.convertors[i]*6
 												+ tile.defenders[i]*0.5
-												- tile.vulnerabilities[i]*5
+			if (tile.conversion < 0.5) or  (tile.owner ~= self.player) then
+				utility = utility - tile.vulnerabilities[i]*5
+			end
 		else
 			utility = utility - tile.convertors[i]*4
 												- tile.defenders[i]*2
@@ -525,7 +546,7 @@ function AI:update(dt)
 		if player[i].winning > 0 then
 			foe.grudge = 1
 		else
-			foe.grudge = math.max(0, foe.grudge - 0.05*dt)
+			foe.grudge = math.max(0, foe.grudge - 0.03*dt)
 		end
 		self.danger = self.danger + foe.grudge
 	end
@@ -604,6 +625,13 @@ function AI:draw()
 		if option.precond then
 			love.graphics.print(tostring(option.precond()), x + 256, y)
 		end
+	end
+
+	-- draw grudges
+	y = self.body.y
+	for i, foe in ipairs(self.foes) do
+		love.graphics.print("GRUDGE[" .. i .. "] = " .. foe.grudge, x + 384, y)
+		y = y + 16
 	end
 end
 
