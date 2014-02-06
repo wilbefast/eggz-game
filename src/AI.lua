@@ -53,7 +53,8 @@ local AI = Class
 												)
 
 				  					or (
-						  								(self.body.passenger ~= nil)
+				  								(self.body.egg_ready < 1)
+						  						and (self.body.passenger ~= nil)
 						  						and (self.body.passenger.player == self.player)
 						  						and (not self.body.passenger:canEvolve())
 				  							)
@@ -66,7 +67,7 @@ local AI = Class
   			-- pick up a friendly egg that needs to be fed or protected (ie. replant elsewhere)
   			name = "feeding",
   			precond = function() 
-  				return ((self.options.feeding.target ~= self.options.laying.target)) end,
+  				return ((not self.body.passenger) and (self.options.feeding.target ~= self.options.laying.target)) end,
 				execute = AI.planGoPickup,
 				recalculateUtility = AI.recalculateFeedingUtility,
 				priority = 1.2 -- higher is better
@@ -116,7 +117,7 @@ local AI = Class
   						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeTurret,
   			recalculateUtility = AI.recalculateTurretUtility,
-  			priority = 0.5 -- higher is better
+  			priority = 0.0 -- higher is better
   		},
   		{
   			-- put down carried rock
@@ -172,24 +173,7 @@ local plantGrudge =
 
 function AI:attackedBy(attackingPlayer, attackedPlant)
 	local foe = self.foes[attackingPlayer]
-	
-	if foe == nil then
-		print("attackingPlayer = ", attackingPlayer)
-		print("attackedPlant = ", attackedPlant)
-		for i, v in ipairs(self.foes) do
-			print(i, v)
-		end
-	end
-
-	if plantGrudge[attackedPlant:typename()] then
-		foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
-	else
-		print("INVALID!!! " .. attackedPlant:typename())
-	end
-	
-
-
-	--foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
+	foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
 end
 
 --[[------------------------------------------------------------
@@ -206,15 +190,27 @@ end
 function AI:recalculateLayingUtility(tile, distance)
 	-- ignore tiles that can't be planted in for whatever reason
 	if (not self.body:canPlant(tile)) then
-		return
+		return -math.huge
 	end
 
 	-- add the tile energy
-	local utility = tile.energy*2
+	local utility = tile.energy*3
 
 	-- subtract the tile distance
 	utility = utility - distance
 
+	-- try to place eggz near allies and far from enemies
+	if tile.owner ~= self.player then
+		for _, t in ipairs(game.grid:getNeighbours8(tile)) do
+			if t.occupant then
+				if t.occupant.player == self.player then
+					utility = utility + 0.1
+				end
+			end
+		end
+	end
+
+	-- for each player
 	for i = 1, n_players do
 		if i ~= self.player then
 			-- subtract utility for each defender
@@ -224,23 +220,28 @@ function AI:recalculateLayingUtility(tile, distance)
 			utility = utility - tile.convertors[i]
 		else
 			-- bonus if the tile is our colour
-			utility = utility + tile.convertors[i]*0.5
+			utility = utility + math.min(1, tile.convertors[i])*1.5
 		end
 	end
 
 	-- best utility ?
 	self:updateUtility(self.options.laying, utility, tile)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateFeedingUtility(tile, distance)
 
 	-- only interested in the contents of the tile
-	if not tile.occupant then return end
+	if not tile.occupant then 
+		return -math.huge
+	end
 	local plant = tile.occupant
 
 	-- stop juggling eggz doofus
 	if plant.tile == self.body.tile then
-		return
+		return -math.huge
 	end
 
 	-- only consider friendly eggz which are not ready to evolve
@@ -248,7 +249,7 @@ function AI:recalculateFeedingUtility(tile, distance)
 		or (not plant:isType("Egg"))
 		or (plant.energy >= 1)
 		or (plant:canEvolve()) then
-		return
+		return -math.huge
 	end
 
 	-- subtract the distance and tile and egg energy
@@ -261,18 +262,23 @@ function AI:recalculateFeedingUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.feeding, utility, plant)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateEvolvingUtility(tile, distance)
 	-- only interested in the contents of the tile
-	if not tile.occupant then return end
+	if not tile.occupant then 
+		return -math.huge
+	end
 	local plant = tile.occupant
 
 	-- only consider friendly eggz which are not ready to evolve
 	if (plant.player ~= self.player) 
 		or (not plant:isType("Egg")) 
 		or (not plant:canEvolve()) then
-		return
+		return -math.huge
 	end
 
 	-- subtract distance 
@@ -280,21 +286,26 @@ function AI:recalculateEvolvingUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.evolving, utility, plant)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateDerockingUtility(tile, distance)
 	-- only interested in the contents of the tile
-	if not tile.occupant then return end
+	if not tile.occupant then 
+		return -math.huge
+	end
 	local plant = tile.occupant
 
 	-- stop juggling rocks doofus
 	if tile == self.body.tile then
-		return
+		return -math.huge
 	end
 
 	-- only consider rocks
 	if not plant:isType("Rock") then
-		return
+		return -math.huge
 	end
 
 	-- prefer close rocks with a lot of energy under them
@@ -326,18 +337,23 @@ function AI:recalculateDerockingUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.derocking, utility, plant)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateKidnappingUtility(tile, distance)
 	-- only interested in the contents of the tile
-	if not tile.occupant then return end
+	if not tile.occupant then 
+		return -math.huge 
+	end
 	local plant = tile.occupant
 
 	-- only consider enemy eggz that can be picked up
 	if (not self.body:canUproot(tile)) 
 		or (not plant:isType("Egg"))
 		or (plant.player == self.player) then
-		return
+		return -math.huge
 	end
 
 	-- prefer close enemy eggz
@@ -348,6 +364,9 @@ function AI:recalculateKidnappingUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.kidnapping, utility, plant)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateConvertorUtility(tile, distance)
@@ -357,7 +376,7 @@ function AI:recalculateConvertorUtility(tile, distance)
 
 	-- ignore tiles that can't be planted in or cleared
 	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
-		return
+		return -math.huge
 	end
 
 	-- conversion areas should not overlap, should not lie on turrets and rocks
@@ -403,12 +422,15 @@ function AI:recalculateConvertorUtility(tile, distance)
 	-- subtract utility for each enemy defender
 	for i = 1, n_players do
 		if i ~= self.player then
-			utility = utility - tile.defenders[i]*16
+			utility = utility - tile.defenders[i]*32
 		end
 	end
 
 	-- best utility ?
 	self:updateUtility(self.options.convertor, utility, tile)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateTurretUtility(tile, distance)
@@ -417,7 +439,7 @@ function AI:recalculateTurretUtility(tile, distance)
 
 	-- ignore tiles that can't be planted in or cleared
 	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
-		return
+		return -math.huge
 	end
 
 	-- turrets should be placed in vulnerable areas
@@ -462,25 +484,29 @@ function AI:recalculateTurretUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.turret, utility, tile)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateRockUtility(tile, distance)
+
 	-- ignore tiles that can't be planted in for whatever reason
-	if (not self.body:canPlant(tile)) then
-		return
+	if (not self.body:canPlant(tile)) and (not self.body:canSwap(tile)) then
+		return -math.huge
 	end
-
 	-- ignore tiles that already contain rocks
-	if tile.occupant and tile.occupant:isType("Rock") then
-		return
+	if (tile.occupant ~= nil) and tile.occupant:isType("Rock") then
+		return -math.huge
 	end
-
-	-- subtract distance 
-	local utility = 8 - 5*distance - tile.energy
 
 	-- don't place in own territory
-	utility = utility - 18*tile.convertors[self.player]
-	utility = utility - 2*tile.defenders[self.player]
+	if tile.convertors[self.player] > 0 then
+		return -math.huge
+	end
+
+	-- subtract distance and energy, don't place on killing grounds
+	local utility = 8 - 5*distance - tile.energy - 2*tile.defenders[self.player]
 
 	-- protect own vulnerabilities, not enemy ones
 	for i = 1, n_players do
@@ -496,21 +522,35 @@ function AI:recalculateRockUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.rock, utility, tile)
+
+	-- return the resulting utility
+	return utility
 end
 
 function AI:recalculateSabotageUtility(tile, distance)
 	-- ignore tiles that can't be planted in for whatever reason
 	if (not self.body:canPlant(tile)) then
-		return
+		return -math.huge
 	end
 
 	-- stop juggling eggz doofus
 	if tile == self.body.tile then
-		return
+		return -math.huge
 	end
 
-	-- prefer close tiles which are poor in energy
+	-- prefer close tiles which are poor in energy and bad for kidnapping from
 	local utility = 3 - tile.energy*2 - distance
+
+	-- try to place enemy eggz near allies and far from enemies
+	for _, t in ipairs(game.grid:getNeighbours8(tile)) do
+		if t.occupant then
+			if t.occupant.player == self.player then
+				utility = utility + 0.3
+			elseif t.occupant.player ~= 0 then
+				utility = utility - 0.1
+			end
+		end
+	end
 
 	for i = 1, n_players do
 		if i == self.player then
@@ -521,6 +561,9 @@ function AI:recalculateSabotageUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.sabotage, utility, tile)
+
+	-- return the resulting utility
+	return utility
 end
 
 --[[------------------------------------------------------------
@@ -532,9 +575,19 @@ function AI:planGoto(tile)
 end
 
 function AI:doGoto(tile)
-	self.x, self.y = Vector.normalize(
-		tile.x + 0.5*TILE_W - self.body.x, 
-		tile.y + 0.5*TILE_H - self.body.y)
+
+	local dx, dy = tile.x + 0.5*TILE_W - self.body.x, tile.y + 0.5*TILE_H - self.body.y
+
+	-- wrap around direction
+	if math.abs(dx) > MAP_W/2 then
+		dx = -dx
+	end
+	if math.abs(dy) > MAP_H/2 then
+		dy = -dy
+	end
+
+	-- normalise direction
+	self.x, self.y = Vector.normalize(dx, dy)
 
 	-- are we there yet?
 	return (self.body.tile == tile)
@@ -700,7 +753,8 @@ function AI:update(dt)
 
 		-- pick out the best option that is possible
 		for i, best_option in ipairs(self.options) do
-			if (not best_option.precond) or best_option.precond() then
+			if ((not best_option.precond) or best_option.precond()) 
+				and (best_option.utility ~= -math.huge) then
 				best_option.execute(self, best_option.target)
 				log:write("executing routine '" .. best_option.name .. "'")
 				break
