@@ -148,7 +148,13 @@ local plantGrudge =
 function AI:attackedBy(attackingPlayer, attackedPlant)
 	local foe = self.foes[attackingPlayer]
 	
-
+	if foe == nil then
+		print("attackingPlayer = ", attackingPlayer)
+		print("attackedPlant = ", attackedPlant)
+		for i, v in ipairs(self.foes) do
+			print(i, v)
+		end
+	end
 
 	if plantGrudge[attackedPlant:typename()] then
 		foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
@@ -274,6 +280,9 @@ function AI:recalculateDerockingUtility(tile, distance)
 												+ tile.defenders[i]*0.5
 			if (tile.conversion < 0.5) or  (tile.owner ~= self.player) then
 				utility = utility - tile.vulnerabilities[i]*5
+			else
+				-- move rocks out of converted areas
+				utility = utility + tile.vulnerabilities[i]*5
 			end
 		else
 			utility = utility - tile.convertors[i]*4
@@ -379,7 +388,21 @@ function AI:recalculateTurretUtility(tile, distance)
 
 	-- turrets should cover as little friendly territory as possible
 	for i, t in ipairs(game.grid:getNeighbours8(tile, true)) do
-		-- semantic markers
+		-- tile plant
+		if tile.occupant then
+			local plant = tile.occupant
+			-- enemy plant
+			if plant.player ~= self.player then
+				-- enemy turret
+				if plant:isType("Turret") then
+					utility = utility 
+										+ (1 - plant.energy) 
+										+ (1 - math.min(1, self.time_since_last_damage))
+				end
+			end
+		end
+		
+		-- tile semantic markers
 		for i = 1, n_players do
 			if i == self.player then
 				-- friend
@@ -526,6 +549,11 @@ end
 function AI:doMakeTurret(tile)
 	return self:doMake(tile, Turret)
 end
+
+--[[------------------------------------------------------------
+Recycling or cancelling unused structures
+--]]--
+
 
 --[[------------------------------------------------------------
 Game loop
