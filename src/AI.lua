@@ -63,6 +63,7 @@ local AI = Class
   			priority = 1.4 -- higher is better
   		},
   		{
+  			-- pick up a friendly egg that needs to be fed or protected (ie. replant elsewhere)
   			name = "feeding",
   			precond = function() 
   				return ((self.options.feeding.target ~= self.options.laying.target)) end,
@@ -71,20 +72,32 @@ local AI = Class
 				priority = 1.2 -- higher is better
   		},
   		{
+  			-- pick up a friendly egg that is ready to evolve
   			name = "evolving",
   			precond = function() 
   				return ((not self.body.passenger) or (not self.body.passenger:canEvolve())) end,
   			execute = AI.planGoPickup,
   			recalculateUtility = AI.recalculateEvolvingUtility,
-  			priority = 1.8 -- higher is better
+  			priority = 2.8 -- higher is better
   		},
   		{
+  			-- pick up a rock that is in the way
   			name = "derocking",
   			execute = AI.planGoPickup,
   			recalculateUtility = AI.recalculateDerockingUtility,
   			priority = 0.0 -- higher is better
   		},
   		{
+  			-- pick up an enemy egg that is not in enemy territory
+  			name = "kidnapping",
+  			precond = function() 
+  				return ((self.options.kidnapping.target ~= self.options.sabotage.target)) end,
+  			execute = AI.planGoPickup,
+  			recalculateUtility = AI.recalculateKidnappingUtility,
+  			priority = 0.2 -- higher is better
+  		},
+  		{
+  			-- convert carried egg into a convertor
   			name = "convertor",
 				precond = function() 
 		  				return ((self.body.passenger ~= nil)
@@ -92,9 +105,10 @@ local AI = Class
 		  						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeConvertor,
   			recalculateUtility = AI.recalculateConvertorUtility,
-  			priority = 1 -- higher is better
+  			priority = 0.5 -- higher is better
   		},
   		{
+  			-- convert carried egg into a turret
   			name = "turret",
 				precond = function() 
   				return ((self.body.passenger ~= nil)
@@ -105,12 +119,23 @@ local AI = Class
   			priority = 0.5 -- higher is better
   		},
   		{
+  			-- put down carried rock
   			name = "rock",
   			precond = function() 
   				return ((self.body.passenger ~= nil) and self.body.passenger:isType("Rock")) end,
   			execute = AI.planGoPlant,
   			recalculateUtility = AI.recalculateRockUtility,
   			priority = 0.3 -- higher is better
+  		},
+  		{
+  			-- put enemy eggz in the worst possible position
+  			name = "sabotage",
+  			precond = function() 
+  				return ((self.body.passenger ~= nil) 
+  					and (self.body.passenger.player ~= self.player)) end,
+  			execute = AI.planGoPlant,
+  			recalculateUtility = AI.recalculateSabotageUtility,
+  			priority = 0.6 -- higher is better
   		}
   	}
 
@@ -220,7 +245,8 @@ function AI:recalculateFeedingUtility(tile, distance)
 
 	-- only consider friendly eggz which are not ready to evolve
 	if (plant.player ~= self.player) 
-		or (not plant:isType("Egg")) 
+		or (not plant:isType("Egg"))
+		or (plant.energy >= 1)
 		or (plant:canEvolve()) then
 		return
 	end
@@ -276,15 +302,17 @@ function AI:recalculateDerockingUtility(tile, distance)
 
 	for i = 1, n_players do
 		if i == self.player then
+			-- friends
 			utility = utility + tile.convertors[i]*6
 												+ tile.defenders[i]*0.5
-			if (tile.conversion < 0.5) or  (tile.owner ~= self.player) then
-				utility = utility - tile.vulnerabilities[i]*5
+			if tile.convertors[i] == 0 then
+				utility = utility - tile.vulnerabilities[i]*2
 			else
 				-- move rocks out of converted areas
-				utility = utility + tile.vulnerabilities[i]*5
+				utility = utility + tile.convertors[i]*3
 			end
 		else
+			-- foes
 			utility = utility - tile.convertors[i]*4
 												- tile.defenders[i]*2
 												+ tile.vulnerabilities[i]*0.5
@@ -298,6 +326,28 @@ function AI:recalculateDerockingUtility(tile, distance)
 
 	-- best utility ?
 	self:updateUtility(self.options.derocking, utility, plant)
+end
+
+function AI:recalculateKidnappingUtility(tile, distance)
+	-- only interested in the contents of the tile
+	if not tile.occupant then return end
+	local plant = tile.occupant
+
+	-- only consider enemy eggz that can be picked up
+	if (not self.body:canUproot(tile)) 
+		or (not plant:isType("Egg"))
+		or (plant.player == self.player) then
+		return
+	end
+
+	-- prefer close enemy eggz
+	local utility = plant.tile.energy 
+									- distance 
+									+ 2*self.conversion 
+									- 10*tile.defenders[self.player]
+
+	-- best utility ?
+	self:updateUtility(self.options.kidnapping, utility, plant)
 end
 
 function AI:recalculateConvertorUtility(tile, distance)
@@ -343,9 +393,9 @@ function AI:recalculateConvertorUtility(tile, distance)
 		-- a convertor with a corner to a rock or turret is well defended
 		if t.occupant then
 			if t.occupant:isPlantType("Turret") and (t.occupant.player == self.player) then
-				utility = utility + 1
-			elseif t.occupant:isType("Rock") then
-				utility = utility + 0.5
+				utility = utility + 3
+			-- elseif t.occupant:isType("Rock") then
+			-- 	utility = utility + 0.5
 			end
 		end
 	end
@@ -362,7 +412,6 @@ function AI:recalculateConvertorUtility(tile, distance)
 end
 
 function AI:recalculateTurretUtility(tile, distance)
-
 	-- subtract distance 
 	local utility = game.total_conversion - player[self.player].total_conversion - 0.5*distance
 
@@ -421,25 +470,57 @@ function AI:recalculateRockUtility(tile, distance)
 		return
 	end
 
+	-- ignore tiles that already contain rocks
+	if tile.occupant and tile.occupant:isType("Rock") then
+		return
+	end
+
 	-- subtract distance 
-	local utility = 8 - 7*distance - tile.energy
+	local utility = 8 - 5*distance - tile.energy
 
 	-- don't place in own territory
-	utility = utility - 6*tile.convertors[self.player]
+	utility = utility - 18*tile.convertors[self.player]
 	utility = utility - 2*tile.defenders[self.player]
 
 	-- protect own vulnerabilities, not enemy ones
 	for i = 1, n_players do
 		if i == self.player then
-			utility = utility + 2*tile.vulnerabilities[i]
+			-- friends
+			utility = utility + 0.8*tile.vulnerabilities[i]
 		else
-			utility = utility - tile.vulnerabilities[i]
+			-- foes
+			utility = utility - 0.5*tile.vulnerabilities[i]
 			utility = utility + 0.5*tile.defenders[i]
 		end
 	end
 
 	-- best utility ?
 	self:updateUtility(self.options.rock, utility, tile)
+end
+
+function AI:recalculateSabotageUtility(tile, distance)
+	-- ignore tiles that can't be planted in for whatever reason
+	if (not self.body:canPlant(tile)) then
+		return
+	end
+
+	-- stop juggling eggz doofus
+	if tile == self.body.tile then
+		return
+	end
+
+	-- prefer close tiles which are poor in energy
+	local utility = 3 - tile.energy*2 - distance
+
+	for i = 1, n_players do
+		if i == self.player then
+			-- add utility for each friendly defender
+			utility = utility + tile.defenders[i]*4
+		end
+	end
+
+	-- best utility ?
+	self:updateUtility(self.options.sabotage, utility, tile)
 end
 
 --[[------------------------------------------------------------
@@ -474,7 +555,8 @@ end
 
 function AI:doGoPickup(plant)
 	-- if the plant still there ?
-	if plant.purge or ((plant.transport and plant.transport ~= self.body)) then
+	if plant.purge or ((plant.transport and plant.transport ~= self.body))
+	or (not self.body:canUproot(plant.tile)) then
 		-- rage quit >:'(
 		return true
 	end
@@ -640,27 +722,29 @@ function AI:draw()
 	love.graphics.setColor(255, 255, 255)
 
 	-- draw utilities
-	local x, y = self.body.x, self.body.y
-	love.graphics.print("ROUTINE", x, y)
-	love.graphics.print("UTILITY", x + 128, y)
-	love.graphics.print("PREDICATE", x + 256, y)
-	for i, name in ipairs(self.option_names) do
-		y = y + 16
-		local option = self.options[name]
-		love.graphics.print(option.name, x, y)
-		local utility = tostring(math.floor((option.utility + option.priority)*100))
-		love.graphics.print(utility, x + 128, y)
-		if option.precond then
-			love.graphics.print(tostring(option.precond()), x + 256, y)
+	if game.pause then
+		local x, y = 256 + ((self.player-1)%2)*400, 32 + math.floor((self.player-1)/2)*256
+		love.graphics.print("ROUTINE", x, y)
+		love.graphics.print("UTILITY", x + 128, y)
+		love.graphics.print("PREDICATE", x + 256, y)
+		for i, name in ipairs(self.option_names) do
+			y = y + 16
+			local option = self.options[name]
+			love.graphics.print(option.name, x, y)
+			local utility = tostring(math.floor((option.utility + option.priority)*100))
+			love.graphics.print(utility, x + 128, y)
+			if option.precond then
+				love.graphics.print(tostring(option.precond()), x + 256, y)
+			end
 		end
 	end
 
 	-- draw grudges
-	y = self.body.y
-	for i, foe in ipairs(self.foes) do
-		love.graphics.print("GRUDGE[" .. i .. "] = " .. foe.grudge, x + 384, y)
-		y = y + 16
-	end
+	-- y = 32 + math.floor((self.player-1)/2)*256
+	-- for i, foe in ipairs(self.foes) do
+	-- 	love.graphics.print("GRUDGE[" .. i .. "] = " .. foe.grudge, x + 384, y)
+	-- 	y = y + 16
+	-- end
 end
 
 	
