@@ -249,14 +249,23 @@ function Turret:update(dt)
 
   -- update menace
   function addMenace(t)
-    local forth = { x = (t.x + TILE_W*0.5 - self.x) * 0.5, 
-                    y = (t.y + TILE_H*0.5 - self.y) * 0.5}
+    local forth = { x = (t.x + TILE_W*0.5 - self.x), 
+                    y = (t.y + TILE_H*0.5 - self.y) }
+
+    -- lap around
+    if math.abs(forth.x) > MAP_W*0.5 then
+      forth.x = -useful.sign(forth.x)*TILE_W
+    end
+    if math.abs(forth.y) > MAP_H*0.5 then
+      forth.y = -useful.sign(forth.y)*TILE_H
+    end
+
     forth.x, forth.y = Vector.normalize(forth.x, forth.y)
     forth.x, forth.y = forth.x*TILE_W*0.4, forth.y*TILE_H*0.4
     local arrow_base = 
     { 
-      x = self.x + forth.x*(1.5 - self.menace.smooth*0.3), 
-      y = self.y + forth.y*(1.5 - self.menace.smooth*0.3)
+      x = forth.x*(1.5 - self.menace.smooth*0.3), 
+      y = forth.y*(1.5 - self.menace.smooth*0.3)
     }
     local arrow = 
     {
@@ -309,14 +318,16 @@ function Turret:draw_projectile()
 end
 
 function Turret:draw(x, y)
-
   x, y = x or self.x, y or self.y
-	
+
   -- draw menace
   if not self.stunned then 
     for _, triangle in ipairs(self.menace) do
       player[self.player].bindTeamColour(192 + self.menace.smooth*64)
-        love.graphics.polygon("fill", triangle)
+        love.graphics.polygon("fill", 
+           x + triangle[1], y + triangle[2],
+           x + triangle[3], y + triangle[4],
+           x + triangle[5], y + triangle[6])
       love.graphics.setColor(255, 255, 255)
     end
   end

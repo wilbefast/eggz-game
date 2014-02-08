@@ -16,9 +16,13 @@ Lesser General Public License fDEFAULT_W, DEFAULT_H, zor more details.
 GLOBAL SETTINGS
 --]]------------------------------------------------------------
 
-DEBUG = true
+DEBUG = false
 
 CHEATS = DEBUG
+local LOW_RESOLUTION = DEBUG
+local FULLSCREEN = (not DEBUG)
+local MUTE = DEBUG
+
 MIN_PLAYERS = 2
 MAX_PLAYERS = 4
 n_players = 2
@@ -141,7 +145,7 @@ tutorial = require("tutorial")
 SINGLETON SETTINGS
 --]]------------------------------------------------------------
 
-audio.mute = true --DEBUG
+audio.mute = MUTE
 
 --[[------------------------------------------------------------
 DEAL WITH DIFFERENT RESOLUTIONS (scale images)
@@ -201,16 +205,16 @@ local function setBestResolution()
   -- try each mode from best to worst
   for i, m in ipairs(modes) do
 
-    -- if DEBUG then
-    --   if #modes > 1 then
-    --     m = modes[#modes - 1]
-    --   else
-    --     m = { width = 640, height = 480 }
-    --   end
-    -- end
+    if LOW_RESOLUTION then
+      if #modes > 1 then
+        m = modes[#modes - 1]
+      else
+        m = { width = 640, height = 480 }
+      end
+    end
     
     -- try to set the resolution
-    local success = love.window.setMode(m.width, m.height, { fullscreen = (not DEBUG) })
+    local success = love.window.setMode(m.width, m.height, { fullscreen = FULLSCREEN })
     if success then
       SCALE_X, SCALE_Y = m.width/DEFAULT_W, m.height/DEFAULT_H
       SCALE_MIN, SCALE_MAX = math.min(SCALE_X, SCALE_Y), math.max(SCALE_X, SCALE_Y)
