@@ -84,6 +84,8 @@ local AI = Class
   		{
   			-- pick up a rock that is in the way
   			name = "derocking",
+  			precond = function()
+  				return (not(self.options.rock.target == self.options.derocking.target)) end,
   			execute = AI.planGoPickup,
   			recalculateUtility = AI.recalculateDerockingUtility,
   			priority = 0.0 -- higher is better
@@ -95,7 +97,14 @@ local AI = Class
   				return ((self.options.kidnapping.target ~= self.options.sabotage.target)) end,
   			execute = AI.planGoPickup,
   			recalculateUtility = AI.recalculateKidnappingUtility,
-  			priority = 0.2 -- higher is better
+  			priority = 0.0 -- higher is better
+  		},
+  		{
+  			-- recycle a convertor to save it from being attacked
+  			name = "recycling",
+  			execute = AI.planGoRecycle,
+  			recalculateUtility = AI.recalculateRecyclingUtility,
+  			priority = 0.6 -- higher is better
   		},
   		{
   			-- convert carried egg into a convertor
@@ -106,7 +115,7 @@ local AI = Class
 		  						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeConvertor,
   			recalculateUtility = AI.recalculateConvertorUtility,
-  			priority = 0.5 -- higher is better
+  			priority = 1.0 -- higher is better
   		},
   		{
   			-- convert carried egg into a turret
@@ -117,7 +126,7 @@ local AI = Class
   						and (self.body.passenger:canEvolve())) end,
   			execute = AI.planMakeTurret,
   			recalculateUtility = AI.recalculateTurretUtility,
-  			priority = 0.0 -- higher is better
+  			priority = 0.5 -- higher is better
   		},
   		{
   			-- put down carried rock
@@ -193,6 +202,11 @@ function AI:recalculateLayingUtility(tile, distance)
 		return -math.huge
 	end
 
+	-- don't just lay things that can evolve: evolve them!
+	if self.body.passenger and self.body.passenger:canEvolve() then
+		return -math.huge
+	end
+
 	-- add the tile energy
 	local utility = tile.energy*3
 
@@ -253,7 +267,7 @@ function AI:recalculateFeedingUtility(tile, distance)
 	end
 
 	-- subtract the distance and tile and egg energy
-	local utility = 2 - 4*plant.tile.energy - plant.energy - 0.3*distance
+	local utility = 3 - 4*plant.tile.energy - plant.energy - 0.2*distance
 
 	-- move eggz which are already on friendly territory less often
 	if plant.tile.owner == self.player then
@@ -299,7 +313,7 @@ function AI:recalculateDerockingUtility(tile, distance)
 	local plant = tile.occupant
 
 	-- stop juggling rocks doofus
-	if tile == self.body.tile then
+	if (tile == self.body.tile) or (tile == self.options.rock.target) then
 		return -math.huge
 	end
 
@@ -358,9 +372,11 @@ function AI:recalculateKidnappingUtility(tile, distance)
 
 	-- prefer close enemy eggz
 	local utility = plant.tile.energy 
+									- 1 
 									- distance 
 									+ 2*self.conversion 
 									- 10*tile.defenders[self.player]
+									+ self.foes[plant.player].grudge
 
 	-- best utility ?
 	self:updateUtility(self.options.kidnapping, utility, plant)
@@ -369,10 +385,41 @@ function AI:recalculateKidnappingUtility(tile, distance)
 	return utility
 end
 
+function AI:recalculateRecyclingUtility(tile, distance)
+	-- only interested in the contents of the tile
+	if not tile.occupant then 
+		return -math.huge 
+	end
+	local plant = tile.occupant
+
+	-- only consider friendly convertors or cocoons which are turning into convertors
+	if not self.body:canEvolve(tile)
+		or (not plant:isPlantType("Convertor"))
+		or (plant.player ~= self.player) then
+		return -math.huge
+	end
+
+	-- prefer close plants
+	local utility = -distance
+
+	-- only go for threatened plants
+	for i = 1, n_players do
+		if i ~= self.player then
+			utility = utility + tile.defenders[i]
+		end
+	end
+
+	-- best utility ?
+	self:updateUtility(self.options.recycling, utility, plant)
+
+	-- return the resulting utility
+	return utility
+end
+
 function AI:recalculateConvertorUtility(tile, distance)
 
 	-- subtract distance and percent conversion
-	local utility = 0.5*distance - self.conversion
+	local utility = 0.5*distance - 2*self.conversion
 
 	-- ignore tiles that can't be planted in or cleared
 	if (not self.body:canPlant(tile)) and (not self.body:canUproot(tile)) then
@@ -491,6 +538,11 @@ end
 
 function AI:recalculateRockUtility(tile, distance)
 
+	-- ignore the current tile
+	if tile == self.body.tile then
+		return -math.huge
+	end
+
 	-- ignore tiles that can't be planted in for whatever reason
 	if (not self.body:canPlant(tile)) and (not self.body:canSwap(tile)) then
 		return -math.huge
@@ -500,13 +552,10 @@ function AI:recalculateRockUtility(tile, distance)
 		return -math.huge
 	end
 
-	-- don't place in own territory
-	if tile.convertors[self.player] > 0 then
-		return -math.huge
-	end
-
-	-- subtract distance and energy, don't place on killing grounds
-	local utility = 8 - 5*distance - tile.energy - 2*tile.defenders[self.player]
+	-- subtract distance and energy, don't place on own territory or killing grounds
+	local utility = 8 - 5*distance - tile.energy 
+									- 32*tile.convertors[self.player] 
+									- 2*tile.defenders[self.player]
 
 	-- protect own vulnerabilities, not enemy ones
 	for i = 1, n_players do
@@ -534,9 +583,12 @@ function AI:recalculateSabotageUtility(tile, distance)
 	end
 
 	-- stop juggling eggz doofus
-	if tile == self.body.tile then
+	if (tile == self.body.tile) 
+		or ((self.options.kidnapping.target ~= nil) 
+				and tile == self.options.kidnapping.target.tile) then
 		return -math.huge
 	end
+
 
 	-- prefer close tiles which are poor in energy and bad for kidnapping from
 	local utility = 3 - tile.energy*2 - distance
@@ -608,8 +660,7 @@ end
 
 function AI:doGoPickup(plant)
 	-- if the plant still there ?
-	if plant.purge or ((plant.transport and plant.transport ~= self.body))
-	or (not self.body:canUproot(plant.tile)) then
+	if plant.purge or plant.transport or (not self.body:canUproot(plant.tile)) then
 		-- rage quit >:'(
 		return true
 	end
@@ -689,6 +740,31 @@ end
 Recycling or cancelling unused structures
 --]]--
 
+function AI:planRecycle(plant)
+	table.insert(self.plan, { method = self.doRecycle, target = plant })
+end
+function AI:doRecycle(plant)
+	-- if the plant still there ?
+	if plant.purge then
+		-- rage quit >:'(
+		return true
+	end
+
+	-- go to the tile
+	if self:doGoto(plant.tile) and self.body:canEvolve() then
+		-- cancel evolution if plant is a cocoon
+		if plant:isType("Cocoon") then
+			self.body:doEvolve(nil) -- nil to cancel evolution
+		-- turn plant back into cocoon 
+		else
+			self.body:doEvolve(Cocoon)
+		end
+		return true
+	else
+		return false
+	end
+end
+
 
 --[[------------------------------------------------------------
 Game loop
@@ -705,7 +781,7 @@ function AI:update(dt)
 
 	-- grudges against various players
 	self.danger = 0
-	for i, foe in ipairs(self.foes) do
+	for i, foe in pairs(self.foes) do
 		if player[i].winning > 0 then
 			foe.grudge = 1
 		else
@@ -755,6 +831,9 @@ function AI:update(dt)
 		for i, best_option in ipairs(self.options) do
 			if ((not best_option.precond) or best_option.precond()) 
 				and (best_option.utility ~= -math.huge) then
+				if not best_option.execute then
+					print(i, best_option, best_option.name)
+				end
 				best_option.execute(self, best_option.target)
 				log:write("executing routine '" .. best_option.name .. "'")
 				break
@@ -773,6 +852,7 @@ function AI:draw()
 		love.graphics.line(stepx, stepy, step.target.x, step.target.y)
 		stepx, stepy = step.target.x, step.target.y
 	end
+
 	love.graphics.setColor(255, 255, 255)
 
 	-- draw utilities
