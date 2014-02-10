@@ -99,13 +99,13 @@ local AI = Class
   			recalculateUtility = AI.recalculateKidnappingUtility,
   			priority = 0.0 -- higher is better
   		},
-  		{
-  			-- recycle a convertor to save it from being attacked
-  			name = "recycling",
-  			execute = AI.planGoRecycle,
-  			recalculateUtility = AI.recalculateRecyclingUtility,
-  			priority = 0.6 -- higher is better
-  		},
+  		-- {
+  		-- 	-- recycle a convertor to save it from being attacked
+  		-- 	name = "recycling",
+  		-- 	execute = AI.planGoRecycle,
+  		-- 	recalculateUtility = AI.recalculateRecyclingUtility,
+  		-- 	priority = 0.6 -- higher is better
+  		-- },
   		{
   			-- convert carried egg into a convertor
   			name = "convertor",
@@ -135,14 +135,15 @@ local AI = Class
   				return ((self.body.passenger ~= nil) and self.body.passenger:isType("Rock")) end,
   			execute = AI.planGoPlant,
   			recalculateUtility = AI.recalculateRockUtility,
-  			priority = 0.3 -- higher is better
+  			priority = 1.3 -- higher is better
   		},
   		{
   			-- put enemy eggz in the worst possible position
   			name = "sabotage",
   			precond = function() 
   				return ((self.body.passenger ~= nil) 
-  					and (self.body.passenger.player ~= self.player)) end,
+  					and (self.body.passenger.player ~= self.player)
+  					and (self.body.passenger:isType("Egg"))) end,
   			execute = AI.planGoPlant,
   			recalculateUtility = AI.recalculateSabotageUtility,
   			priority = 0.6 -- higher is better
@@ -182,7 +183,9 @@ local plantGrudge =
 
 function AI:attackedBy(attackingPlayer, attackedPlant)
 	local foe = self.foes[attackingPlayer]
-	foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
+	if foe then
+		foe.grudge = math.min(1, foe.grudge + plantGrudge[attackedPlant:typename()])
+	end
 end
 
 --[[------------------------------------------------------------
@@ -493,13 +496,13 @@ function AI:recalculateTurretUtility(tile, distance)
 	for i = 1, n_players do
 		if i == self.player then
 			-- friend
-			utility = utility + 2*tile.vulnerabilities[i]
+			utility = utility + 3*tile.vulnerabilities[i]
 		else
 			-- foe
 			utility = utility 
-								+ 2*tile.vulnerabilities[i]
+								+ tile.vulnerabilities[i]
 										* (1 + 2*player[i].total_conversion)
-										* (1 + 5*self.foes[i].grudge)
+										* (1 + 6*self.foes[i].grudge)
 								- tile.defenders[i] 
 		end
 	end
@@ -681,14 +684,18 @@ end
 
 function AI:doGoPlant(tile)
 	-- can't lay in occupied tiles
-	if not self.body:canPlant(tile) then
+	if (not self.body:canPlant(tile)) and (not self.body:canSwap(tile)) then
 		-- rage quit >:'(
 		return true
 	end
 
 	-- go to the tile
 	if self:doGoto(tile) then
-		self.body:doPlant()
+		if self.body:canPlant() then
+			self.body:doPlant()
+		elseif self.body:canSwap() then
+			self.body:doUproot()
+		end
 		return true
 	else
 		return false
