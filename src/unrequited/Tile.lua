@@ -276,7 +276,7 @@ function Tile:update(dt, total_energy)
 	elseif not self:isRock() then
 		-- regrowth
 		local regrowth_speed = math.min(Tile.MAX_REGROWTH_PER_SECOND, 
-			Tile.REGROWTH_SPEED/(self.energy*total_energy)*(1 + 4*self.conversion))
+			Tile.REGROWTH_SPEED/(self.energy*total_energy)*(1 + 16*self.conversion))
 		self.energy = math.min(1, self.energy + dt*regrowth_speed)
 
 		-- convert
