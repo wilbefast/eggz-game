@@ -115,21 +115,38 @@ for i = 1, 4 do
 end
 
 --[[------------------------------------------------------------
+Markers
+--]]--
+
+function Turret:removeMarkers()
+  for i, tile in pairs(self.guardArea) do
+    tile.defenders[self.player] = tile.defenders[self.player] - 1
+  end
+end
+
+--[[------------------------------------------------------------
+Evolve
+--]]--
+
+function Turret:onEvolution()
+  self:removeMarkers()
+end
+
+
+--[[------------------------------------------------------------
 Take damage
 --]]--
 
 function Turret:die()
   Plant.die(self)
   audio:play_sound("KNIGHT-destroyed")
-  for i, tile in pairs(self.guardArea) do
-    tile.defenders[self.player] = tile.defenders[self.player] - 1
-  end
+  self:removeMarkers()
 end
 
 function Turret:takeDamage(amount, attacker, ignoreArmour)
   Plant.takeDamage(self, amount, attacker, ignoreArmour)
 
-  if attacker and (not attacker.purge) and (not self.aggro) then
+  if attacker and attacker.isPlantType and (not attacker.purge) and (not self.aggro) then
     self.aggro = attacker
   end
 end

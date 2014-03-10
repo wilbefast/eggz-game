@@ -67,11 +67,27 @@ for i = 1, #Convertor.IMAGES do
 end
 
 --[[------------------------------------------------------------
+AI markers
+--]]--
+
+function Convertor:removeMarkers()
+  -- remove vulnerability markers
+  for i, t in pairs(GameObject.COLLISIONGRID:getNeighboursX(self.tile)) do
+    t.vulnerabilities[self.player] = t.vulnerabilities[self.player] - 1
+  end
+  -- remove converison markers
+  for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(self.tile, true)) do
+    t.convertors[self.player] = t.convertors[self.player] - 1
+  end
+end
+
+--[[------------------------------------------------------------
 Evolve
 --]]--
 
 function Convertor:onEvolution()
   player[self.player].show_conversion(self.x, self.y - 32, 3)
+  self:removeMarkers()
 end
 
 
@@ -84,14 +100,7 @@ function Convertor:die()
   audio:play_sound("FOUNTAIN-destroyed")
   -- push message in player log
   player[self.player].show_conversion(self.x, self.y - 32, 3)
-  -- remove vulnerability markers
-  for i, t in pairs(GameObject.COLLISIONGRID:getNeighboursX(self.tile)) do
-    t.vulnerabilities[self.player] = t.vulnerabilities[self.player] - 1
-  end
-  -- remove converison markers
-  for i, t in pairs(GameObject.COLLISIONGRID:getNeighbours4(self.tile, true)) do
-    t.convertors[self.player] = t.convertors[self.player] - 1
-  end
+  self:removeMarkers()
 end
 
 --[[------------------------------------------------------------
