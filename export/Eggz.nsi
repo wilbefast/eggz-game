@@ -3,9 +3,12 @@ outFile "Install Eggz.exe"
  
 # define installation directory
 installDir "$PROGRAMFILES\Eggz"
+
+#overwrite 
+SetOverwrite on
  
-# For removing Start Menu shortcut in Windows 7
-RequestExecutionLevel user
+# for removing Start Menu shortcut in Windows 7
+RequestExecutionLevel admin
  
 # start default section
 section
@@ -14,24 +17,25 @@ section
     setOutPath $INSTDIR
 
     # list of files to install
-    File Eggz.exe
+    File eggz.exe
     File DevIL.dll
-    File liblove.dll
+    File love.dll
     File lua51.dll
     File mpg123.dll
-    File msvcp100.dll
-    File OpenAL.dll
-    File SDL.dll
+    File msvcp110.dll
+    File msvcr110.dll
+    File OpenAL32.dll
+    File SDL2.dll
 
     # create the uninstaller
     writeUninstaller "$INSTDIR\Uninstall Eggz.exe"
 
     # create start menu shortcuts
     createShortCut "$SMPROGRAMS\Uninstall Eggz.lnk" "$INSTDIR\Uninstall Eggz.exe"
-    createShortCut "$SMPROGRAMS\Play Eggz.lnk" "$INSTDIR\Eggz.exe"
+    createShortCut "$SMPROGRAMS\Play Eggz.lnk" "$INSTDIR\eggz.exe"
 
     # create desktop shortcuts
-    createShortCut "$DESKTOP\Play Eggz.lnk" "$INSTDIR\Eggz.exe"
+    createShortCut "$DESKTOP\Play Eggz.lnk" "$INSTDIR\eggz.exe"
     
 sectionEnd
  
@@ -39,14 +43,15 @@ sectionEnd
 section "uninstall"
  
     # list of files to install
-    delete "$INSTDIR\Eggz.exe"
+    delete "$INSTDIR\eggz.exe"
     delete "$INSTDIR\DevIL.dll"
-    delete "$INSTDIR\liblove.dll"
+    delete "$INSTDIR\love.dll"
     delete "$INSTDIR\lua51.dll"
     delete "$INSTDIR\mpg123.dll"
-    delete "$INSTDIR\msvcp100.dll"
-    delete "$INSTDIR\OpenAL.dll"
-    delete "$INSTDIR\SDL.dll"
+    delete "$INSTDIR\msvcp110.dll"
+    delete "$INSTDIR\msvcr110.dll"
+    delete "$INSTDIR\OpenAL32.dll"
+    delete "$INSTDIR\SDL2.dll"
 
     # remove desktop shortcuts
     delete "$DESKTOP\Play Eggz.lnk"
