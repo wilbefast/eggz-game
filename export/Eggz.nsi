@@ -2,7 +2,7 @@
 outFile "Install Eggz.exe"
  
 # define installation directory
-installDir $DESKTOP\BINK
+installDir "$PROGRAMFILES\Eggz"
  
 # For removing Start Menu shortcut in Windows 7
 RequestExecutionLevel user
